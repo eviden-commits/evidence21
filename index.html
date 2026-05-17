@@ -40,11 +40,9 @@
         .nav-count-num { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--text-primary); line-height: 1; }
         .nav-count-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); }
         
-        /* 통계 프로그레스 바 스타일 추가 */
         .nav-progress-wrap { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
         .nav-progress-bar-bg { width: 80px; height: 6px; background: var(--border-strong); border-radius: 3px; overflow: hidden; }
         .nav-progress-bar-fill { height: 100%; width: 0%; background: var(--accent-green); transition: width 0.4s ease; }
-
         .nav-sync { font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.04em; }
         .nav-actions { display: flex; align-items: center; gap: 4px; }
         .nav-btn { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); font-size: 15px; transition: background 0.15s, color 0.15s; }
@@ -135,15 +133,13 @@
         .content-header { padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); flex-wrap: wrap; gap: 12px; }
         .content-title { font-size: 15px; font-weight: 600; }
         
-        /* 필터 및 서치 유닛 커스텀 */
         .filter-controls { display: flex; align-items: center; gap: 16px; }
         .search-input-wrapper { position: relative; }
         .search-input-wrapper i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); font-size: 13px; }
         .search-box { padding: 6px 12px 6px 32px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px; outline: none; background: var(--surface-raised); width: 160px; transition: width 0.2s ease; }
         .search-box:focus { width: 220px; border-color: var(--accent); }
         .toggle-filter-wrap { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); font-weight: 500; cursor: pointer; user-select: none; }
-        .toggle-filter-wrap input { cursor: pointer; }
-
+        
         .content-count { font-family: var(--mono); font-size: 12px; color: var(--text-tertiary); }
         #ui-post-list { padding: 0 28px; }
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); gap: 12px; }
@@ -380,6 +376,7 @@
 </div>
 
 <script>
+    // 본인의 실시간 GAS 주소와 완벽 결합
     const GAS_URL = "https://script.google.com/macros/s/AKfycby08KHN5Wf5_lJ8QnXI5L3rLqE6C4i3_wOuciB5gIjUyhPNZpHsKGAIr0loeSB3m0CT/exec";
 
     let AppState = {
@@ -424,7 +421,6 @@
             else card.classList.remove('selected');
         }
 
-        // 💡 1번 사양: 대시보드 전체 업무량 대비 완료 수치 바 매핑 계산
         const progressPercent = total > 0 ? Math.round((doneTotal / total) * 100) : 0;
         document.getElementById('ui-progress-fill').style.width = `${progressPercent}%`;
         document.getElementById('ui-progress-percent').innerText = `${progressPercent}%`;
@@ -447,11 +443,9 @@
             </div>`;
         }).join('');
 
-        // 리스트 필터 렌더링 호출
         filterAndRenderList();
     }
 
-    // 💡 3번 사양: 프론트엔드 실시간 결합형 검색 키워드 및 상태 정밀 필터링 로직
     function filterAndRenderList() {
         const area = document.getElementById('content-area');
         if (!AppState.selectedCategory) { area.style.display = 'none'; return; }
@@ -464,7 +458,6 @@
         const searchKeyword = document.getElementById('search-keyword').value.toLowerCase().trim();
         const onlyActive = document.getElementById('chk-only-active').checked;
 
-        // 1차 필터링 (상태값 및 검색어)
         let filtered = items.filter(t => {
             if (onlyActive && t.status === 'done') return false;
             if (searchKeyword) {
@@ -475,7 +468,6 @@
             return true;
         });
 
-        // 정렬 수행
         const sorted = filtered.sort((a, b) => {
             const aDone = a.status === 'done';
             const bDone = b.status === 'done';
@@ -530,11 +522,8 @@
     function selectCategory(cat) {
         AppState.selectedCategory = cat;
         if (document.getElementById('reg-cat')) document.getElementById('reg-cat').value = cat;
-        
-        // 카테고리 전환 시 검색창 초기화
         document.getElementById('search-keyword').value = "";
         document.getElementById('chk-only-active').checked = false;
-        
         render();
         setTimeout(() => {
             const el = document.getElementById('content-area');
@@ -568,15 +557,10 @@
 
     function closeModal() {
         document.getElementById('inputModal').classList.remove('active');
-        document.getElementById('reg-id').value = '';
-        document.getElementById('reg-title').value = '';
-        document.getElementById('reg-content').value = '';
-        document.getElementById('reg-startdate').value = '';
-        document.getElementById('reg-duedate').value = '';
-        document.getElementById('reg-file').value = '';
+        document.getElementById('reg-id').value = ''; document.getElementById('reg-title').value = ''; document.getElementById('reg-content').value = '';
+        document.getElementById('reg-startdate').value = ''; document.getElementById('reg-duedate').value = ''; document.getElementById('reg-file').value = '';
         document.getElementById('file-label-text').innerHTML = `<i class="fa-solid fa-cloud-arrow-up" style="margin-right:6px;"></i>파일 선택 (최대 25MB)`;
-        document.getElementById('btn-save-submit').innerText = "저장";
-        document.getElementById('btn-save-submit').disabled = false;
+        document.getElementById('btn-save-submit').innerText = "저장"; document.getElementById('btn-save-submit').disabled = false;
     }
 
     function openMemoModal() {
@@ -585,6 +569,11 @@
         setTimeout(() => document.getElementById('edit-memo-text').focus(), 200);
     }
     function closeMemoModal() { document.getElementById('memoModal').classList.remove('active'); }
+
+    // 🔒 마스터 패스워드 프롬프트 호출 함수
+    function askPassword() {
+        return prompt("🔒 보안 구역입니다. 인증 코드를 기재하십시오.");
+    }
 
     async function handleSave() {
         const id = document.getElementById('reg-id').value;
@@ -596,6 +585,10 @@
         const fileInput = document.getElementById('reg-file');
         
         if (!title) return;
+
+        // 실행 전 패스워드 확인
+        const pwd = askPassword();
+        if (pwd === null) return; // 취소 버튼
 
         const submitBtn = document.getElementById('btn-save-submit');
         submitBtn.innerText = "처리 중...";
@@ -609,6 +602,7 @@
             title: title,
             content: content,
             duedate: duedate,
+            password: pwd, // 패스워드 페이로드 동봉
             fileData: null, fileName: null, fileMime: null
         };
 
@@ -629,16 +623,23 @@
 
     async function sendTaskData(payload) {
         try {
-            await fetch(GAS_URL, {
+            const res = await fetch(GAS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             });
-            await new Promise(r => setTimeout(r, 1200));
-            await initApp();
-            closeModal();
+            const result = await res.json();
+            
+            if (result.status === "auth_error") {
+                alert(result.message);
+            } else {
+                await new Promise(r => setTimeout(r, 1200));
+                await initApp();
+                closeModal();
+            }
         } catch (e) { 
             alert("통신 오류가 발생했습니다."); 
+        } finally {
             document.getElementById('btn-save-submit').innerText = "저장";
             document.getElementById('btn-save-submit').disabled = false;
         }
@@ -647,69 +648,66 @@
     async function handleMemoSave() {
         const newMemo = document.getElementById('edit-memo-text').value.trim();
         if (!newMemo) return;
+        
+        const pwd = askPassword();
+        if (pwd === null) return;
+
         try {
-            await fetch(GAS_URL, {
+            const res = await fetch(GAS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'updateMemo', memo: newMemo })
+                body: JSON.stringify({ action: 'updateMemo', memo: newMemo, password: pwd })
             });
-            await new Promise(r => setTimeout(r, 1500));
-            await initApp();
-            closeMemoModal();
+            const result = await res.json();
+            if (result.status === "auth_error") {
+                alert(result.message);
+            } else {
+                await new Promise(r => setTimeout(r, 1500));
+                await initApp();
+                closeMemoModal();
+            }
         } catch (e) { alert("통신 오류가 발생했습니다."); }
     }
 
-    // 💡 2번 사양: 의도치 않은 데이터 손실 방지를 위한 마스터 검증 얼럿 레이어 처리
     async function handleDelete(cat, id) {
-        if (!confirm("⚠️ 주의: 해당 업무 항목을 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.")) return;
+        if (!confirm("⚠️ 주의: 해당 업무 항목을 영구 삭제하시겠습니까?")) return;
+        
+        const pwd = askPassword();
+        if (pwd === null) return;
+
         try {
-            await fetch(GAS_URL, {
+            const res = await fetch(GAS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'deleteTask', id: id })
+                body: JSON.stringify({ action: 'deleteTask', id: id, password: pwd })
             });
-            await new Promise(r => setTimeout(r, 1500));
-            await initApp();
+            const result = await res.json();
+            if (result.status === "auth_error") {
+                alert(result.message);
+            } else {
+                await new Promise(r => setTimeout(r, 1500));
+                await initApp();
+            }
         } catch (e) { alert("통신 오류가 발생했습니다."); }
-    }
-
-    function exportReport() {
-        var now = new Date();
-        var dateStr = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
-        var categories = Object.keys(AppState.tasks);
-        var CAT_COLORS = { '사고관리': '#C0392B', '입찰지원': '#1C3F8F', '노무관리': '#8B5E00', '인증관리': '#1A6B4A', '법무관리': '#4A2080', '기타관리': '#6B6B6B' };
-        var catSections = ''; var totalCount = 0; var today = new Date().toISOString().split('T')[0];
-
-        categories.forEach(function(cat) {
-            var items = AppState.tasks[cat];
-            if (!items || items.length === 0) return;
-            totalCount += items.length;
-            var color = CAT_COLORS[cat] || '#333'; var rows = ''; var reversed = items.slice().reverse();
-            reversed.forEach(function(t) {
-                var isOverdue = t.duedate && t.duedate < today;
-                var contentHtml = t.content ? t.content.split('\n').join('<br>') : '—';
-                rows += '<tr><td class="col-title">' + t.title + '</td><td class="col-content">' + contentHtml + '</td><td class="col-date">' + (t.date || '—') + '</td><td class="col-date' + (isOverdue ? ' overdue' : '') + '">' + (t.duedate || '—') + '</td></tr>';
-            });
-            catSections += '<div class="cat-section"><div class="cat-header" style="border-left-color:' + color + ';"><span class="cat-name">' + cat + '</span><span class="cat-count" style="color:' + color + ';">' + items.length + '건</span></div><table><thead><tr><th class="col-title">제목</th><th class="col-content">내용</th><th class="col-date">시작일</th><th class="col-date">종료일</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
-        });
-
-        if (totalCount === 0) { alert('등록된 업무가 없습니다.'); return; }
-        var summaryBar = '';
-        categories.forEach(function(cat) {
-            var cnt = AppState.tasks[cat] ? AppState.tasks[cat].length : 0;
-            var color = CAT_COLORS[cat] || '#333';
-            summaryBar += '<div class="summary-item"><div class="s-num" style="color:' + color + '">' + cnt + '</div><div class="s-label">' + cat + '</div></div>';
-        });
-
-        var reportHTML = '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>업무현황보고서_' + dateStr + '</title><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: "Noto Sans KR", sans-serif; background: #f0f0f0; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .page { width: 210mm; min-height: 297mm; margin: 20px auto; background: white; padding: 18mm 18mm 20mm; box-shadow: 0 4px 24px rgba(0,0,0,0.12); } .report-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #111; margin-bottom: 20px; } .company-name { font-size: 11px; font-weight: 500; color: #666; letter-spacing: 0.05em; margin-bottom: 4px; } .report-title { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: #0D0D0D; } .header-right { text-align: right; } .report-date { font-size: 11px; color: #888; margin-bottom: 6px; } .report-badge { display: inline-block; background: #0D0D0D; color: white; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; } .summary-bar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; } .summary-item { flex: 1; min-width: 80px; background: #F8F8F6; border: 1px solid #E5E5E5; border-radius: 8px; padding: 10px 12px; text-align: center; } .s-num { font-size: 20px; font-weight: 700; line-height: 1; margin-bottom: 3px; } .s-label { font-size: 9px; color: #999; font-weight: 500; letter-spacing: 0.05em; } .cat-section { margin-bottom: 22px; } .cat-header { display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #333; padding: 6px 0 6px 10px; margin-bottom: 8px; } .cat-name { font-size: 13px; font-weight: 700; } .cat-count { font-size: 11px; font-weight: 600; } table { width: 100%; border-collapse: collapse; font-size: 11px; } thead tr { background: #F4F4F4; } th { padding: 7px 10px; text-align: left; font-weight: 600; color: #555; border-bottom: 1px solid #E0E0E0; font-size: 10px; letter-spacing: 0.03em; } td { padding: 8px 10px; border-bottom: 1px solid #F0F0F0; vertical-align: top; line-height: 1.5; } tr:last-child td { border-bottom: none; } .col-title { width: 25%; font-weight: 500; } .col-content { width: 45%; color: #555; } .col-date { width: 15%; color: #888; font-size: 10px; white-space: nowrap; } .overdue { color: #C0392B !important; font-weight: 600; } .report-footer { margin-top: 28px; padding-top: 12px; border-top: 1px solid #E5E5E5; display: flex; justify-content: space-between; } .footer-text { font-size: 9px; color: #BBB; letter-spacing: 0.05em; } .print-bar { width: 210mm; margin: 0 auto 12px; display: flex; gap: 8px; justify-content: flex-end; } .btn-print { background: #0D0D0D; color: white; border: none; padding: 10px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; font-family: "Noto Sans KR", sans-serif; cursor: pointer; } .btn-close { background: #F0F0F0; color: #333; border: none; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-family: "Noto Sans KR", sans-serif; cursor: pointer; } @media print { body { background: white; } .page { margin: 0; box-shadow: none; padding: 15mm 15mm 18mm; } .no-print { display: none !important; } }</style></head><body><div class="print-bar no-print"><button class="btn-close" onclick="window.close()">닫기</button><button class="btn-print" onclick="window.print()">🖨 인쇄 / PDF 저장</button></div><div class="page"><div class="report-header"><div class="header-left"><div class="company-name">(주)세방테크 · 품질안전보건실</div><div class="report-title">업무 현황 보고서</div></div><div class="header-right"><div class="report-date">기준일: ' + dateStr + '</div><div class="report-badge">총 ' + totalCount + '건 진행중</div></div></div><div class="summary-bar">' + summaryBar + '</div>' + catSections + '<div class="report-footer"><span class="footer-text">(주)세방테크 · 품질안전보건실 · CONFIDENTIAL</span><span class="footer-text">출력일: ' + dateStr + '</span></div></div></body></html>';
-
-        var win = window.open('', '_blank'); win.document.write(reportHTML); win.document.close();
     }
 
     async function toggleDone(id) {
+        const pwd = askPassword();
+        if (pwd === null) return;
+
         try {
-            await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'toggleStatus', id: id }) });
-            await new Promise(r => setTimeout(r, 1000)); await initApp();
+            const res = await fetch(GAS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'toggleStatus', id: id, password: pwd })
+            });
+            const result = await res.json();
+            if (result.status === "auth_error") {
+                alert(result.message);
+            } else {
+                await new Promise(r => setTimeout(r, 1000));
+                await initApp();
+            }
         } catch(e) { alert("통신 오류가 발생했습니다."); }
     }
 
