@@ -44,6 +44,13 @@
         .nav-progress-bar-bg { width: 80px; height: 6px; background: var(--border-strong); border-radius: 3px; overflow: hidden; }
         .nav-progress-bar-fill { height: 100%; width: 0%; background: var(--accent-green); transition: width 0.4s ease; }
         .nav-sync { font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.04em; }
+        
+        /* 🔒 패스워드 상단 고정 인풋 인라인 스타일 */
+        .nav-auth-input-wrapper { display: flex; align-items: center; gap: 6px; }
+        .nav-auth-input-wrapper i { color: var(--text-tertiary); font-size: 12px; }
+        .nav-auth-field { border: 1px solid var(--border-strong); background: var(--surface); padding: 5px 10px; border-radius: var(--radius-sm); font-size: 12px; width: 90px; outline: none; transition: all 0.15s ease; font-family: var(--mono); }
+        .nav-auth-field:focus { border-color: var(--accent); background: var(--surface-raised); box-shadow: 0 0 0 2px rgba(13,13,13,0.05); }
+
         .nav-actions { display: flex; align-items: center; gap: 4px; }
         .nav-btn { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); font-size: 15px; transition: background 0.15s, color 0.15s; }
         .nav-btn:hover { background: var(--border); color: var(--text-primary); }
@@ -215,6 +222,12 @@
             <span class="nav-count-label">Tasks</span>
         </div>
         <span class="nav-sync" id="nav-sync">—</span>
+        
+        <div class="nav-auth-input-wrapper">
+            <i class="fa-solid fa-key" title="인증 코드"></i>
+            <input type="password" id="global-auth-pwd" class="nav-auth-field" placeholder="인증 코드 입력">
+        </div>
+
         <div class="nav-actions">
             <button class="nav-btn" onclick="initApp()" title="새로고침">
                 <i class="fa-solid fa-arrows-rotate"></i>
@@ -369,14 +382,13 @@
             <textarea id="edit-memo-text" placeholder="실장 코멘트를 입력하세요"></textarea>
         </div>
         <div class="modal-actions">
-            <button class="btn-primary" onclick="handleMemoSave()">업데이트</button>
+            <button class="btn-primary" onclick="handleMemoSave()">구글시트 반영</button>
             <button class="btn-ghost" onclick="closeMemoModal()">취소</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 본인의 실시간 GAS 주소와 완벽 결합
     const GAS_URL = "https://script.google.com/macros/s/AKfycby08KHN5Wf5_lJ8QnXI5L3rLqE6C4i3_wOuciB5gIjUyhPNZpHsKGAIr0loeSB3m0CT/exec";
 
     let AppState = {
@@ -407,14 +419,10 @@
     }
 
     function render() {
-        let total = 0;
-        let doneTotal = 0;
-        
+        let total = 0; let doneTotal = 0;
         for (let cat in AppState.tasks) {
-            const cnt = AppState.tasks[cat].length;
-            total += cnt;
+            const cnt = AppState.tasks[cat].length; total += cnt;
             doneTotal += AppState.tasks[cat].filter(t => t.status === 'done').length;
-            
             document.getElementById(`badge-${cat}`).innerText = cnt;
             const card = document.getElementById(`card-${cat}`);
             if (AppState.selectedCategory === cat) card.classList.add('selected');
@@ -424,7 +432,6 @@
         const progressPercent = total > 0 ? Math.round((doneTotal / total) * 100) : 0;
         document.getElementById('ui-progress-fill').style.width = `${progressPercent}%`;
         document.getElementById('ui-progress-percent').innerText = `${progressPercent}%`;
-
         document.getElementById('nav-total').innerText = total;
         document.getElementById('total-tasks-label').innerText = `(${total} tasks)`;
         document.getElementById('nav-sync').innerText = AppState.lastSync;
@@ -469,8 +476,7 @@
         });
 
         const sorted = filtered.sort((a, b) => {
-            const aDone = a.status === 'done';
-            const bDone = b.status === 'done';
+            const aDone = a.status === 'done'; const bDone = b.status === 'done';
             if (aDone !== bDone) return aDone - bDone;
             return (a.date || '').localeCompare(b.date || '');
         });
@@ -480,8 +486,7 @@
 
         const listDiv = document.getElementById('ui-post-list');
         if (sorted.length === 0) {
-            listDiv.innerHTML = '<div class="list-empty">조건에 부합하는 업무가 없습니다.</div>';
-            return;
+            listDiv.innerHTML = '<div class="list-empty">조건에 부합하는 업무가 없습니다.</div>'; return;
         }
 
         listDiv.innerHTML = sorted.map(t => {
@@ -542,7 +547,6 @@
     function openModifyModal(cat, id) {
         const targetItem = AppState.tasks[cat].find(t => String(t.id) === String(id));
         if (!targetItem) return;
-
         document.getElementById('modal-ui-title').innerText = "업무 상세 수정";
         document.getElementById('reg-id').value = targetItem.id;
         document.getElementById('reg-cat').value = cat;
@@ -550,7 +554,6 @@
         document.getElementById('reg-content').value = targetItem.content;
         document.getElementById('reg-startdate').value = targetItem.date;
         document.getElementById('reg-duedate').value = targetItem.duedate;
-
         document.getElementById('inputModal').classList.add('active');
         setTimeout(() => document.getElementById('reg-title').focus(), 200);
     }
@@ -570,9 +573,11 @@
     }
     function closeMemoModal() { document.getElementById('memoModal').classList.remove('active'); }
 
-    // 🔒 마스터 패스워드 프롬프트 호출 함수
-    function askPassword() {
-        return prompt("🔒 보안 구역입니다. 인증 코드를 기재하십시오.");
+    // 🔒 상단 인풋 상시 고정 컴포넌트에서 비밀번호 추출 메커니즘 변경
+    function getGlobalPassword() {
+        const pwd = document.getElementById('global-auth-pwd').value.trim();
+        if (!pwd) { alert("🔒 상단 바 우측 '인증 코드 입력' 칸에 비밀번호를 먼저 입력하십시오."); return null; }
+        return pwd;
     }
 
     async function handleSave() {
@@ -586,33 +591,23 @@
         
         if (!title) return;
 
-        // 실행 전 패스워드 확인
-        const pwd = askPassword();
-        if (pwd === null) return; // 취소 버튼
+        // 🔒 상단 바 고정 인풋 패스워드 로드
+        const pwd = getGlobalPassword();
+        if (pwd === null) return;
 
         const submitBtn = document.getElementById('btn-save-submit');
-        submitBtn.innerText = "처리 중...";
-        submitBtn.disabled = true;
+        submitBtn.innerText = "처리 중..."; submitBtn.disabled = true;
 
         let payload = {
-            action: id ? 'updateTask' : 'addTask',
-            id: id ? id : Date.now().toString(),
-            category: cat,
-            date: startdate,
-            title: title,
-            content: content,
-            duedate: duedate,
-            password: pwd, // 패스워드 페이로드 동봉
+            action: id ? 'updateTask' : 'addTask', id: id ? id : Date.now().toString(), category: cat,
+            date: startdate, title: title, content: content, duedate: duedate, password: pwd,
             fileData: null, fileName: null, fileMime: null
         };
 
         if (fileInput.files && fileInput.files.length > 0) {
-            const file = fileInput.files[0];
-            const reader = new FileReader();
+            const file = fileInput.files[0]; const reader = new FileReader();
             reader.onload = async function(e) {
-                payload.fileData = e.target.result.split(',')[1];
-                payload.fileName = file.name;
-                payload.fileMime = file.type;
+                payload.fileData = e.target.result.split(',')[1]; payload.fileName = file.name; payload.fileMime = file.type;
                 await sendTaskData(payload);
             };
             reader.readAsDataURL(file);
@@ -623,91 +618,47 @@
 
     async function sendTaskData(payload) {
         try {
-            const res = await fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
-            });
+            const res = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
             const result = await res.json();
-            
-            if (result.status === "auth_error") {
-                alert(result.message);
-            } else {
-                await new Promise(r => setTimeout(r, 1200));
-                await initApp();
-                closeModal();
-            }
-        } catch (e) { 
-            alert("통신 오류가 발생했습니다."); 
-        } finally {
-            document.getElementById('btn-save-submit').innerText = "저장";
-            document.getElementById('btn-save-submit').disabled = false;
-        }
+            if (result.status === "auth_error") { alert(result.message); } 
+            else { await new Promise(r => setTimeout(r, 1200)); await initApp(); closeModal(); }
+        } catch (e) { alert("통신 오류가 발생했습니다."); } 
+        finally { document.getElementById('btn-save-submit').innerText = "저장"; document.getElementById('btn-save-submit').disabled = false; }
     }
 
     async function handleMemoSave() {
         const newMemo = document.getElementById('edit-memo-text').value.trim();
         if (!newMemo) return;
         
-        const pwd = askPassword();
-        if (pwd === null) return;
+        const pwd = getGlobalPassword(); if (pwd === null) return;
 
         try {
-            const res = await fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'updateMemo', memo: newMemo, password: pwd })
-            });
+            const res = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'updateMemo', memo: newMemo, password: pwd }) });
             const result = await res.json();
-            if (result.status === "auth_error") {
-                alert(result.message);
-            } else {
-                await new Promise(r => setTimeout(r, 1500));
-                await initApp();
-                closeMemoModal();
-            }
+            if (result.status === "auth_error") { alert(result.message); } 
+            else { await new Promise(r => setTimeout(r, 1500)); await initApp(); closeMemoModal(); }
         } catch (e) { alert("통신 오류가 발생했습니다."); }
     }
 
     async function handleDelete(cat, id) {
-        if (!confirm("⚠️ 주의: 해당 업무 항목을 영구 삭제하시겠습니까?")) return;
-        
-        const pwd = askPassword();
-        if (pwd === null) return;
+        const pwd = getGlobalPassword(); if (pwd === null) return;
 
         try {
-            const res = await fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'deleteTask', id: id, password: pwd })
-            });
+            const res = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteTask', id: id, password: pwd }) });
             const result = await res.json();
-            if (result.status === "auth_error") {
-                alert(result.message);
-            } else {
-                await new Promise(r => setTimeout(r, 1500));
-                await initApp();
-            }
+            if (result.status === "auth_error") { alert(result.message); } 
+            else { await new Promise(r => setTimeout(r, 1500)); await initApp(); }
         } catch (e) { alert("통신 오류가 발생했습니다."); }
     }
 
     async function toggleDone(id) {
-        const pwd = askPassword();
-        if (pwd === null) return;
+        const pwd = getGlobalPassword(); if (pwd === null) return;
 
         try {
-            const res = await fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'toggleStatus', id: id, password: pwd })
-            });
+            const res = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'toggleStatus', id: id, password: pwd }) });
             const result = await res.json();
-            if (result.status === "auth_error") {
-                alert(result.message);
-            } else {
-                await new Promise(r => setTimeout(r, 1000));
-                await initApp();
-            }
+            if (result.status === "auth_error") { alert(result.message); } 
+            else { await new Promise(r => setTimeout(r, 1000)); await initApp(); }
         } catch(e) { alert("통신 오류가 발생했습니다."); }
     }
 
