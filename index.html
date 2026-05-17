@@ -39,6 +39,12 @@
         .nav-task-count { display: flex; align-items: baseline; gap: 5px; }
         .nav-count-num { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--text-primary); line-height: 1; }
         .nav-count-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); }
+        
+        /* 통계 프로그레스 바 스타일 추가 */
+        .nav-progress-wrap { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+        .nav-progress-bar-bg { width: 80px; height: 6px; background: var(--border-strong); border-radius: 3px; overflow: hidden; }
+        .nav-progress-bar-fill { height: 100%; width: 0%; background: var(--accent-green); transition: width 0.4s ease; }
+
         .nav-sync { font-family: var(--mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.04em; }
         .nav-actions { display: flex; align-items: center; gap: 4px; }
         .nav-btn { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); font-size: 15px; transition: background 0.15s, color 0.15s; }
@@ -92,7 +98,6 @@
         .cat-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow-md); transform: translateY(-2px); }
         .cat-card.selected::before { opacity: 1; background: var(--accent); }
 
-        /* Category specific styles */
         .cat-card[data-cat="사고관리"]::before { background: var(--accent-red); }
         .cat-card[data-cat="사고관리"] .cat-icon-wrap { background: var(--accent-red-light); color: var(--accent-red); }
         .cat-card[data-cat="사고관리"] .cat-badge { background: var(--accent-red-light); color: var(--accent-red); }
@@ -127,8 +132,18 @@
 
         /* CONTENT PANEL */
         #content-area { display: none; margin-top: 20px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); animation: fadeUp 0.3s ease both; }
-        .content-header { padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); }
+        .content-header { padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); flex-wrap: wrap; gap: 12px; }
         .content-title { font-size: 15px; font-weight: 600; }
+        
+        /* 필터 및 서치 유닛 커스텀 */
+        .filter-controls { display: flex; align-items: center; gap: 16px; }
+        .search-input-wrapper { position: relative; }
+        .search-input-wrapper i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); font-size: 13px; }
+        .search-box { padding: 6px 12px 6px 32px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px; outline: none; background: var(--surface-raised); width: 160px; transition: width 0.2s ease; }
+        .search-box:focus { width: 220px; border-color: var(--accent); }
+        .toggle-filter-wrap { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); font-weight: 500; cursor: pointer; user-select: none; }
+        .toggle-filter-wrap input { cursor: pointer; }
+
         .content-count { font-family: var(--mono); font-size: 12px; color: var(--text-tertiary); }
         #ui-post-list { padding: 0 28px; }
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); gap: 12px; }
@@ -149,7 +164,7 @@
         .btn-del:hover { background: var(--accent-red-light); color: var(--accent-red); }
         .btn-done:hover { background: var(--accent-green-light); color: var(--accent-green); }
         .btn-done.active { color: var(--accent-green); }
-        .btn-mod:hover { background: var(--accent-blue-light); color: var(--accent-blue); } /* 수정 버튼 스타일 */
+        .btn-mod:hover { background: var(--accent-blue-light); color: var(--accent-blue); }
         .list-actions { display: flex; gap: 2px; flex-shrink: 0; }
         .list-empty { padding: 40px 0; text-align: center; color: var(--text-tertiary); font-size: 13px; }
 
@@ -192,6 +207,13 @@
         <span class="nav-brand-name">최차장 업무창고</span>
     </div>
     <div class="nav-right">
+        <div class="nav-progress-wrap">
+            <span>완료율</span>
+            <div class="nav-progress-bar-bg">
+                <div class="nav-progress-bar-fill" id="ui-progress-fill"></div>
+            </div>
+            <span id="ui-progress-percent">0%</span>
+        </div>
         <div class="nav-task-count">
             <span class="nav-count-num" id="nav-total">0</span>
             <span class="nav-count-label">Tasks</span>
@@ -273,8 +295,20 @@
 
         <div id="content-area">
             <div class="content-header">
-                <span class="content-title" id="ui-list-title">—</span>
-                <span class="content-count" id="ui-list-count"></span>
+                <div>
+                    <span class="content-title" id="ui-list-title">—</span>
+                    <span class="content-count" id="ui-list-count"></span>
+                </div>
+                <div class="filter-controls">
+                    <label class="toggle-filter-wrap">
+                        <input type="checkbox" id="chk-only-active" onchange="filterAndRenderList()">
+                        <span>진행중인 업무만</span>
+                    </label>
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-keyword" class="search-box" placeholder="결과 내 검색..." oninput="filterAndRenderList()">
+                    </div>
+                </div>
             </div>
             <div id="ui-post-list"></div>
         </div>
@@ -285,7 +319,8 @@
     <div class="modal-content">
         <div class="modal-handle"></div>
         <div class="modal-title" id="modal-ui-title">새 업무 추가</div>
-        <input type="hidden" id="reg-id"> <div class="field-wrap">
+        <input type="hidden" id="reg-id">
+        <div class="field-wrap">
             <div class="field-label">분류</div>
             <select id="reg-cat">
                 <option value="사고관리">사고관리</option>
@@ -355,8 +390,7 @@
 
     async function initApp() {
         const overlay = document.getElementById('loading-overlay');
-        overlay.classList.remove('fade-out');
-        overlay.style.display = 'flex';
+        overlay.classList.remove('fade-out'); overlay.style.display = 'flex';
         try {
             const response = await fetch(GAS_URL);
             const data = await response.json();
@@ -377,14 +411,23 @@
 
     function render() {
         let total = 0;
+        let doneTotal = 0;
+        
         for (let cat in AppState.tasks) {
             const cnt = AppState.tasks[cat].length;
             total += cnt;
+            doneTotal += AppState.tasks[cat].filter(t => t.status === 'done').length;
+            
             document.getElementById(`badge-${cat}`).innerText = cnt;
             const card = document.getElementById(`card-${cat}`);
             if (AppState.selectedCategory === cat) card.classList.add('selected');
             else card.classList.remove('selected');
         }
+
+        // 💡 1번 사양: 대시보드 전체 업무량 대비 완료 수치 바 매핑 계산
+        const progressPercent = total > 0 ? Math.round((doneTotal / total) * 100) : 0;
+        document.getElementById('ui-progress-fill').style.width = `${progressPercent}%`;
+        document.getElementById('ui-progress-percent').innerText = `${progressPercent}%`;
 
         document.getElementById('nav-total').innerText = total;
         document.getElementById('total-tasks-label').innerText = `(${total} tasks)`;
@@ -404,52 +447,75 @@
             </div>`;
         }).join('');
 
+        // 리스트 필터 렌더링 호출
+        filterAndRenderList();
+    }
+
+    // 💡 3번 사양: 프론트엔드 실시간 결합형 검색 키워드 및 상태 정밀 필터링 로직
+    function filterAndRenderList() {
         const area = document.getElementById('content-area');
-        if (AppState.selectedCategory) {
-            area.style.display = 'block';
-            const cat = AppState.selectedCategory;
-            const items = AppState.tasks[cat];
-            document.getElementById('ui-list-title').innerText = cat;
-            const listDiv = document.getElementById('ui-post-list');
-            
-            if (items.length === 0) {
-                listDiv.innerHTML = '<div class="list-empty">등록된 업무가 없습니다.</div>';
-            } else {
-                const sorted = [...items].sort((a, b) => {
-                    const aDone = a.status === 'done';
-                    const bDone = b.status === 'done';
-                    if (aDone !== bDone) return aDone - bDone;
-                    return (a.date || '').localeCompare(b.date || '');
-                });
-                const activeCount = sorted.filter(t => t.status !== 'done').length;
-                document.getElementById('ui-list-count').innerText = `${activeCount}건 진행 / ${items.length}건 전체`;
-                
-                listDiv.innerHTML = sorted.map(t => {
-                    const isDone = t.status === 'done';
-                    return `
-                    <div class="list-row${isDone ? ' done' : ''}">
-                        <div class="list-info">
-                            <span class="list-date">${t.date}</span>
-                            <span class="list-title">${t.title}</span>
-                            ${t.content ? `<span class="list-content">${t.content.split('\n').join('<br>')}</span>` : ''}
-                            ${t.duedate ? `<span class="list-duedate"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i>${t.duedate} 종료</span>` : ''}
-                            ${t.fileUrl ? `<a href="${t.fileUrl}" target="_blank" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일 보기</a>` : ''}
-                        </div>
-                        <div class="list-actions">
-                            <button class="btn-done${isDone ? ' active' : ''}" onclick="toggleDone('${t.id}')" title="${isDone ? '완료 취소' : '완료 처리'}">
-                                <i class="fa-solid fa-check"></i>
-                            </button>
-                            <button class="btn-mod" onclick="openModifyModal('${cat}', '${t.id}')" title="업무 수정">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <button class="btn-del" onclick="handleDelete('${cat}', '${t.id}')" title="업무 삭제">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div>`;
-                }).join('');
+        if (!AppState.selectedCategory) { area.style.display = 'none'; return; }
+
+        area.style.display = 'block';
+        const cat = AppState.selectedCategory;
+        const items = AppState.tasks[cat];
+        document.getElementById('ui-list-title').innerText = cat;
+
+        const searchKeyword = document.getElementById('search-keyword').value.toLowerCase().trim();
+        const onlyActive = document.getElementById('chk-only-active').checked;
+
+        // 1차 필터링 (상태값 및 검색어)
+        let filtered = items.filter(t => {
+            if (onlyActive && t.status === 'done') return false;
+            if (searchKeyword) {
+                const inTitle = (t.title || '').toLowerCase().includes(searchKeyword);
+                const inContent = (t.content || '').toLowerCase().includes(searchKeyword);
+                return inTitle || inContent;
             }
-        } else { area.style.display = 'none'; }
+            return true;
+        });
+
+        // 정렬 수행
+        const sorted = filtered.sort((a, b) => {
+            const aDone = a.status === 'done';
+            const bDone = b.status === 'done';
+            if (aDone !== bDone) return aDone - bDone;
+            return (a.date || '').localeCompare(b.date || '');
+        });
+
+        const activeCount = items.filter(t => t.status !== 'done').length;
+        document.getElementById('ui-list-count').innerText = `${activeCount}건 진행 / ${items.length}건 전체 (필터결과: ${sorted.length}건)`;
+
+        const listDiv = document.getElementById('ui-post-list');
+        if (sorted.length === 0) {
+            listDiv.innerHTML = '<div class="list-empty">조건에 부합하는 업무가 없습니다.</div>';
+            return;
+        }
+
+        listDiv.innerHTML = sorted.map(t => {
+            const isDone = t.status === 'done';
+            return `
+            <div class="list-row${isDone ? ' done' : ''}">
+                <div class="list-info">
+                    <span class="list-date">${t.date}</span>
+                    <span class="list-title">${t.title}</span>
+                    ${t.content ? `<span class="list-content">${t.content.split('\n').join('<br>')}</span>` : ''}
+                    ${t.duedate ? `<span class="list-duedate"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i>${t.duedate} 종료</span>` : ''}
+                    ${t.fileUrl ? `<a href="${t.fileUrl}" target="_blank" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일 보기</a>` : ''}
+                </div>
+                <div class="list-actions">
+                    <button class="btn-done${isDone ? ' active' : ''}" onclick="toggleDone('${t.id}')" title="${isDone ? '완료 취소' : '완료 처리'}">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                    <button class="btn-mod" onclick="openModifyModal('${cat}', '${t.id}')" title="업무 수정">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn-del" onclick="handleDelete('${cat}', '${t.id}')" title="업무 삭제">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>`;
+        }).join('');
     }
 
     function updateFileLabel(input) {
@@ -464,6 +530,11 @@
     function selectCategory(cat) {
         AppState.selectedCategory = cat;
         if (document.getElementById('reg-cat')) document.getElementById('reg-cat').value = cat;
+        
+        // 카테고리 전환 시 검색창 초기화
+        document.getElementById('search-keyword').value = "";
+        document.getElementById('chk-only-active').checked = false;
+        
         render();
         setTimeout(() => {
             const el = document.getElementById('content-area');
@@ -471,16 +542,14 @@
         }, 50);
     }
 
-    // 🛠️ 업무 신규 추가 모드 오픈
     function openModal() {
         document.getElementById('modal-ui-title').innerText = "새 업무 추가";
-        document.getElementById('reg-id').value = ""; // 신규 추가는 ID 공백
+        document.getElementById('reg-id').value = "";
         document.getElementById('inputModal').classList.add('active');
         document.getElementById('reg-startdate').value = new Date().toISOString().split('T')[0];
         setTimeout(() => document.getElementById('reg-title').focus(), 200);
     }
 
-    // 🛠️ 업무 항목 수정 모드 오픈
     function openModifyModal(cat, id) {
         const targetItem = AppState.tasks[cat].find(t => String(t.id) === String(id));
         if (!targetItem) return;
@@ -532,7 +601,6 @@
         submitBtn.innerText = "처리 중...";
         submitBtn.disabled = true;
 
-        // ID 유무에 따라 action 분기 ('updateTask' 또는 'addTask')
         let payload = {
             action: id ? 'updateTask' : 'addTask',
             id: id ? id : Date.now().toString(),
@@ -591,8 +659,9 @@
         } catch (e) { alert("통신 오류가 발생했습니다."); }
     }
 
+    // 💡 2번 사양: 의도치 않은 데이터 손실 방지를 위한 마스터 검증 얼럿 레이어 처리
     async function handleDelete(cat, id) {
-        if (!confirm("이 업무를 삭제하시겠습니까?")) return;
+        if (!confirm("⚠️ 주의: 해당 업무 항목을 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.")) return;
         try {
             await fetch(GAS_URL, {
                 method: 'POST',
