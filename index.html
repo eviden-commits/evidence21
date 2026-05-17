@@ -200,12 +200,6 @@
             color: var(--text-primary);
             line-height: 1.1;
         }
-        .page-header .subtitle {
-            margin-top: 6px;
-            font-size: 14px;
-            color: var(--text-tertiary);
-            font-weight: 400;
-        }
 
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(12px); }
@@ -398,7 +392,7 @@
         .cat-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow-md); transform: translateY(-2px); }
         .cat-card.selected::before { opacity: 1; background: var(--accent); }
 
-        /* Category specific colors */
+        /* Category colors */
         .cat-card[data-cat="사고관리"]::before { background: var(--accent-red); }
         .cat-card[data-cat="사고관리"] .cat-icon-wrap { background: var(--accent-red-light); color: var(--accent-red); }
         .cat-card[data-cat="사고관리"] .cat-badge { background: var(--accent-red-light); color: var(--accent-red); }
@@ -430,276 +424,92 @@
         .cat-card[data-cat="기타관리"].selected { border-color: #6B6B6B; box-shadow: 0 0 0 1px #6B6B6B, var(--shadow-md); }
 
         .cat-icon-wrap {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            margin-bottom: 16px;
-            transition: transform 0.2s;
+            width: 36px; height: 36px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; margin-bottom: 16px; transition: transform 0.2s;
         }
         .cat-card:hover .cat-icon-wrap { transform: scale(1.1); }
-        .cat-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-        }
-        .cat-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .cat-status {
-            font-family: var(--mono);
-            font-size: 9px;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-tertiary);
-        }
-        .cat-badge {
-            font-family: var(--mono);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 3px 10px;
-            border-radius: 20px;
-            min-width: 32px;
-            text-align: center;
-        }
+        .cat-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px; }
+        .cat-footer { display: flex; align-items: center; justify-content: space-between; }
+        .cat-status { font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); }
+        .cat-badge { font-family: var(--mono); font-size: 13px; font-weight: 500; padding: 3px 10px; border-radius: 20px; min-width: 32px; text-align: center; }
 
         /* ── CONTENT PANEL ───────────────── */
         #content-area {
-            display: none;
-            margin-top: 20px;
-            background: var(--surface-raised);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            animation: fadeUp 0.3s ease both;
+            display: none; margin-top: 20px; background: var(--surface-raised);
+            border: 1px solid var(--border); border-radius: var(--radius-lg);
+            overflow: hidden; box-shadow: var(--shadow-md); animation: fadeUp 0.3s ease both;
         }
         .content-header {
-            padding: 20px 28px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--surface);
+            padding: 20px 28px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; background: var(--surface);
         }
-        .content-title {
-            font-size: 15px;
-            font-weight: 600;
-        }
-        .content-count {
-            font-family: var(--mono);
-            font-size: 12px;
-            color: var(--text-tertiary);
-        }
+        .content-title { font-size: 15px; font-weight: 600; }
+        .content-count { font-family: var(--mono); font-size: 12px; color: var(--text-tertiary); }
         #ui-post-list { padding: 0 28px; }
         .list-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-            gap: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 0; border-bottom: 1px solid var(--border); gap: 12px;
         }
         .list-row:last-child { border-bottom: none; }
         .list-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-        .list-date {
-            font-family: var(--mono);
-            font-size: 12px;
-            color: var(--text-secondary);
-            letter-spacing: 0.04em;
-            font-weight: 500;
-        }
-        .list-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            line-height: 1.4;
-        }
-        .btn-del {
-            width: 30px;
-            height: 30px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: none;
-            border: none;
-            color: var(--text-tertiary);
-            font-size: 13px;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: all 0.15s;
+        .list-date { font-family: var(--mono); font-size: 12px; color: var(--text-secondary); letter-spacing: 0.04em; font-weight: 500; }
+        .list-title { font-size: 14px; font-weight: 500; color: var(--text-primary); line-height: 1.4; }
+        .list-content { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-top: 2px; }
+        .list-duedate { font-size: 12px; font-family: var(--mono); color: var(--text-secondary); margin-top: 4px; letter-spacing: 0.02em; font-weight: 500; }
+        .list-duedate.overdue { color: var(--accent-red); }
+        
+        /* 파일 링크 스타일 */
+        .list-attachment { font-size: 12px; margin-top: 6px; display: inline-flex; align-items: center; gap: 6px; color: var(--accent-blue); text-decoration: none; font-weight: 500; }
+        .list-attachment:hover { text-decoration: underline; }
+
+        .list-row.done .list-title { text-decoration: line-through; color: var(--text-tertiary); }
+        .list-row.done .list-date, .list-row.done .list-content, .list-row.done .list-duedate, .list-row.done .list-attachment { opacity: 0.45; }
+        
+        .btn-del, .btn-done {
+            width: 30px; height: 30px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            background: none; border: none; color: var(--text-tertiary); font-size: 13px; cursor: pointer; flex-shrink: 0; transition: all 0.15s;
         }
         .btn-del:hover { background: var(--accent-red-light); color: var(--accent-red); }
-        .list-content {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-top: 2px;
-        }
-        .list-duedate {
-            font-size: 12px;
-            font-family: var(--mono);
-            color: var(--text-secondary);
-            margin-top: 4px;
-            letter-spacing: 0.02em;
-            font-weight: 500;
-        }
-        .list-duedate.overdue {
-            color: var(--accent-red);
-        }
-        .list-row.done .list-title {
-            text-decoration: line-through;
-            color: var(--text-tertiary);
-        }
-        .list-row.done .list-date,
-        .list-row.done .list-content,
-        .list-row.done .list-duedate {
-            opacity: 0.45;
-        }
-        .btn-done {
-            width: 30px;
-            height: 30px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: none;
-            border: none;
-            color: var(--text-tertiary);
-            font-size: 13px;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: all 0.15s;
-        }
         .btn-done:hover { background: var(--accent-green-light); color: var(--accent-green); }
         .btn-done.active { color: var(--accent-green); }
         .list-actions { display: flex; gap: 2px; flex-shrink: 0; }
-        .list-empty {
-            padding: 40px 0;
-            text-align: center;
-            color: var(--text-tertiary);
-            font-size: 13px;
-        }
+        .list-empty { padding: 40px 0; text-align: center; color: var(--text-tertiary); font-size: 13px; }
 
         /* ── MODALS ──────────────────────── */
         .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.35);
-            z-index: 1000;
-            align-items: flex-end;
-            justify-content: center;
-            backdrop-filter: blur(4px);
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+            z-index: 1000; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px);
         }
-        @media (min-width: 600px) {
-            .modal { align-items: center; }
-        }
+        @media (min-width: 600px) { .modal { align-items: center; } }
         .modal.active { display: flex; }
         .modal-content {
-            background: var(--surface-raised);
-            width: 100%;
-            max-width: 480px;
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            padding: 32px 28px 40px;
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
+            background: var(--surface-raised); width: 100%; max-width: 480px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 32px 28px 40px;
+            box-shadow: var(--shadow-lg); animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
         }
-        @media (min-width: 600px) {
-            .modal-content { border-radius: var(--radius-lg); animation: scaleIn 0.25s cubic-bezier(0.32, 0.72, 0, 1) both; }
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes scaleIn {
-            from { transform: scale(0.94); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .modal-handle {
-            width: 36px; height: 4px;
-            background: var(--border-strong);
-            border-radius: 2px;
-            margin: 0 auto 24px;
-        }
+        @media (min-width: 600px) { .modal-content { border-radius: var(--radius-lg); animation: scaleIn 0.25s cubic-bezier(0.32, 0.72, 0, 1) both; } }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes scaleIn { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-handle { width: 36px; height: 4px; background: var(--border-strong); border-radius: 2px; margin: 0 auto 24px; }
         @media (min-width: 600px) { .modal-handle { display: none; } }
-        .modal-title {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-        .field-label {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--text-tertiary);
-            margin-bottom: 8px;
-        }
+        .modal-title { font-size: 17px; font-weight: 600; margin-bottom: 24px; }
+        .field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; }
         .field-wrap { margin-bottom: 20px; }
-        .modal-content input,
-        .modal-content textarea,
-        .modal-content select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--border-strong);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            font-family: var(--sans);
-            color: var(--text-primary);
-            background: var(--surface);
-            outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
-            -webkit-appearance: none;
+        .modal-content input, .modal-content textarea, .modal-content select {
+            width: 100%; padding: 12px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+            font-size: 14px; font-family: var(--sans); color: var(--text-primary); background: var(--surface); outline: none; transition: all 0.15s;
         }
-        .modal-content input:focus,
-        .modal-content textarea:focus,
-        .modal-content select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(13,13,13,0.08);
-        }
-        .modal-content textarea { resize: vertical; min-height: 100px; }
-        .modal-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 15px;
-            font-weight: 600;
-            font-family: var(--sans);
-            cursor: pointer;
-            transition: background 0.15s;
-        }
+        .modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(13,13,13,0.08); }
+        .modal-content-file-label { display: block; padding: 12px; border: 1px dashed var(--border-strong); text-align: center; border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+        .modal-content-file-label:hover { background: #F0EFEF; }
+        
+        .modal-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+        .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
         .btn-primary:hover { background: #333; }
-        .btn-ghost {
-            width: 100%;
-            padding: 12px;
-            background: none;
-            border: none;
-            font-size: 14px;
-            font-family: var(--sans);
-            color: var(--text-tertiary);
-            cursor: pointer;
-        }
+        .btn-ghost { width: 100%; padding: 12px; background: none; border: none; font-size: 14px; color: var(--text-tertiary); cursor: pointer; }
         .btn-ghost:hover { color: var(--text-primary); }
-
-        /* ── DIVIDERS ────────────────────── */
         .section-gap { margin-bottom: 36px; }
     </style>
 </head>
@@ -737,7 +547,6 @@
 
 <div class="container">
 
-    <!-- 중요 코멘트 -->
     <div class="section-gap">
         <div class="section-label">중요 코멘트</div>
         <div class="memo-card">
@@ -757,13 +566,11 @@
         </div>
     </div>
 
-    <!-- Schedule -->
     <div class="schedule-section section-gap">
         <div class="section-label">최차장 주간 일정 <span id="ui-sch-period"></span></div>
         <div class="schedule-grid" id="ui-schedule"></div>
     </div>
 
-    <!-- Categories -->
     <div class="categories-section">
         <div class="section-label">업무 분류 <span id="total-tasks-label"></span></div>
         <div class="category-grid">
@@ -817,7 +624,6 @@
             </div>
         </div>
 
-        <!-- Content Area -->
         <div id="content-area">
             <div class="content-header">
                 <span class="content-title" id="ui-list-title">—</span>
@@ -829,7 +635,6 @@
 
 </div>
 
-<!-- Add Task Modal -->
 <div id="inputModal" class="modal" onclick="if(event.target===this)closeModal()">
     <div class="modal-content">
         <div class="modal-handle"></div>
@@ -863,14 +668,22 @@
                 <input type="date" id="reg-duedate">
             </div>
         </div>
+        
+        <div class="field-wrap">
+            <div class="field-label">파일 첨부 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-tertiary)">선택</span></div>
+            <label for="reg-file" class="modal-content-file-label" id="file-label-text">
+                <i class="fa-solid fa-cloud-arrow-up" style="margin-right:6px;"></i>파일 선택 (최대 25MB)
+            </label>
+            <input type="file" id="reg-file" style="display:none;" onchange="updateFileLabel(this)">
+        </div>
+
         <div class="modal-actions">
-            <button class="btn-primary" onclick="handleSave()">저장</button>
+            <button class="btn-primary" id="btn-save-submit" onclick="handleSave()">저장</button>
             <button class="btn-ghost" onclick="closeModal()">취소</button>
         </div>
     </div>
 </div>
 
-<!-- Memo Modal -->
 <div id="memoModal" class="modal" onclick="if(event.target===this)closeMemoModal()">
     <div class="modal-content">
         <div class="modal-handle"></div>
@@ -937,15 +750,9 @@
         document.getElementById('nav-sync').innerText = AppState.lastSync;
         document.getElementById('ui-memo').innerText = AppState.memo;
 
-        // Schedule — D+3까지만 표시
-        const todayNum = new Date().getDate();
-        const visibleSchedule = (() => {
-            const todayIdx = AppState.schedule.findIndex(s => s.isToday);
-            if (todayIdx === -1) return AppState.schedule.slice(0, 4);
-            return AppState.schedule.slice(todayIdx, todayIdx + 4);
-        })();
+        // Schedule
         const schDiv = document.getElementById('ui-schedule');
-        schDiv.innerHTML = visibleSchedule.map(s => {
+        schDiv.innerHTML = AppState.schedule.map(s => {
             const dayName = s.id ? s.id : '';
             const cls = ['sch-card', s.isToday ? 'today' : '', s.isHoliday ? 'holiday' : ''].filter(Boolean).join(' ');
             return `
@@ -967,7 +774,6 @@
             const cat = AppState.selectedCategory;
             const items = AppState.tasks[cat];
             document.getElementById('ui-list-title').innerText = cat;
-            document.getElementById('ui-list-count').innerText = `${items.length}건`;
             const listDiv = document.getElementById('ui-post-list');
             if (items.length === 0) {
                 listDiv.innerHTML = '<div class="list-empty">등록된 업무가 없습니다.</div>';
@@ -976,7 +782,6 @@
                     const aDone = a.status === 'done';
                     const bDone = b.status === 'done';
                     if (aDone !== bDone) return aDone - bDone;
-                    // 같은 그룹 안에서 시작일 오름차순
                     return (a.date || '').localeCompare(b.date || '');
                 });
                 const activeCount = sorted.filter(t => t.status !== 'done').length;
@@ -990,6 +795,7 @@
                             <span class="list-title">${t.title}</span>
                             ${t.content ? `<span class="list-content">${t.content.split('\n').join('<br>')}</span>` : ''}
                             ${t.duedate ? `<span class="list-duedate"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i>${t.duedate} 종료</span>` : ''}
+                            ${t.fileUrl ? `<a href="${t.fileUrl}" target="_blank" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일 보기</a>` : ''}
                         </div>
                         <div class="list-actions">
                             <button class="btn-done${isDone ? ' active' : ''}" onclick="toggleDone('${t.id}')" title="${isDone ? '완료 취소' : '완료 처리'}">
@@ -1007,9 +813,17 @@
         }
     }
 
+    function updateFileLabel(input) {
+        const textEl = document.getElementById('file-label-text');
+        if (input.files && input.files.length > 0) {
+            textEl.innerHTML = `<i class="fa-solid fa-file" style="margin-right:6px; color:var(--accent-blue);"></i>${input.files[0].name}`;
+        } else {
+            textEl.innerHTML = `<i class="fa-solid fa-cloud-arrow-up" style="margin-right:6px;"></i>파일 선택 (최대 25MB)`;
+        }
+    }
+
     function selectCategory(cat) {
         AppState.selectedCategory = cat;
-        // Pre-set modal select to this category
         if (document.getElementById('reg-cat')) {
             document.getElementById('reg-cat').value = cat;
         }
@@ -1032,6 +846,10 @@
         document.getElementById('reg-content').value = '';
         document.getElementById('reg-startdate').value = '';
         document.getElementById('reg-duedate').value = '';
+        document.getElementById('reg-file').value = '';
+        document.getElementById('file-label-text').innerHTML = `<i class="fa-solid fa-cloud-arrow-up" style="margin-right:6px;"></i>파일 선택 (최대 25MB)`;
+        document.getElementById('btn-save-submit').innerText = "저장";
+        document.getElementById('btn-save-submit').disabled = false;
     }
     function openMemoModal() {
         document.getElementById('edit-memo-text').value = AppState.memo;
@@ -1042,31 +860,67 @@
         document.getElementById('memoModal').classList.remove('active');
     }
 
+    // 파일 로딩을 위한 FileReader 활용 로직 포함
     async function handleSave() {
         const cat = document.getElementById('reg-cat').value;
         const title = document.getElementById('reg-title').value.trim();
         const content = document.getElementById('reg-content').value.trim();
         const startdate = document.getElementById('reg-startdate').value || new Date().toISOString().split('T')[0];
         const duedate = document.getElementById('reg-duedate').value;
+        const fileInput = document.getElementById('reg-file');
+        
         if (!title) return;
+
+        const submitBtn = document.getElementById('btn-save-submit');
+        submitBtn.innerText = "업로드 중...";
+        submitBtn.disabled = true;
+
+        let payload = {
+            action: 'addTask',
+            id: Date.now().toString(),
+            category: cat,
+            date: startdate,
+            title: title,
+            content: content,
+            duedate: duedate,
+            fileData: null,
+            fileName: null,
+            fileMime: null
+        };
+
+        if (fileInput.files && fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = async function(e) {
+                const base64Data = e.target.result.split(',')[1];
+                payload.fileData = base64Data;
+                payload.fileName = file.name;
+                payload.fileMime = file.type;
+                
+                await sendTaskData(payload);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            await sendTaskData(payload);
+        }
+    }
+
+    async function sendTaskData(payload) {
         try {
             await fetch(GAS_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'addTask',
-                    id: Date.now().toString(),
-                    category: cat,
-                    date: startdate,
-                    title: title,
-                    content: content,
-                    duedate: duedate
-                })
+                body: JSON.stringify(payload)
             });
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 1000));
             await initApp();
             closeModal();
-        } catch (e) { alert("통신 오류가 발생했습니다."); }
+        } catch (e) { 
+            alert("통신 오류가 발생했습니다."); 
+            document.getElementById('btn-save-submit').innerText = "저장";
+            document.getElementById('btn-save-submit').disabled = false;
+        }
     }
 
     async function handleMemoSave() {
@@ -1096,7 +950,6 @@
             await initApp();
         } catch (e) { alert("통신 오류가 발생했습니다."); }
     }
-
 
     function exportReport() {
         var now = new Date();
@@ -1213,7 +1066,6 @@
         win.document.close();
     }
 
-
     async function toggleDone(id) {
         try {
             await fetch(GAS_URL, {
@@ -1226,7 +1078,6 @@
         } catch(e) { alert("통신 오류가 발생했습니다."); }
     }
 
-    // ESC to close modals
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') { closeModal(); closeMemoModal(); }
     });
