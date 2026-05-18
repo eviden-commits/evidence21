@@ -48,3 +48,872 @@
         .nav-center{display:flex;align-items:center;gap:6px;}
         .nav-pill{display:flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:rgba(0,0,0,0.05);font-size:12px;font-weight:500;color:var(--sys-label-3);}
         .nav-pill-accent{color:var(--sys-label);font-weight:600;font-family:var(--font-mono);}
+        .progress-ring{width:18px;height:18px;}
+        .progress-ring-bg{fill:none;stroke:rgba(0,0,0,0.08);stroke-width:2.5;}
+        .progress-ring-fill{fill:none;stroke:var(--sys-green);stroke-width:2.5;stroke-linecap:round;transform-origin:center;transform:rotate(-90deg);stroke-dasharray:44;stroke-dashoffset:44;transition:stroke-dashoffset 0.4s cubic-bezier(0.4,0,0.2,1);}
+        .nav-right{display:flex;align-items:center;gap:6px;}
+        .nav-sync-label{font-size:11px;color:var(--sys-label-4);font-family:var(--font-mono);padding-right:4px;}
+        .cache-chip{font-size:10px;font-weight:600;color:var(--sys-orange);background:var(--sys-orange-bg);padding:2px 8px;border-radius:10px;letter-spacing:0.02em;}
+        .nav-auth-wrap{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--r-xs);background:rgba(0,0,0,0.04);border:0.5px solid transparent;transition:all 0.15s;}
+        .nav-auth-wrap:focus-within{background:var(--sys-surface);border-color:var(--sys-separator-2);box-shadow:var(--shadow-sm);}
+        .nav-auth-wrap i{font-size:10px;color:var(--sys-label-4);}
+        .nav-auth-field{border:none;background:transparent;font-size:12px;width:76px;outline:none;font-family:var(--font-mono);color:var(--sys-label);}
+        .nav-divider{width:1px;height:18px;background:var(--sys-separator);margin:0 2px;}
+        .nav-icon-btn{width:32px;height:32px;border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--sys-label-3);font-size:13px;cursor:pointer;transition:all 0.12s;}
+        .nav-icon-btn:hover{background:rgba(0,0,0,0.06);color:var(--sys-label);}
+        .nav-icon-btn.cta{background:var(--sys-label);color:white;}
+        .nav-icon-btn.cta:hover{background:rgba(29,29,31,0.85);}
+
+        /* LAYOUT */
+        .container{max-width:980px;margin:0 auto;padding:36px 32px;}
+        .section{margin-bottom:36px;}
+        .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+        .section-title{font-size:11px;font-weight:600;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.07em;}
+
+        /* MEMO */
+        .memo-card{background:var(--sys-surface);border-radius:var(--r-lg);padding:20px 22px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--shadow-sm);}
+        .memo-avatar{width:36px;height:36px;border-radius:11px;background:var(--sys-label);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0;}
+        .memo-body{flex:1;min-width:0;}
+        .memo-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+        .memo-name-row{display:flex;align-items:baseline;gap:6px;}
+        .memo-name{font-size:13px;font-weight:600;}
+        .memo-role{font-size:12px;color:var(--sys-label-4);}
+        .memo-edit{width:28px;height:28px;border-radius:8px;border:none;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sys-label-4);font-size:12px;transition:all 0.12s;}
+        .memo-edit:hover{background:var(--sys-surface-2);color:var(--sys-label-2);}
+        .memo-text{font-size:13.5px;line-height:1.65;color:var(--sys-label-2);white-space:pre-wrap;}
+
+        /* SCHEDULE */
+        .schedule-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+        .sch-card{background:var(--sys-surface);border-radius:var(--r-md);padding:14px 16px;min-height:100px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-xs);transition:transform 0.15s;}
+        .sch-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+        .sch-card.today{background:var(--sys-label);box-shadow:0 4px 16px rgba(0,0,0,0.18);}
+        .sch-card.holiday .sch-date,.sch-card.holiday .sch-dayname{color:var(--sys-red);}
+        .sch-top{display:flex;align-items:center;justify-content:space-between;}
+        .sch-dayname{font-size:10px;font-weight:600;color:var(--sys-label-4);letter-spacing:0.05em;text-transform:uppercase;}
+        .sch-card.today .sch-dayname{color:rgba(255,255,255,0.45);}
+        .today-badge{font-size:9px;font-weight:700;background:rgba(255,255,255,0.15);color:white;padding:1px 6px;border-radius:10px;font-family:var(--font-mono);}
+        .sch-date{font-family:var(--font-mono);font-size:24px;font-weight:300;margin:6px 0 2px;color:var(--sys-label);}
+        .sch-card.today .sch-date{color:white;}
+        .sch-loc{font-size:11.5px;font-weight:500;color:var(--sys-label-3);line-height:1.4;}
+        .sch-card.today .sch-loc{color:rgba(255,255,255,0.75);}
+        .holiday-label{font-size:11px;color:var(--sys-red);font-weight:500;margin-top:2px;}
+        .sch-card.today .holiday-label{color:rgba(255,120,110,0.9);}
+
+        /* CATEGORIES */
+        .categories-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+        .head-btn-group{display:flex;align-items:center;gap:6px;}
+        .pill-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:var(--sys-surface);border:0.5px solid var(--sys-separator);font-size:12px;font-weight:500;color:var(--sys-label-3);cursor:pointer;transition:all 0.15s;user-select:none;box-shadow:var(--shadow-xs);}
+        .pill-btn:hover{color:var(--sys-label);}
+        .pill-btn.active{background:var(--sys-label);color:white;border-color:var(--sys-label);}
+        .pill-btn.kpi{color:var(--sys-blue);border-color:rgba(0,122,255,0.2);background:var(--sys-blue-bg);}
+        .pill-btn.kpi:hover{background:var(--sys-blue);color:white;border-color:var(--sys-blue);}
+
+        /* GLOBAL SEARCH BAR */
+        .global-search-bar{display:flex;align-items:center;gap:8px;background:var(--sys-surface);border:0.5px solid var(--sys-separator);border-radius:var(--r-sm);padding:8px 14px;margin-bottom:10px;box-shadow:var(--shadow-xs);transition:all 0.15s;}
+        .global-search-bar:focus-within{border-color:var(--sys-blue);box-shadow:0 0 0 3px var(--sys-blue-bg);}
+        .global-search-bar i{color:var(--sys-label-4);font-size:13px;}
+        .global-search-input{flex:1;border:none;background:transparent;font-size:14px;font-family:var(--font-sans);color:var(--sys-label);outline:none;}
+        .global-search-input::placeholder{color:var(--sys-label-4);}
+        .gsb-clear{background:none;border:none;color:var(--sys-label-4);cursor:pointer;padding:2px 4px;border-radius:4px;font-size:13px;transition:all 0.12s;}
+        .gsb-clear:hover{color:var(--sys-label);background:rgba(0,0,0,0.05);}
+
+        /* CATEGORY GRID */
+        .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
+        .cat-card{background:var(--sys-surface);border-radius:var(--r-md);padding:14px 16px;cursor:pointer;transition:all 0.18s cubic-bezier(0.4,0,0.2,1);box-shadow:var(--shadow-xs);border:1.5px solid transparent;}
+        .cat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+        .cat-card.selected{border-color:var(--sys-label);box-shadow:var(--shadow-sm);}
+        .cat-card:focus-visible{outline:2px solid var(--sys-blue);outline-offset:2px;}
+        .cat-header{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
+        .cat-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+        .cat-name{font-size:13px;font-weight:600;color:var(--sys-label);}
+        .cat-progress-track{height:3px;background:rgba(0,0,0,0.06);border-radius:2px;overflow:hidden;margin-bottom:10px;}
+        .cat-progress-fill{height:100%;width:0%;border-radius:2px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);}
+        .cat-footer{display:flex;align-items:center;justify-content:space-between;}
+        .cat-status{font-size:10px;font-weight:600;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.04em;}
+        .cat-footer-right{display:flex;align-items:center;gap:5px;}
+        .overdue-badge{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--sys-red-bg);color:var(--sys-red);}
+        .cat-count{font-family:var(--font-mono);font-size:12px;font-weight:600;padding:2px 8px;border-radius:10px;}
+
+        /* Category color tokens */
+        .cat-card[data-cat="사고관리"] .cat-icon{background:var(--sys-red-bg);color:var(--sys-red);}
+        .cat-card[data-cat="사고관리"] .cat-count{background:var(--sys-red-bg);color:var(--sys-red);}
+        .cat-card[data-cat="사고관리"] .cat-progress-fill{background:var(--sys-red);}
+        .cat-card[data-cat="입찰지원"] .cat-icon{background:var(--sys-blue-bg);color:var(--sys-blue);}
+        .cat-card[data-cat="입찰지원"] .cat-count{background:var(--sys-blue-bg);color:var(--sys-blue);}
+        .cat-card[data-cat="입찰지원"] .cat-progress-fill{background:var(--sys-blue);}
+        .cat-card[data-cat="노무관리"] .cat-icon{background:var(--sys-orange-bg);color:var(--sys-orange);}
+        .cat-card[data-cat="노무관리"] .cat-count{background:var(--sys-orange-bg);color:var(--sys-orange);}
+        .cat-card[data-cat="노무관리"] .cat-progress-fill{background:var(--sys-orange);}
+        .cat-card[data-cat="인증관리"] .cat-icon{background:var(--sys-green-bg);color:var(--sys-green);}
+        .cat-card[data-cat="인증관리"] .cat-count{background:var(--sys-green-bg);color:var(--sys-green);}
+        .cat-card[data-cat="인증관리"] .cat-progress-fill{background:var(--sys-green);}
+        .cat-card[data-cat="법무관리"] .cat-icon{background:var(--sys-purple-bg);color:var(--sys-purple);}
+        .cat-card[data-cat="법무관리"] .cat-count{background:var(--sys-purple-bg);color:var(--sys-purple);}
+        .cat-card[data-cat="법무관리"] .cat-progress-fill{background:var(--sys-purple);}
+        .cat-card[data-cat="기타관리"] .cat-icon{background:var(--sys-gray-bg);color:var(--sys-gray);}
+        .cat-card[data-cat="기타관리"] .cat-count{background:var(--sys-gray-bg);color:var(--sys-gray);}
+        .cat-card[data-cat="기타관리"] .cat-progress-fill{background:var(--sys-gray);}
+
+        /* CONTENT PANEL */
+        #content-area{display:none;background:var(--sys-surface);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-md);animation:slideDown 0.22s cubic-bezier(0.4,0,0.2,1) both;}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+        .content-header{padding:12px 22px;border-bottom:0.5px solid var(--sys-separator);display:flex;align-items:center;justify-content:space-between;background:var(--sys-surface-2);gap:10px;flex-wrap:wrap;}
+        .content-title-row{display:flex;align-items:center;gap:10px;}
+        .content-title{font-size:14px;font-weight:600;color:var(--sys-label);}
+        .content-count{font-size:12px;color:var(--sys-label-4);font-family:var(--font-mono);}
+        .content-controls{display:flex;align-items:center;gap:6px;}
+        .sort-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--r-xs);border:0.5px solid var(--sys-separator);background:var(--sys-surface);font-size:11px;font-weight:600;color:var(--sys-label-3);cursor:pointer;transition:all 0.12s;font-family:var(--font-sans);}
+        .sort-btn:hover{color:var(--sys-label);border-color:var(--sys-label-4);}
+        .search-wrap{position:relative;}
+        .search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--sys-label-4);font-size:11px;pointer-events:none;}
+        .search-box{padding:7px 12px 7px 28px;border:0.5px solid var(--sys-separator);border-radius:var(--r-xs);font-size:13px;outline:none;background:var(--sys-surface);width:150px;transition:all 0.15s;font-family:var(--font-sans);color:var(--sys-label);}
+        .search-box::placeholder{color:var(--sys-label-4);}
+        .search-box:focus{width:200px;border-color:var(--sys-blue);box-shadow:0 0 0 3px var(--sys-blue-bg);}
+
+        /* TASK LIST */
+        #ui-post-list{padding:0 22px;}
+        .list-row{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 0;gap:16px;border-bottom:0.5px solid var(--sys-separator);transition:opacity 0.15s;}
+        .list-row:last-child{border-bottom:none;}
+        .list-row.done{opacity:0.42;}
+        .list-row.done .list-title{text-decoration:line-through;color:var(--sys-label-3);}
+        .list-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;}
+        .list-cat-tag{display:inline-block;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;background:var(--sys-gray-bg);color:var(--sys-gray);margin-bottom:2px;width:fit-content;}
+        .list-date{font-family:var(--font-mono);font-size:11px;color:var(--sys-label-4);}
+        .list-title{font-size:14px;font-weight:600;color:var(--sys-label);line-height:1.45;}
+        .list-content{font-size:13px;color:var(--sys-label-3);line-height:1.55;white-space:pre-wrap;margin-top:2px;}
+        .list-duedate{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-family:var(--font-mono);color:var(--sys-label-3);margin-top:4px;}
+        .list-duedate.overdue{color:var(--sys-red);background:var(--sys-red-bg);padding:2px 6px;border-radius:4px;font-weight:600;}
+        .list-attachment{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:12px;color:var(--sys-blue);font-weight:500;text-decoration:none;}
+        .list-attachment:hover{text-decoration:underline;}
+        .list-actions{display:flex;gap:2px;flex-shrink:0;padding-top:2px;}
+        .act-btn{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--sys-label-4);font-size:12px;cursor:pointer;transition:all 0.12s;}
+        .act-btn.done-btn:hover{background:var(--sys-green-bg);color:var(--sys-green);}
+        .act-btn.done-btn.active{background:var(--sys-green-bg);color:var(--sys-green);}
+        .act-btn.mod-btn:hover{background:var(--sys-blue-bg);color:var(--sys-blue);}
+        .act-btn.del-btn:hover{background:var(--sys-red-bg);color:var(--sys-red);}
+        .list-empty{padding:52px 0;text-align:center;color:var(--sys-label-4);font-size:14px;}
+        .list-empty i{font-size:28px;display:block;margin-bottom:12px;}
+
+        /* MODALS */
+        .modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.32);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;}
+        .modal.active{display:flex;}
+        .modal-sheet{background:var(--sys-surface);width:100%;max-width:430px;border-radius:var(--r-xl);padding:28px 24px 20px;box-shadow:var(--shadow-lg);animation:sheetUp 0.22s cubic-bezier(0.34,1.56,0.64,1) both;}
+        .modal-sheet.wide{max-width:560px;}
+        @keyframes sheetUp{from{transform:scale(0.95) translateY(8px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+        .modal-title{font-size:17px;font-weight:700;color:var(--sys-label);margin-bottom:20px;letter-spacing:-0.02em;}
+        .modal-subtitle{font-size:13px;color:var(--sys-label-3);margin-top:-14px;margin-bottom:20px;}
+        .field-group{margin-bottom:14px;}
+        .field-label{font-size:11px;font-weight:600;color:var(--sys-label-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;}
+        .modal-sheet input,.modal-sheet textarea,.modal-sheet select{display:block;width:100%;padding:10px 14px;border:1px solid var(--sys-separator);border-radius:var(--r-sm);font-size:14px;font-family:var(--font-sans);color:var(--sys-label);background:var(--sys-surface-2);outline:none;transition:all 0.15s;-webkit-appearance:none;}
+        .modal-sheet input:focus,.modal-sheet textarea:focus,.modal-sheet select:focus{border-color:var(--sys-blue);background:var(--sys-surface);box-shadow:0 0 0 3px var(--sys-blue-bg);}
+        .modal-sheet textarea{resize:none;}
+        .date-row{display:flex;gap:10px;}
+        .date-row .field-group{flex:1;}
+        .file-drop-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px;border-radius:var(--r-sm);border:1.5px dashed var(--sys-separator);background:var(--sys-surface-2);cursor:pointer;transition:all 0.15s;text-align:center;}
+        .file-drop-zone:hover{border-color:var(--sys-blue);background:var(--sys-blue-bg);}
+        .file-drop-zone i{font-size:18px;color:var(--sys-label-4);}
+        .file-drop-zone span{font-size:12px;color:var(--sys-label-3);font-weight:500;}
+        .modal-actions{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+        .btn-fill{width:100%;padding:13px;border-radius:var(--r-sm);border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.12s;font-family:var(--font-sans);letter-spacing:-0.02em;}
+        .btn-fill.dark{background:var(--sys-label);color:white;}
+        .btn-fill.dark:hover{background:rgba(29,29,31,0.85);}
+        .btn-text-only{width:100%;padding:10px;background:none;border:none;font-size:14px;color:var(--sys-label-3);cursor:pointer;font-family:var(--font-sans);transition:color 0.12s;}
+        .btn-text-only:hover{color:var(--sys-label);}
+
+        /* KPI */
+        .kpi-summary-row{display:flex;gap:8px;margin-bottom:20px;}
+        .kpi-summary-chip{flex:1;background:var(--sys-surface-2);border-radius:var(--r-sm);padding:12px 14px;}
+        .kpi-chip-label{font-size:10px;font-weight:600;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
+        .kpi-chip-value{font-size:22px;font-weight:300;font-family:var(--font-mono);color:var(--sys-label);}
+        .kpi-chip-value.green{color:var(--sys-green);}
+        .kpi-month-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;}
+        .kpi-month-row{display:grid;grid-template-columns:64px 1fr 44px;align-items:center;gap:12px;}
+        .kpi-month-label{font-size:12px;font-family:var(--font-mono);color:var(--sys-label-3);}
+        .kpi-bar-track{height:6px;background:rgba(0,0,0,0.06);border-radius:3px;overflow:hidden;}
+        .kpi-bar-fill{height:100%;border-radius:3px;background:var(--sys-green);transition:width 0.4s ease;}
+        .kpi-month-count{font-size:12px;font-family:var(--font-mono);color:var(--sys-label-3);text-align:right;}
+        .kpi-cat-table{width:100%;border-collapse:collapse;}
+        .kpi-cat-table th{font-size:10px;font-weight:600;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.04em;padding:6px 8px;text-align:left;border-bottom:0.5px solid var(--sys-separator);}
+        .kpi-cat-table td{font-size:13px;padding:8px 8px;border-bottom:0.5px solid var(--sys-separator-2);}
+        .kpi-cat-table tr:last-child td{border-bottom:none;}
+        .kpi-pct-badge{display:inline-block;font-family:var(--font-mono);font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;background:var(--sys-green-bg);color:var(--sys-green);}
+        .kpi-pct-badge.mid{background:var(--sys-blue-bg);color:var(--sys-blue);}
+        .kpi-pct-badge.low{background:var(--sys-red-bg);color:var(--sys-red);}
+        .kpi-tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--sys-surface-2);padding:3px;border-radius:var(--r-sm);}
+        .kpi-tab{flex:1;padding:6px;border-radius:6px;border:none;background:none;font-size:12px;font-weight:500;color:var(--sys-label-3);cursor:pointer;transition:all 0.12s;}
+        .kpi-tab.active{background:var(--sys-surface);color:var(--sys-label);box-shadow:var(--shadow-xs);font-weight:600;}
+
+        /* PRINT */
+        #print-view{display:none;}
+        @media print {
+            body>*:not(#print-view){display:none!important;}
+            #print-view{display:block!important;font-family:'Pretendard',-apple-system,sans-serif;color:#1D1D1F;padding:20px 28px;font-size:13px;line-height:1.6;}
+            .pv-header{border-bottom:2px solid #1D1D1F;padding-bottom:12px;margin-bottom:16px;}
+            .pv-title{font-size:20px;font-weight:700;margin-bottom:4px;}
+            .pv-meta{font-size:11px;color:#6C6C70;}
+            .pv-summary{display:flex;gap:20px;margin-bottom:16px;padding:12px 14px;background:#F5F5F7;border-radius:8px;}
+            .pv-summary-label{font-size:10px;font-weight:600;color:#6C6C70;text-transform:uppercase;letter-spacing:0.06em;}
+            .pv-summary-value{font-size:18px;font-weight:300;}
+            .pv-sch-grid{display:flex;gap:6px;margin-bottom:6px;}
+            .pv-sch-card{flex:1;padding:8px 10px;border:0.5px solid #AEAEB2;border-radius:6px;}
+            .pv-sch-today{background:#1D1D1F;color:white;border-color:#1D1D1F;}
+            .pv-sch-day{font-size:9px;font-weight:600;color:#AEAEB2;text-transform:uppercase;}
+            .pv-sch-today .pv-sch-day{color:rgba(255,255,255,0.5);}
+            .pv-sch-date{font-size:16px;font-weight:300;margin:3px 0;}
+            .pv-sch-today .pv-sch-date{color:white;}
+            .pv-sch-loc{font-size:10px;color:#6C6C70;}
+            .pv-sch-today .pv-sch-loc{color:rgba(255,255,255,0.7);}
+            .pv-cat-section{margin-bottom:16px;page-break-inside:avoid;}
+            .pv-cat-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-bottom:5px;border-bottom:0.5px solid #AEAEB2;}
+            .pv-cat-name{font-size:13px;font-weight:700;}
+            .pv-cat-stat{font-size:11px;color:#6C6C70;}
+            .pv-task-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:0.5px solid rgba(60,60,67,0.06);}
+            .pv-task-row:last-child{border-bottom:none;}
+            .pv-task-body{flex:1;min-width:0;}
+            .pv-task-title{font-size:13px;font-weight:600;margin-bottom:2px;}
+            .pv-task-content{font-size:11px;color:#6C6C70;line-height:1.5;white-space:pre-wrap;}
+            .pv-task-meta{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;}
+            .pv-task-date{font-size:10px;color:#AEAEB2;}
+            .pv-task-due{font-size:11px;font-weight:600;color:#1D1D1F;}
+            .pv-footer{margin-top:20px;padding-top:10px;border-top:0.5px solid #AEAEB2;font-size:10px;color:#AEAEB2;display:flex;justify-content:space-between;}
+        }
+
+        /* MOBILE */
+        @media (max-width:700px){
+            .category-grid{grid-template-columns:repeat(2,1fr);}
+            .schedule-grid{grid-template-columns:repeat(2,1fr);}
+            .top-nav{padding:0 16px;}
+            .container{padding:24px 16px;}
+            .nav-center{display:none;}
+            .modal-sheet{max-width:100%;border-bottom-left-radius:0;border-bottom-right-radius:0;margin-top:auto;}
+        }
+        @media (hover:none) and (pointer:coarse){
+            .act-btn{width:40px;height:40px;}
+            .nav-icon-btn{width:40px;height:40px;}
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-overlay">
+    <div class="loader-wordmark">Warehouse</div>
+    <div class="loader-track"></div>
+</div>
+<div id="print-view"></div>
+
+<nav class="top-nav">
+    <div class="nav-brand" onclick="goHome()" title="메인 화면">
+        <div class="nav-brand-icon"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5.5" height="5.5" rx="1"/><rect x="8.5" y="2" width="5.5" height="5.5" rx="1"/><rect x="2" y="8.5" width="5.5" height="5.5" rx="1"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1"/></svg></div>
+        <span class="nav-brand-name">업무창고</span>
+    </div>
+    <div class="nav-center">
+        <div class="nav-pill">
+            <svg class="progress-ring" viewBox="0 0 18 18" role="img" aria-label="전체 진척률">
+                <circle class="progress-ring-bg" cx="9" cy="9" r="7"/>
+                <circle class="progress-ring-fill" id="ui-ring-fill" cx="9" cy="9" r="7"/>
+            </svg>
+            진척율 <span class="nav-pill-accent" id="ui-progress-percent">0%</span>
+        </div>
+        <div class="nav-pill">Tasks <span class="nav-pill-accent" id="nav-total">0</span></div>
+    </div>
+    <div class="nav-right">
+        <span class="nav-sync-label" id="nav-sync">—</span>
+        <span class="cache-chip" id="cache-chip" style="display:none;" title="캐시에서 로드됨 · 새로고침 권장">캐시</span>
+        <div class="nav-auth-wrap">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="global-auth-pwd" class="nav-auth-field" placeholder="인증코드" oninput="onPwdInput(this.value)">
+        </div>
+        <div class="nav-divider"></div>
+        <button class="nav-icon-btn" onclick="printReport()" title="보고서 출력"><i class="fa-solid fa-print"></i></button>
+        <button class="nav-icon-btn" onclick="syncForce()" title="새로고침"><i class="fa-solid fa-arrows-rotate"></i></button>
+        <button class="nav-icon-btn cta" onclick="openModal()" title="새 업무 추가"><i class="fa-solid fa-plus"></i></button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="section">
+        <div class="section-head"><span class="section-title">실장 코멘트</span></div>
+        <div class="memo-card">
+            <div class="memo-avatar">정</div>
+            <div class="memo-body">
+                <div class="memo-meta">
+                    <div class="memo-name-row">
+                        <span class="memo-name">정재빈 실장</span>
+                        <span class="memo-role">품질안전보건실</span>
+                    </div>
+                    <button class="memo-edit" onclick="openMemoModal()" title="코멘트 수정" aria-label="코멘트 수정"><i class="fa-solid fa-pen"></i></button>
+                </div>
+                <p class="memo-text" id="ui-memo">로딩 중...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-head"><span class="section-title">최차장 주간 일정</span></div>
+        <div class="schedule-grid" id="ui-schedule"></div>
+    </div>
+
+    <div class="section">
+        <div class="categories-head">
+            <span class="section-title">업무 분류 <span id="total-tasks-label" style="font-weight:400;"></span></span>
+            <div class="head-btn-group">
+                <button class="pill-btn kpi" onclick="openKpiModal()"><i class="fa-solid fa-chart-bar"></i> 월별 KPI</button>
+                <button class="pill-btn" id="btn-toggle-archive" onclick="toggleArchiveMode()"><i class="fa-solid fa-box-archive"></i><span id="archive-btn-text">종료된 업무</span></button>
+            </div>
+        </div>
+
+        <div class="global-search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="global-search-input" id="global-search-input" placeholder="전체 업무 검색…" oninput="onGlobalSearch(this.value)" autocomplete="off">
+            <button class="gsb-clear" id="gsb-clear" onclick="clearGlobalSearch()" style="display:none;" aria-label="검색 초기화"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="category-grid">
+            <div class="cat-card" id="card-사고관리" data-cat="사고관리" onclick="selectCategory('사고관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('사고관리')">
+                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><span class="cat-name">사고관리</span></div>
+                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-사고관리"></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-사고관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-사고관리" style="display:none;"></span><span class="cat-count" id="badge-사고관리">0</span></div></div>
+            </div>
+            <div class="cat-card" id="card-입찰지원" data-cat="입찰지원" onclick="selectCategory('입찰지원')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('입찰지원')">
+                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-layer-group"></i></div><span class="cat-name">입찰지원</span></div>
+                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-입찰지원"></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-입찰지원">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-입찰지원" style="display:none;"></span><span class="cat-count" id="badge-입찰지원">0</span></div></div>
+            </div>
+            <div class="cat-card" id="card-노무관리" data-cat="노무관리" onclick="selectCategory('노무관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('노무관리')">
+                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-user-group"></i></div><span class="cat-name">노무관리</span></div>
+                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-노무관리"></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-노무관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-노무관리" style="display:none;"></span><span class="cat-count" id="badge-노무관리">0</span></div></div>
+            </div>
+            <div class="cat-card" id="card-인증관리" data-cat="인증관리" onclick="selectCategory('인증관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('인증관리')">
+                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-certificate"></i></div><span class="cat-name">인증관리</span></div>
+                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-인증관리"></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-인증관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-인증관리" style="display:none;"></span><span class="cat-count" id="badge-인증관리">0</span></div></div>
+            </div>
+            <div class="cat-card" id="card-법무관리" data-cat="법무관리" onclick="selectCategory('법무관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('법무관리')">
+                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-scale-balanced"></i></div><span class="cat-name">법무관리</span></div>
+                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-법무관리"></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-법무관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-법무관리" style="display:none;"></span><span class="cat-count" id="badge-법무관리">0</span></div></div>
+            </div>
+            <div class="cat-card" id="card-기타관리" data-cat="기타관리" onclick="selectCategory('기타관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('기타관리')">
+                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-ellipsis"></i></div><span class="cat-name">기타관리</span></div>
+                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-기타관리"></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-기타관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-기타관리" style="display:none;"></span><span class="cat-count" id="badge-기타관리">0</span></div></div>
+            </div>
+        </div>
+
+        <div id="content-area">
+            <div class="content-header">
+                <div class="content-title-row">
+                    <span class="content-title" id="ui-list-title">—</span>
+                    <span class="content-count" id="ui-list-count"></span>
+                </div>
+                <div class="content-controls">
+                    <button class="sort-btn" id="sort-btn" onclick="cycleSortMode()" title="정렬 변경">
+                        <i class="fa-solid fa-arrow-up-wide-short"></i><span id="sort-label">등록일</span>
+                    </button>
+                    <div class="search-wrap">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-keyword" class="search-box" placeholder="결과 내 검색…" oninput="filterAndRenderList()">
+                    </div>
+                </div>
+            </div>
+            <div id="ui-post-list"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: 업무 추가/수정 -->
+<div id="inputModal" class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-sheet">
+        <div class="modal-title" id="modal-ui-title">새 업무 추가</div>
+        <input type="hidden" id="reg-id">
+        <div class="field-group"><div class="field-label">분류</div>
+            <select id="reg-cat"><option value="사고관리">사고관리</option><option value="입찰지원">입찰지원</option><option value="노무관리">노무관리</option><option value="인증관리">인증관리</option><option value="법무관리">법무관리</option><option value="기타관리">기타관리</option></select>
+        </div>
+        <div class="field-group"><div class="field-label">업무 제목 *</div><input type="text" id="reg-title" placeholder="제목을 입력하세요"></div>
+        <div class="field-group"><div class="field-label">내용</div><textarea id="reg-content" rows="3" placeholder="상세 내용을 입력하세요"></textarea></div>
+        <div class="date-row">
+            <div class="field-group"><div class="field-label">시작일</div><input type="date" id="reg-startdate"></div>
+            <div class="field-group"><div class="field-label">종료일</div><input type="date" id="reg-duedate"></div>
+        </div>
+        <div class="field-group"><div class="field-label">파일 첨부</div>
+            <label for="reg-file" class="file-drop-zone" id="file-label-el"><i class="fa-solid fa-cloud-arrow-up"></i><span id="file-label-text">파일 선택 (최대 25MB)</span></label>
+            <input type="file" id="reg-file" style="display:none;" onchange="updateFileLabel(this)">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-fill dark" id="btn-save-submit" onclick="handleSave()">구글시트 저장</button>
+            <button class="btn-text-only" onclick="closeModal()">취소</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: 코멘트 -->
+<div id="memoModal" class="modal" onclick="if(event.target===this)closeMemoModal()">
+    <div class="modal-sheet">
+        <div class="modal-title">실장 코멘트 수정</div>
+        <div class="field-group"><div class="field-label">코멘트</div><textarea id="edit-memo-text" rows="5" placeholder="실장 코멘트를 입력하세요"></textarea></div>
+        <div class="modal-actions">
+            <button class="btn-fill dark" onclick="handleMemoSave()">구글시트 반영</button>
+            <button class="btn-text-only" onclick="closeMemoModal()">취소</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: KPI -->
+<div id="kpiModal" class="modal" onclick="if(event.target===this)closeKpiModal()">
+    <div class="modal-sheet wide">
+        <div class="modal-title">월별 업무 달성 KPI</div>
+        <div class="modal-subtitle" id="kpi-date-range">—</div>
+        <div class="kpi-summary-row" id="kpi-summary-chips"></div>
+        <div class="kpi-tabs">
+            <button class="kpi-tab active" id="tab-monthly" onclick="switchKpiTab('monthly')">월별 완료 현황</button>
+            <button class="kpi-tab" id="tab-category" onclick="switchKpiTab('category')">분류별 달성률</button>
+        </div>
+        <div id="kpi-content-monthly"></div>
+        <div id="kpi-content-category" style="display:none;"></div>
+        <div class="modal-actions" style="margin-top:16px;"><button class="btn-text-only" onclick="closeKpiModal()">닫기</button></div>
+    </div>
+</div>
+
+<script>
+    /* ── HELPERS ── */
+    function todayStr() { return new Date().toLocaleDateString('en-CA'); } // ⑪ 로컬 타임존
+    function escHtml(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); } // ⑨ XSS
+    function safeUrl(u) { if(!u)return''; try{const p=new URL(u).protocol;return['http:','https:'].includes(p)?u:'';}catch{return'';} } // ⑨
+
+    const GAS_URL = "https://script.google.com/macros/s/AKfycby08KHN5Wf5_lJ8QnXI5L3rLqE6C4i3_wOuciB5gIjUyhPNZpHsKGAIr0loeSB3m0CT/exec";
+    const CATS = ["사고관리","입찰지원","노무관리","인증관리","법무관리","기타관리"];
+    const SORT_MODES = [{key:'date',label:'등록일'},{key:'duedate_asc',label:'마감일↑'},{key:'duedate_desc',label:'마감일↓'}];
+    let _sortIdx = 0;
+    let _sessionPwd = ''; // ② 세션 캐싱
+
+    let AppState = {
+        memo:"", schedule:[],
+        tasks:{"사고관리":[],"입찰지원":[],"노무관리":[],"인증관리":[],"법무관리":[],"기타관리":[]},
+        selectedCategory:null, onlyArchiveMode:false, lastSync:"—", globalQuery:""
+    };
+
+    /* ── PASSWORD ── */
+    function onPwdInput(val) { _sessionPwd = val.trim(); } // ② 입력 즉시 캐싱
+    function getGlobalPassword() {
+        const field = document.getElementById('global-auth-pwd').value.trim();
+        if (field) { _sessionPwd = field; return field; }
+        if (_sessionPwd) return _sessionPwd;
+        alert("상단 바의 인증코드를 입력하십시오."); return null;
+    }
+
+    /* ── INIT ── */
+    async function initApp(forceReload=false) {
+        const overlay = document.getElementById('loading-overlay');
+        const cached = localStorage.getItem('warehouse_cache_data');
+        if (!forceReload && cached) {
+            try {
+                parseAndSetState(JSON.parse(cached));
+                overlay.style.display='none';
+                document.getElementById('cache-chip').style.display=''; // ⑩ 캐시 표시
+                render(); return;
+            } catch(e) { localStorage.removeItem('warehouse_cache_data'); }
+        }
+        overlay.classList.remove('fade-out'); overlay.style.display='flex';
+        try {
+            const data = await fetch(GAS_URL).then(r=>r.json());
+            localStorage.setItem('warehouse_cache_data', JSON.stringify(data));
+            parseAndSetState(data);
+            document.getElementById('cache-chip').style.display='none'; // ⑩ 신선 데이터
+        } catch(e) { console.error('Fetch error:',e); }
+        finally {
+            overlay.classList.add('fade-out');
+            setTimeout(()=>overlay.style.display='none',300);
+            render();
+        }
+    }
+
+    function parseAndSetState(data) {
+        AppState.tasks = data.tasks || AppState.tasks;
+        AppState.memo = data.memo || "등록된 코멘트가 없습니다.";
+        AppState.schedule = data.schedule || [];
+        AppState.lastSync = data.lastSync || "—";
+        const today = todayStr();
+        AppState.schedule.forEach(s => s.isToday = (s.fullDate === today));
+    }
+
+    async function syncSilent(restoreY=null) { // ⑤ 백그라운드 싱크
+        try {
+            const data = await fetch(GAS_URL).then(r=>r.json());
+            localStorage.setItem('warehouse_cache_data', JSON.stringify(data));
+            parseAndSetState(data);
+            document.getElementById('cache-chip').style.display='none';
+            render();
+            if (restoreY!==null) requestAnimationFrame(()=>window.scrollTo(0,restoreY));
+        } catch(e) {}
+    }
+
+    function syncForce() { initApp(true); }
+
+    function goHome() {
+        AppState.selectedCategory=null; AppState.onlyArchiveMode=false; AppState.globalQuery="";
+        document.getElementById('btn-toggle-archive').classList.remove('active');
+        document.getElementById('archive-btn-text').innerText="종료된 업무";
+        document.getElementById('global-search-input').value="";
+        document.getElementById('gsb-clear').style.display='none';
+        render(); window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function toggleArchiveMode() {
+        AppState.onlyArchiveMode=!AppState.onlyArchiveMode;
+        document.getElementById('btn-toggle-archive').classList.toggle('active',AppState.onlyArchiveMode);
+        document.getElementById('archive-btn-text').innerText=AppState.onlyArchiveMode?'진행중으로 복귀':'종료된 업무';
+        render();
+    }
+
+    /* ── GLOBAL SEARCH ⑬ ── */
+    function onGlobalSearch(val) {
+        AppState.globalQuery = val.trim();
+        AppState.selectedCategory = null;
+        document.getElementById('gsb-clear').style.display = val?'':'none';
+        document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('selected'));
+        render();
+    }
+    function clearGlobalSearch() {
+        AppState.globalQuery="";
+        document.getElementById('global-search-input').value="";
+        document.getElementById('gsb-clear').style.display='none';
+        render();
+    }
+
+    /* ── SORT ⑥ ── */
+    function cycleSortMode() {
+        _sortIdx = (_sortIdx+1) % SORT_MODES.length;
+        document.getElementById('sort-label').innerText = SORT_MODES[_sortIdx].label;
+        filterAndRenderList();
+    }
+
+    /* ── RENDER ── */
+    function render() {
+        let total=0, doneTotal=0;
+        const today=todayStr();
+        for (const cat of CATS) {
+            const tasks=AppState.tasks[cat]||[];
+            const doneCnt=tasks.filter(t=>t.status==='done').length;
+            const activeCnt=tasks.length-doneCnt;
+            const overdueCnt=tasks.filter(t=>t.status!=='done'&&t.duedate&&t.duedate<today).length; // ⑫
+            total+=tasks.length; doneTotal+=doneCnt;
+
+            const pct=tasks.length>0?Math.round(doneCnt/tasks.length*100):0;
+            document.getElementById(`badge-${cat}`).innerText = AppState.onlyArchiveMode?doneCnt:activeCnt;
+            document.getElementById(`progress-${cat}`).style.width=`${pct}%`;
+            document.getElementById(`status-${cat}`).innerText = tasks.length===0?'Empty':(activeCnt===0?'완료':'Active');
+
+            // ⑫ 기한초과 배지
+            const oBadge=document.getElementById(`overdue-${cat}`);
+            if(oBadge){oBadge.style.display=overdueCnt>0?'':'none';oBadge.textContent=`D+ ${overdueCnt}`;}
+
+            document.getElementById(`card-${cat}`).classList.toggle('selected',AppState.selectedCategory===cat);
+        }
+        const pct=total>0?Math.round(doneTotal/total*100):0;
+        document.getElementById('ui-progress-percent').innerText=`${pct}%`;
+        document.getElementById('nav-total').innerText=total;
+        document.getElementById('total-tasks-label').innerText=`(전체 ${total}건)`;
+        document.getElementById('nav-sync').innerText=AppState.lastSync;
+        document.getElementById('ui-memo').innerText=AppState.memo;
+        const circ=43.98;
+        document.getElementById('ui-ring-fill').style.strokeDashoffset=circ-(circ*pct/100);
+
+        // Schedule ⑪ todayStr 이미 적용됨
+        document.getElementById('ui-schedule').innerHTML=AppState.schedule.map(s=>{
+            const cls=['sch-card',s.isToday?'today':'',s.isHoliday?'holiday':''].filter(Boolean).join(' ');
+            return `<div class="${cls}"><div class="sch-top"><span class="sch-dayname">${escHtml(s.id||'')}</span>${s.isToday?'<span class="today-badge">TODAY</span>':''}</div><div class="sch-date">${escHtml(s.date||'')}</div>${s.isHoliday?`<div class="holiday-label">${escHtml(s.holiday||'')}</div>`:''}<div class="sch-loc">${escHtml(s.loc||'—')}</div></div>`;
+        }).join('');
+
+        filterAndRenderList();
+    }
+
+    /* ── LIST ── */
+    function filterAndRenderList() {
+        const area=document.getElementById('content-area');
+        const gq=AppState.globalQuery;
+        if (!AppState.selectedCategory && !gq) { area.style.display='none'; return; }
+        area.style.display='block';
+
+        const today=todayStr();
+        const keyword=(gq||document.getElementById('search-keyword').value.toLowerCase().trim());
+        let sourceItems=[];
+
+        if (gq) {
+            for (const cat of CATS) (AppState.tasks[cat]||[]).forEach(t=>sourceItems.push({...t,cat}));
+            document.getElementById('ui-list-title').innerText=`전체 검색: "${gq}"`;
+            document.getElementById('search-keyword').value='';
+        } else {
+            const cat=AppState.selectedCategory;
+            sourceItems=(AppState.tasks[cat]||[]).map(t=>({...t,cat}));
+            document.getElementById('ui-list-title').innerText=`${cat}${AppState.onlyArchiveMode?' · 아카이브':''}`;
+        }
+
+        let filtered=sourceItems.filter(t=>{
+            if (AppState.onlyArchiveMode&&t.status!=='done') return false;
+            if (!AppState.onlyArchiveMode&&t.status==='done') return false;
+            if (keyword) return (t.title||'').toLowerCase().includes(keyword)||(t.content||'').toLowerCase().includes(keyword);
+            return true;
+        });
+
+        // ⑥ 정렬
+        const mode=SORT_MODES[_sortIdx].key;
+        filtered.sort((a,b)=>{
+            if (mode==='duedate_asc') return (a.duedate||'9999-99-99').localeCompare(b.duedate||'9999-99-99');
+            if (mode==='duedate_desc') return (b.duedate||'').localeCompare(a.duedate||'');
+            return (a.date||'').localeCompare(b.date||'');
+        });
+
+        if (gq) {
+            document.getElementById('ui-list-count').innerText=`${filtered.length}건 검색됨`;
+        } else {
+            const items=AppState.tasks[AppState.selectedCategory]||[];
+            const ac=items.filter(t=>t.status!=='done').length;
+            document.getElementById('ui-list-count').innerText=`${ac}건 진행 / ${items.length-ac}건 완료`;
+        }
+
+        const listDiv=document.getElementById('ui-post-list');
+        if (filtered.length===0) {
+            listDiv.innerHTML=`<div class="list-empty"><i class="fa-regular fa-folder-open"></i>${gq?'검색 결과가 없습니다.':(AppState.onlyArchiveMode?'종료 및 보관된 업무가 없습니다.':'현재 진행 중인 업무가 없습니다.')}</div>`;
+            return;
+        }
+
+        listDiv.innerHTML=filtered.map(t=>{
+            const isDone=t.status==='done';
+            const isOverdue=!isDone&&t.duedate&&t.duedate<today; // ⑦
+            const catBtn=escHtml(t.cat||AppState.selectedCategory);
+            const tid=escHtml(t.id);
+            const fileHref=safeUrl(t.fileUrl); // ⑨
+            return `<div class="list-row${isDone?' done':''}">
+                <div class="list-info">
+                    ${gq?`<span class="list-cat-tag">${escHtml(t.cat)}</span>`:''}
+                    <span class="list-date">${escHtml(t.date)} 등록</span>
+                    <span class="list-title">${escHtml(t.title)}</span>
+                    ${t.content?`<span class="list-content">${escHtml(t.content)}</span>`:''}
+                    ${t.duedate?`<span class="list-duedate${isOverdue?' overdue':''}"><i class="fa-regular fa-clock"></i> 목표일: ${escHtml(t.duedate)}${isOverdue?' · 기한초과':''}</span>`:''}
+                    ${fileHref?`<a href="${fileHref}" target="_blank" rel="noopener" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일</a>`:''}
+                </div>
+                <div class="list-actions">
+                    <button class="act-btn done-btn${isDone?' active':''}" onclick="toggleDone('${tid}')" title="${isDone?'진행중으로 변경':'완료 처리'}"><i class="fa-solid fa-check"></i></button>
+                    <button class="act-btn mod-btn" onclick="openModifyModal('${catBtn}','${tid}')" title="수정"><i class="fa-solid fa-pen"></i></button>
+                    <button class="act-btn del-btn" onclick="handleDelete('${catBtn}','${tid}')" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    /* ── FILE LABEL ── */
+    function updateFileLabel(input) {
+        const el=document.getElementById('file-label-text');
+        const icon=document.querySelector('#file-label-el i');
+        if (input.files&&input.files.length>0) {
+            el.textContent=input.files[0].name; icon.className='fa-solid fa-file';
+        } else {
+            el.textContent='파일 선택 (최대 25MB)'; icon.className='fa-solid fa-cloud-arrow-up';
+        }
+    }
+
+    /* ── CATEGORY SELECT ── */
+    function selectCategory(cat) {
+        AppState.selectedCategory=cat; AppState.globalQuery="";
+        document.getElementById('global-search-input').value="";
+        document.getElementById('gsb-clear').style.display='none';
+        document.getElementById('search-keyword').value="";
+        if(document.getElementById('reg-cat')) document.getElementById('reg-cat').value=cat;
+        render();
+        setTimeout(()=>document.getElementById('content-area')?.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+    }
+
+    /* ── MODAL: 추가/수정 ── */
+    function openModal() {
+        document.getElementById('modal-ui-title').innerText="새 업무 추가";
+        document.getElementById('reg-id').value="";
+        document.getElementById('reg-startdate').value=todayStr(); // ⑪
+        document.getElementById('inputModal').classList.add('active');
+        setTimeout(()=>document.getElementById('reg-title').focus(),200);
+    }
+
+    function openModifyModal(cat,id) {
+        const item=(AppState.tasks[cat]||[]).find(t=>String(t.id)===String(id));
+        if(!item) return;
+        document.getElementById('modal-ui-title').innerText="업무 수정";
+        document.getElementById('reg-id').value=item.id;
+        document.getElementById('reg-cat').value=cat;
+        document.getElementById('reg-title').value=item.title;
+        document.getElementById('reg-content').value=item.content||'';
+        document.getElementById('reg-startdate').value=item.date;
+        document.getElementById('reg-duedate').value=item.duedate||'';
+        // ⑧ 기존 파일 표시
+        const el=document.getElementById('file-label-text');
+        const icon=document.querySelector('#file-label-el i');
+        const href=safeUrl(item.fileUrl);
+        if (href) {
+            el.innerHTML=`기존 파일 연결됨 &nbsp;<a href="${href}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--sys-blue);text-decoration:underline;font-size:11px;">보기</a>`;
+            icon.className='fa-solid fa-file-circle-check'; icon.style.color='var(--sys-green)';
+        } else {
+            el.textContent='파일 선택 (최대 25MB)'; icon.className='fa-solid fa-cloud-arrow-up'; icon.style.color='';
+        }
+        document.getElementById('inputModal').classList.add('active');
+        setTimeout(()=>document.getElementById('reg-title').focus(),200);
+    }
+
+    function closeModal() {
+        document.getElementById('inputModal').classList.remove('active');
+        ['reg-id','reg-title','reg-content','reg-startdate','reg-duedate'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('reg-file').value='';
+        document.getElementById('file-label-text').textContent='파일 선택 (최대 25MB)';
+        const icon=document.querySelector('#file-label-el i');
+        icon.className='fa-solid fa-cloud-arrow-up'; icon.style.color='';
+        document.getElementById('btn-save-submit').textContent='구글시트 저장';
+        document.getElementById('btn-save-submit').disabled=false;
+    }
+
+    function openMemoModal() {
+        document.getElementById('edit-memo-text').value=AppState.memo;
+        document.getElementById('memoModal').classList.add('active');
+        setTimeout(()=>document.getElementById('edit-memo-text').focus(),200);
+    }
+    function closeMemoModal(){document.getElementById('memoModal').classList.remove('active');}
+
+    /* ── SAVE ── */
+    async function handleSave() {
+        const id=document.getElementById('reg-id').value;
+        const title=document.getElementById('reg-title').value.trim();
+        // ④ 제목 검증
+        if (!title) { alert("제목을 입력하세요."); document.getElementById('reg-title').focus(); return; }
+        const pwd=getGlobalPassword(); if(!pwd) return;
+        const submitBtn=document.getElementById('btn-save-submit');
+        submitBtn.textContent="저장 중…"; submitBtn.disabled=true;
+        const payload={
+            action:id?'updateTask':'addTask', id:id||Date.now().toString(),
+            category:document.getElementById('reg-cat').value,
+            date:document.getElementById('reg-startdate').value||todayStr(),
+            title, content:document.getElementById('reg-content').value.trim(),
+            duedate:document.getElementById('reg-duedate').value,
+            password:pwd, fileData:null, fileName:null, fileMime:null
+        };
+        const fileInput=document.getElementById('reg-file');
+        if (fileInput.files&&fileInput.files.length>0) {
+            const file=fileInput.files[0];
+            // ③ 파일 크기/타입 검증
+            if (file.size>25*1024*1024) { alert("파일 크기는 25MB 이하여야 합니다."); submitBtn.textContent='구글시트 저장'; submitBtn.disabled=false; return; }
+            const allowed=['image/','application/pdf','application/msword','application/vnd.openxmlformats','application/vnd.ms-','text/','application/zip','application/x-zip'];
+            if (!allowed.some(t=>file.type.startsWith(t))) { alert(`허용되지 않는 파일 형식입니다.\n(${file.type})`); submitBtn.textContent='구글시트 저장'; submitBtn.disabled=false; return; }
+            const reader=new FileReader();
+            reader.onerror=()=>{ alert("파일을 읽는 중 오류가 발생했습니다."); submitBtn.textContent='구글시트 저장'; submitBtn.disabled=false; }; // ③
+            reader.onload=async(e)=>{ payload.fileData=e.target.result.split(',')[1]; payload.fileName=file.name; payload.fileMime=file.type; await sendTaskData(payload); };
+            reader.readAsDataURL(file);
+        } else { await sendTaskData(payload); }
+    }
+
+    async function sendTaskData(payload) {
+        try {
+            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+            const result=await res.json();
+            if(result.status==="auth_error"){alert(result.message);}
+            else{localStorage.removeItem('warehouse_cache_data');closeModal();await syncSilent();}
+        } catch(e){alert("통신 오류가 발생했습니다.");}
+        finally{document.getElementById('btn-save-submit').textContent="구글시트 저장";document.getElementById('btn-save-submit').disabled=false;}
+    }
+
+    async function handleMemoSave() {
+        const newMemo=document.getElementById('edit-memo-text').value.trim();
+        if(!newMemo) return;
+        const pwd=getGlobalPassword(); if(!pwd) return;
+        try {
+            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'updateMemo',memo:newMemo,password:pwd})});
+            const result=await res.json();
+            if(result.status==="auth_error"){alert(result.message);}
+            else{localStorage.removeItem('warehouse_cache_data');closeMemoModal();await syncSilent();}
+        } catch(e){alert("통신 오류가 발생했습니다.");}
+    }
+
+    /* ── DELETE ① ── */
+    async function handleDelete(cat,id) {
+        const pwd=getGlobalPassword(); if(!pwd) return;
+        const task=(AppState.tasks[cat]||[]).find(t=>String(t.id)===String(id));
+        const label=task?`"${task.title}"를(을)`:'이 업무를';
+        if(!confirm(`${label} 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.`)) return; // ①
+        // 낙관적 삭제
+        AppState.tasks[cat]=(AppState.tasks[cat]||[]).filter(t=>String(t.id)!==String(id));
+        render();
+        try {
+            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'deleteTask',id,password:pwd})});
+            const result=await res.json();
+            if(result.status==="auth_error"){alert(result.message);await initApp(true);}
+            else{await syncSilent();}
+        } catch(e){alert("통신 오류가 발생했습니다.");await initApp(true);}
+    }
+
+    /* ── TOGGLE DONE ⑤ ── */
+    async function toggleDone(id) {
+        const pwd=getGlobalPassword(); if(!pwd) return;
+        const scrollY=window.scrollY;
+        // 낙관적 업데이트
+        for(const cat of CATS){
+            const task=(AppState.tasks[cat]||[]).find(t=>String(t.id)===String(id));
+            if(task){task.status=task.status==='done'?'active':'done';break;}
+        }
+        render();
+        requestAnimationFrame(()=>window.scrollTo(0,scrollY));
+        try {
+            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'toggleStatus',id,password:pwd})});
+            const result=await res.json();
+            if(result.status==="auth_error"){alert(result.message);await initApp(true);return;}
+            await syncSilent(scrollY); // 백그라운드 싱크, 스크롤 복원
+        } catch(e){alert("통신 오류가 발생했습니다.");await initApp(true);}
+    }
+
+    /* ── KPI ── */
+    let kpiTab='monthly';
+    function openKpiModal(){document.getElementById('kpiModal').classList.add('active');buildKpiContent();}
+    function closeKpiModal(){document.getElementById('kpiModal').classList.remove('active');}
+    function switchKpiTab(tab){
+        kpiTab=tab;
+        document.getElementById('tab-monthly').classList.toggle('active',tab==='monthly');
+        document.getElementById('tab-category').classList.toggle('active',tab==='category');
+        document.getElementById('kpi-content-monthly').style.display=tab==='monthly'?'':'none';
+        document.getElementById('kpi-content-category').style.display=tab==='category'?'':'none';
+    }
+    function buildKpiContent(){
+        let all=[];
+        for(const cat of CATS) all=all.concat((AppState.tasks[cat]||[]).map(t=>({...t,cat})));
+        const total=all.length, done=all.filter(t=>t.status==='done').length;
+        const pct=total>0?Math.round(done/total*100):0;
+        document.getElementById('kpi-date-range').innerText=`기준일: ${new Date().toLocaleDateString('ko-KR')} 현재 누계`;
+        document.getElementById('kpi-summary-chips').innerHTML=`<div class="kpi-summary-chip"><div class="kpi-chip-label">전체</div><div class="kpi-chip-value">${total}</div></div><div class="kpi-summary-chip"><div class="kpi-chip-label">완료</div><div class="kpi-chip-value green">${done}</div></div><div class="kpi-summary-chip"><div class="kpi-chip-label">진행중</div><div class="kpi-chip-value">${total-done}</div></div><div class="kpi-summary-chip"><div class="kpi-chip-label">달성률</div><div class="kpi-chip-value">${pct}%</div></div>`;
+        const mmap={};
+        all.forEach(t=>{const m=(t.duedate||t.date||'').substring(0,7);if(!m)return;if(!mmap[m])mmap[m]={done:0,total:0};mmap[m].total++;if(t.status==='done')mmap[m].done++;});
+        const months=Object.keys(mmap).sort();
+        const maxD=months.length?Math.max(...months.map(m=>mmap[m].done),1):1;
+        document.getElementById('kpi-content-monthly').innerHTML=months.length===0?'<div style="text-align:center;color:var(--sys-label-4);padding:24px 0;font-size:13px;">데이터가 없습니다.</div>':`<div class="kpi-month-list">${months.map(m=>{const{done:d,total:tt}=mmap[m];const w=Math.round(d/maxD*100);return`<div class="kpi-month-row"><span class="kpi-month-label">${m}</span><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:${w}%"></div></div><span class="kpi-month-count">${d}/${tt}</span></div>`;}).join('')}</div>`;
+        document.getElementById('kpi-content-category').innerHTML=`<table class="kpi-cat-table"><thead><tr><th>분류</th><th>전체</th><th>완료</th><th>진행중</th><th>달성률</th></tr></thead><tbody>${CATS.map(cat=>{const tasks=AppState.tasks[cat]||[];const d=tasks.filter(t=>t.status==='done').length;const tt=tasks.length;const p=tt>0?Math.round(d/tt*100):0;const cls=p>=80?'':p>=40?'mid':'low';return`<tr><td style="font-weight:600;">${cat}</td><td>${tt}</td><td>${d}</td><td>${tt-d}</td><td><span class="kpi-pct-badge ${cls}">${p}%</span></td></tr>`;}).join('')}</tbody></table>`;
+    }
+
+    /* ── PRINT ⑭ ── */
+    function printReport() {
+        const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+        let all=[];
+        for(const cat of CATS) all=all.concat((AppState.tasks[cat]||[]).map(t=>({...t,cat})));
+        const total=all.length,done=all.filter(t=>t.status==='done').length,pct=total>0?Math.round(done/total*100):0;
+
+        // ⑭ 주간 일정 섹션
+        const schSection=AppState.schedule.length>0?`<div class="pv-cat-section"><div class="pv-cat-header"><span class="pv-cat-name">최차장 주간 일정</span></div><div class="pv-sch-grid">${AppState.schedule.map(s=>`<div class="pv-sch-card${s.isToday?' pv-sch-today':''}"><div class="pv-sch-day">${escHtml(s.id||'')}</div><div class="pv-sch-date">${escHtml(s.date||'')}</div><div class="pv-sch-loc">${s.isHoliday?escHtml(s.holiday||''):escHtml(s.loc||'—')}</div></div>`).join('')}</div></div>`:'';
+
+        const catSections=CATS.map(cat=>{
+            const active=(AppState.tasks[cat]||[]).filter(t=>t.status!=='done').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+            if(!active.length) return '';
+            const rows=active.map(t=>`<div class="pv-task-row"><div class="pv-task-body"><div class="pv-task-title">${escHtml(t.title)}</div>${t.content?`<div class="pv-task-content">${escHtml(t.content)}</div>`:''}</div><div class="pv-task-meta"><span class="pv-task-date">${escHtml(t.date)} 등록</span>${t.duedate?`<span class="pv-task-due">목표: ${escHtml(t.duedate)}</span>`:''}</div></div>`).join('');
+            return `<div class="pv-cat-section"><div class="pv-cat-header"><span class="pv-cat-name">${cat}</span><span class="pv-cat-stat">&nbsp;진행중 ${active.length}건</span></div>${rows}</div>`;
+        }).join('');
+
+        document.getElementById('print-view').innerHTML=`<div class="pv-header"><div class="pv-title">품질안전보건실 업무 현황 보고</div><div class="pv-meta">작성일: ${today}&nbsp;|&nbsp;담당: 최차장&nbsp;|&nbsp;보고: 정재빈 실장</div></div><div class="pv-summary"><div><div class="pv-summary-label">전체 업무</div><div class="pv-summary-value">${total}건</div></div><div><div class="pv-summary-label">완료</div><div class="pv-summary-value">${done}건</div></div><div><div class="pv-summary-label">진행중</div><div class="pv-summary-value">${total-done}건</div></div><div><div class="pv-summary-label">달성률</div><div class="pv-summary-value">${pct}%</div></div></div>${schSection}${catSections}<div class="pv-footer"><span>품질안전보건실 업무창고 시스템</span><span>출력일시: ${new Date().toLocaleString('ko-KR')}</span></div>`;
+        window.print();
+    }
+
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeMemoModal();closeKpiModal();}});
+    initApp();
+</script>
+</body>
+</html>
