@@ -220,6 +220,21 @@
         .btn-text-only{width:100%;padding:10px;background:none;border:none;font-size:14px;color:var(--sys-label-3);cursor:pointer;font-family:var(--font-sans);transition:color 0.12s;}
         .btn-text-only:hover{color:var(--sys-label);}
 
+        /* PERSONNEL */
+        .personnel-card{background:var(--sys-surface);border-radius:var(--r-lg);display:flex;align-items:stretch;box-shadow:var(--shadow-sm);overflow:hidden;}
+        .pers-item{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:6px;}
+        .pers-item.total{background:var(--sys-label);flex:1.3;}
+        .pers-divider{width:0.5px;background:var(--sys-separator);flex-shrink:0;align-self:stretch;}
+        .pers-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--sys-label-3);}
+        .pers-item.total .pers-label{color:rgba(255,255,255,0.45);}
+        .pers-val-row{display:flex;align-items:baseline;gap:3px;}
+        .pers-value{font-size:34px;font-weight:300;font-family:var(--font-mono);color:var(--sys-label);line-height:1;}
+        .pers-item.total .pers-value{color:white;}
+        .pers-unit{font-size:13px;color:var(--sys-label-4);}
+        .pers-item.total .pers-unit{color:rgba(255,255,255,0.4);}
+        .pers-edit-btn{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--sys-label-3);font-size:11px;cursor:pointer;transition:all 0.12s;}
+        .pers-edit-btn:hover{background:rgba(0,0,0,0.06);color:var(--sys-label);}
+
         /* KPI */
         .kpi-summary-row{display:flex;gap:8px;margin-bottom:20px;}
         .kpi-summary-chip{flex:1;background:var(--sys-surface-2);border-radius:var(--r-sm);padding:12px 14px;}
@@ -333,18 +348,35 @@
 <div class="container">
 
     <div class="section">
-        <div class="section-head"><span class="section-title">실장 코멘트</span></div>
-        <div class="memo-card">
-            <div class="memo-avatar">정</div>
-            <div class="memo-body">
-                <div class="memo-meta">
-                    <div class="memo-name-row">
-                        <span class="memo-name">정재빈 실장</span>
-                        <span class="memo-role">품질안전보건실</span>
-                    </div>
-                    <button class="memo-edit" onclick="openMemoModal()" title="코멘트 수정" aria-label="코멘트 수정"><i class="fa-solid fa-pen"></i></button>
+        <div class="section-head">
+            <span class="section-title">출력 인원 현황</span>
+            <button class="pers-edit-btn" onclick="openPersonnelModal()" title="인원 입력" aria-label="인원 입력">
+                <i class="fa-solid fa-pencil"></i>
+            </button>
+        </div>
+        <div class="personnel-card">
+            <div class="pers-item total">
+                <span class="pers-label">전체 출력인원</span>
+                <div class="pers-val-row">
+                    <span class="pers-value" id="pers-total">0</span>
+                    <span class="pers-unit">명</span>
                 </div>
-                <p class="memo-text" id="ui-memo">로딩 중...</p>
+            </div>
+            <div class="pers-divider"></div>
+            <div class="pers-item">
+                <span class="pers-label">하이테크</span>
+                <div class="pers-val-row">
+                    <span class="pers-value" id="pers-hitech">0</span>
+                    <span class="pers-unit">명</span>
+                </div>
+            </div>
+            <div class="pers-divider"></div>
+            <div class="pers-item">
+                <span class="pers-label">건축기계</span>
+                <div class="pers-val-row">
+                    <span class="pers-value" id="pers-arch">0</span>
+                    <span class="pers-unit">명</span>
+                </div>
             </div>
         </div>
     </div>
@@ -448,14 +480,22 @@
     </div>
 </div>
 
-<!-- MODAL: 코멘트 -->
-<div id="memoModal" class="modal" onclick="if(event.target===this)closeMemoModal()">
+<!-- MODAL: 출력인원 -->
+<div id="personnelModal" class="modal" onclick="if(event.target===this)closePersonnelModal()">
     <div class="modal-sheet">
-        <div class="modal-title">실장 코멘트 수정</div>
-        <div class="field-group"><div class="field-label">코멘트</div><textarea id="edit-memo-text" rows="5" placeholder="실장 코멘트를 입력하세요"></textarea></div>
+        <div class="modal-title">출력 인원 입력</div>
+        <div class="modal-subtitle" id="pers-modal-date"></div>
+        <div class="field-group">
+            <div class="field-label">하이테크</div>
+            <input type="number" id="pers-hitech-input" min="0" max="9999" placeholder="0">
+        </div>
+        <div class="field-group">
+            <div class="field-label">건축기계</div>
+            <input type="number" id="pers-arch-input" min="0" max="9999" placeholder="0">
+        </div>
         <div class="modal-actions">
-            <button class="btn-fill dark" onclick="handleMemoSave()">구글시트 반영</button>
-            <button class="btn-text-only" onclick="closeMemoModal()">취소</button>
+            <button class="btn-fill dark" id="btn-pers-save" onclick="handlePersonnelSave()">구글시트 저장</button>
+            <button class="btn-text-only" onclick="closePersonnelModal()">취소</button>
         </div>
     </div>
 </div>
@@ -489,8 +529,9 @@
     let _sessionPwd = ''; // ② 세션 캐싱
 
     let AppState = {
-        memo:"", schedule:[],
+        schedule:[],
         tasks:{"사고관리":[],"입찰지원":[],"노무관리":[],"인증관리":[],"법무관리":[],"기타관리":[]},
+        personnel:{ hitech:0, arch:0 },
         selectedCategory:null, onlyArchiveMode:false, lastSync:"—", globalQuery:""
     };
 
@@ -531,9 +572,11 @@
 
     function parseAndSetState(data) {
         AppState.tasks = data.tasks || AppState.tasks;
-        AppState.memo = data.memo || "등록된 코멘트가 없습니다.";
         AppState.schedule = data.schedule || [];
         AppState.lastSync = data.lastSync || "—";
+        if (data.personnel) {
+            AppState.personnel = { hitech: Number(data.personnel.hitech)||0, arch: Number(data.personnel.arch)||0 };
+        }
         const today = todayStr();
         AppState.schedule.forEach(s => s.isToday = (s.fullDate === today));
     }
@@ -616,7 +659,11 @@
         document.getElementById('nav-total').innerText=total;
         document.getElementById('total-tasks-label').innerText=`(전체 ${total}건)`;
         document.getElementById('nav-sync').innerText=AppState.lastSync;
-        document.getElementById('ui-memo').innerText=AppState.memo;
+        // 출력인원
+        const hitech=AppState.personnel.hitech, arch=AppState.personnel.arch;
+        document.getElementById('pers-hitech').innerText=hitech;
+        document.getElementById('pers-arch').innerText=arch;
+        document.getElementById('pers-total').innerText=hitech+arch;
         const circ=43.98;
         document.getElementById('ui-ring-fill').style.strokeDashoffset=circ-(circ*pct/100);
 
@@ -769,12 +816,37 @@
         document.getElementById('btn-save-submit').disabled=false;
     }
 
-    function openMemoModal() {
-        document.getElementById('edit-memo-text').value=AppState.memo;
-        document.getElementById('memoModal').classList.add('active');
-        setTimeout(()=>document.getElementById('edit-memo-text').focus(),200);
+    /* ── PERSONNEL MODAL ── */
+    function openPersonnelModal() {
+        document.getElementById('pers-modal-date').innerText=`기준일: ${new Date().toLocaleDateString('ko-KR')}`;
+        document.getElementById('pers-hitech-input').value=AppState.personnel.hitech||'';
+        document.getElementById('pers-arch-input').value=AppState.personnel.arch||'';
+        document.getElementById('personnelModal').classList.add('active');
+        setTimeout(()=>document.getElementById('pers-hitech-input').focus(),200);
     }
-    function closeMemoModal(){document.getElementById('memoModal').classList.remove('active');}
+    function closePersonnelModal(){document.getElementById('personnelModal').classList.remove('active');}
+
+    async function handlePersonnelSave() {
+        const pwd=getGlobalPassword(); if(!pwd) return;
+        const hitech=parseInt(document.getElementById('pers-hitech-input').value)||0;
+        const arch=parseInt(document.getElementById('pers-arch-input').value)||0;
+        const btn=document.getElementById('btn-pers-save');
+        btn.textContent='저장 중…'; btn.disabled=true;
+        try {
+            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+                body:JSON.stringify({action:'savePersonnel',date:todayStr(),hitech,arch,password:pwd})});
+            const result=await res.json();
+            if(result.status==="auth_error"){alert(result.message);}
+            else {
+                AppState.personnel={hitech,arch};
+                render();
+                closePersonnelModal();
+                localStorage.removeItem('warehouse_cache_data');
+                syncSilent();
+            }
+        } catch(e){alert("통신 오류가 발생했습니다.");}
+        finally{btn.textContent='구글시트 저장';btn.disabled=false;}
+    }
 
     /* ── SAVE ── */
     async function handleSave() {
@@ -815,18 +887,6 @@
             else{localStorage.removeItem('warehouse_cache_data');closeModal();await syncSilent();}
         } catch(e){alert("통신 오류가 발생했습니다.");}
         finally{document.getElementById('btn-save-submit').textContent="구글시트 저장";document.getElementById('btn-save-submit').disabled=false;}
-    }
-
-    async function handleMemoSave() {
-        const newMemo=document.getElementById('edit-memo-text').value.trim();
-        if(!newMemo) return;
-        const pwd=getGlobalPassword(); if(!pwd) return;
-        try {
-            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'updateMemo',memo:newMemo,password:pwd})});
-            const result=await res.json();
-            if(result.status==="auth_error"){alert(result.message);}
-            else{localStorage.removeItem('warehouse_cache_data');closeMemoModal();await syncSilent();}
-        } catch(e){alert("통신 오류가 발생했습니다.");}
     }
 
     /* ── DELETE ① ── */
@@ -912,7 +972,7 @@
         window.print();
     }
 
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeMemoModal();closeKpiModal();}});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closePersonnelModal();closeKpiModal();}});
     initApp();
 </script>
 </body>
