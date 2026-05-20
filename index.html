@@ -243,7 +243,13 @@
         .btn-text-only{width:100%;padding:10px;background:none;border:none;font-size:14px;color:var(--sys-label-3);cursor:pointer;font-family:var(--font-sans);transition:color 0.12s;}
         .btn-text-only:hover{color:var(--sys-label);}
 
-        /* PERSONNEL */
+        /* PERSONNEL + SCHEDULE ROW */
+        .info-section-row{display:flex;align-items:flex-start;gap:14px;}
+        .info-col{display:flex;flex-direction:column;gap:6px;}
+        .info-col--pers{flex-shrink:0;}
+        .info-col--sch{flex:1;min-width:0;}
+        .info-col-label{display:flex;align-items:center;gap:7px;height:20px;}
+        .pers-card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
         .pers-edit-btn{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--sys-label-3);font-size:11px;cursor:pointer;transition:all 0.12s;}
         .pers-edit-btn:hover{background:rgba(0,0,0,0.06);color:var(--sys-label);}
 
@@ -308,12 +314,19 @@
         /* MOBILE */
         @media (max-width:700px){
             .category-grid{grid-template-columns:repeat(2,1fr);}
-            .schedule-grid{grid-template-columns:repeat(2,1fr);}
             .top-nav{padding:0 16px;}
             .container{padding:24px 16px;}
-            .nav-center{display:flex;} /* 숨기지 않음 */
-            .nav-pill:last-child{display:none;} /* Tasks 수만 숨김 */
             .modal-sheet{max-width:100%;border-bottom-left-radius:0;border-bottom-right-radius:0;margin-top:auto;}
+            /* ① 인원+일정 세로 스택 */
+            .info-section-row{flex-direction:column;}
+            .info-col--pers,.info-col--sch{width:100%;}
+            .pers-card-grid{grid-template-columns:repeat(3,1fr);}
+            .schedule-grid{grid-template-columns:repeat(2,1fr);}
+            /* ② 네비게이션 줄바꿈 방지 */
+            .nav-center{display:none;}
+            .nav-pill{white-space:nowrap;}
+            /* ③ 카테고리 뱃지 모바일 크기 축소 */
+            .cat-count,.cat-done-count{font-size:11px;padding:2px 7px;}
         }
         @media (hover:none) and (pointer:coarse){
             .act-btn{width:40px;height:40px;}
@@ -361,46 +374,46 @@
 <div class="container">
 
     <div class="section">
-        <!-- 라벨 행: 3fr(인원) + 4fr(일정) -->
-        <div style="display:grid;grid-template-columns:3fr 4fr;gap:6px;margin-bottom:6px;">
-            <div style="display:flex;align-items:center;gap:7px;">
-                <span class="section-title">출력 인원 현황</span>
-                <button class="pers-edit-btn" onclick="openPersonnelModal()" title="인원 입력" aria-label="인원 입력"><i class="fa-solid fa-pencil"></i></button>
-            </div>
-            <div style="display:flex;align-items:center;gap:7px;">
-                <span class="section-title">최차장 주간 일정</span>
-                <button class="pers-edit-btn" onclick="openScheduleModal()" title="일정 입력" aria-label="일정 입력"><i class="fa-solid fa-pencil"></i></button>
-            </div>
-        </div>
-        <!-- 카드 행: 7칸 단일 그리드 -->
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;">
-            <!-- 전체 출력인원 -->
-            <div class="sch-card today" style="position:relative;">
-                <span class="today-badge">TODAY</span>
-                <div class="sch-top"><span class="sch-dayname" style="color:rgba(255,255,255,0.5);">전체 출력인원</span></div>
-                <div style="display:flex;align-items:baseline;gap:2px;">
-                    <span class="sch-date" id="pers-total">0</span>
-                    <span class="sch-loc" style="color:rgba(255,255,255,0.65);">명</span>
+        <div class="info-section-row">
+            <!-- 출력인원 -->
+            <div class="info-col info-col--pers">
+                <div class="info-col-label">
+                    <span class="section-title">출력 인원 현황</span>
+                    <button class="pers-edit-btn" onclick="openPersonnelModal()" title="인원 입력" aria-label="인원 입력"><i class="fa-solid fa-pencil"></i></button>
+                </div>
+                <div class="pers-card-grid">
+                    <div class="sch-card today" style="position:relative;">
+                        <span class="today-badge">TODAY</span>
+                        <div class="sch-top"><span class="sch-dayname" style="color:rgba(255,255,255,0.5);">전체 출력인원</span></div>
+                        <div style="display:flex;align-items:baseline;gap:2px;">
+                            <span class="sch-date" id="pers-total">0</span>
+                            <span class="sch-loc" style="color:rgba(255,255,255,0.65);">명</span>
+                        </div>
+                    </div>
+                    <div class="sch-card">
+                        <div class="sch-top"><span class="sch-dayname">하이테크</span></div>
+                        <div style="display:flex;align-items:baseline;gap:2px;">
+                            <span class="sch-date" id="pers-hitech">0</span>
+                            <span class="sch-loc">명</span>
+                        </div>
+                    </div>
+                    <div class="sch-card">
+                        <div class="sch-top"><span class="sch-dayname">건축기계</span></div>
+                        <div style="display:flex;align-items:baseline;gap:2px;">
+                            <span class="sch-date" id="pers-arch">0</span>
+                            <span class="sch-loc">명</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- 하이테크 -->
-            <div class="sch-card">
-                <div class="sch-top"><span class="sch-dayname">하이테크</span></div>
-                <div style="display:flex;align-items:baseline;gap:2px;">
-                    <span class="sch-date" id="pers-hitech">0</span>
-                    <span class="sch-loc">명</span>
+            <!-- 주간일정 -->
+            <div class="info-col info-col--sch">
+                <div class="info-col-label">
+                    <span class="section-title">최차장 주간 일정</span>
+                    <button class="pers-edit-btn" onclick="openScheduleModal()" title="일정 입력" aria-label="일정 입력"><i class="fa-solid fa-pencil"></i></button>
                 </div>
+                <div class="schedule-grid" id="ui-schedule"></div>
             </div>
-            <!-- 건축기계 -->
-            <div class="sch-card">
-                <div class="sch-top"><span class="sch-dayname">건축기계</span></div>
-                <div style="display:flex;align-items:baseline;gap:2px;">
-                    <span class="sch-date" id="pers-arch">0</span>
-                    <span class="sch-loc">명</span>
-                </div>
-            </div>
-            <!-- 주간일정 4칸 (JS 렌더, display:contents로 그리드 참여) -->
-            <div id="ui-schedule" style="display:contents;"></div>
         </div>
     </div>
 
