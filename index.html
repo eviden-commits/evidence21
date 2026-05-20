@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>업무창고 — 품질안전보건실</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -18,7 +18,7 @@
             --sys-orange:#FF9500; --sys-orange-bg:rgba(255,149,0,0.10);
             --sys-purple:#AF52DE; --sys-purple-bg:rgba(175,82,222,0.10);
             --sys-gray:#636366; --sys-gray-bg:rgba(99,99,102,0.10);
-            --font-sans:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;
+            --font-sans:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
             --font-mono:'JetBrains Mono','SF Mono',monospace;
             --r-xs:6px; --r-sm:10px; --r-md:14px; --r-lg:18px; --r-xl:22px;
             --shadow-xs:0 1px 1px rgba(0,0,0,0.04);
@@ -68,7 +68,7 @@
         .container{max-width:980px;margin:0 auto;padding:36px 32px;}
         .section{margin-bottom:36px;}
         .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-        .section-title{font-size:11px;font-weight:600;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.07em;}
+        .section-title{font-size:11.5px;font-weight:700;color:var(--sys-label-3);text-transform:uppercase;letter-spacing:0.07em;}
 
         /* MEMO */
         .memo-card{background:var(--sys-surface);border-radius:var(--r-lg);padding:20px 22px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--shadow-sm);}
@@ -84,19 +84,19 @@
 
         /* SCHEDULE */
         .schedule-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-        .sch-card{background:var(--sys-surface);border-radius:var(--r-md);padding:14px 16px;min-height:100px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-xs);transition:transform 0.15s;}
+        .sch-card{background:var(--sys-surface);border-radius:var(--r-md);padding:12px 14px;min-height:72px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-xs);transition:transform 0.15s;position:relative;}
         .sch-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm);}
-        .sch-card.today{background:var(--sys-blue);box-shadow:0 4px 16px rgba(0,122,255,0.28);}
+        .sch-card.today{background:var(--sys-blue);box-shadow:0 4px 14px rgba(0,122,255,0.28);}
         .sch-card.holiday .sch-date,.sch-card.holiday .sch-dayname{color:var(--sys-red);}
         .sch-top{display:flex;align-items:center;justify-content:space-between;}
         .sch-dayname{font-size:10px;font-weight:600;color:var(--sys-label-4);letter-spacing:0.05em;text-transform:uppercase;}
-        .sch-card.today .sch-dayname{color:rgba(255,255,255,0.45);}
-        .today-badge{font-size:9px;font-weight:700;background:rgba(255,255,255,0.22);color:white;padding:1px 6px;border-radius:10px;font-family:var(--font-mono);}
-        .sch-date{font-family:var(--font-mono);font-size:24px;font-weight:300;margin:6px 0 2px;color:var(--sys-label);}
+        .sch-card.today .sch-dayname{color:rgba(255,255,255,0.5);}
+        .today-badge{font-size:11px;font-weight:700;background:white;color:var(--sys-blue);padding:2px 8px;border-radius:0 var(--r-md) 0 8px;font-family:var(--font-mono);position:absolute;top:0;right:0;}
+        .sch-date{font-family:var(--font-mono);font-size:20px;font-weight:300;margin:4px 0 2px;color:var(--sys-label);}
         .sch-card.today .sch-date{color:white;}
-        .sch-loc{font-size:11.5px;font-weight:500;color:var(--sys-label-3);line-height:1.4;}
-        .sch-card.today .sch-loc{color:rgba(255,255,255,0.75);}
-        .holiday-label{font-size:11px;color:var(--sys-red);font-weight:500;margin-top:2px;}
+        .sch-loc{font-size:11px;font-weight:500;color:var(--sys-label-3);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .sch-card.today .sch-loc{color:rgba(255,255,255,0.8);}
+        .holiday-label{font-size:10px;color:var(--sys-red);font-weight:500;margin-top:2px;}
         .sch-card.today .holiday-label{color:rgba(255,120,110,0.9);}
 
         /* CATEGORIES */
@@ -117,22 +117,45 @@
         .gsb-clear{background:none;border:none;color:var(--sys-label-4);cursor:pointer;padding:2px 4px;border-radius:4px;font-size:13px;transition:all 0.12s;}
         .gsb-clear:hover{color:var(--sys-label);background:rgba(0,0,0,0.05);}
 
+        /* NEW ARRIVE */
+        .new-arrive-wrap{margin-bottom:10px;}
+        .new-arrive-header{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+        .new-arrive-label{font-size:10px;font-weight:700;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.08em;}
+        .new-arrive-dot{width:6px;height:6px;border-radius:50%;background:var(--sys-blue);flex-shrink:0;animation:pulse-dot 2s ease-in-out infinite;}
+        @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+        .new-arrive-list{display:flex;flex-direction:column;gap:5px;}
+        .na-card{display:flex;align-items:center;gap:10px;background:var(--sys-surface);border-radius:var(--r-sm);padding:9px 14px;box-shadow:var(--shadow-xs);border:0.5px solid var(--sys-separator);cursor:pointer;transition:all 0.15s;}
+        .na-card:hover{box-shadow:var(--shadow-sm);transform:translateX(2px);}
+        .na-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+        .na-cat{font-size:10px;font-weight:600;color:var(--sys-label-4);width:50px;flex-shrink:0;}
+        .na-title{font-size:13px;font-weight:500;color:var(--sys-label);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .na-date{font-size:11px;font-family:var(--font-mono);color:var(--sys-label-4);flex-shrink:0;}
+        .na-new-badge{font-size:9px;font-weight:700;color:var(--sys-blue);background:var(--sys-blue-bg);padding:1px 6px;border-radius:8px;flex-shrink:0;}
+        /* dot colors per cat */
+        .na-dot.사고관리{background:var(--sys-red);}
+        .na-dot.입찰지원{background:var(--sys-blue);}
+        .na-dot.노무관리{background:var(--sys-orange);}
+        .na-dot.인증관리{background:var(--sys-green);}
+        .na-dot.법무관리{background:var(--sys-purple);}
+        .na-dot.기타관리{background:var(--sys-gray);}
+
         /* CATEGORY GRID */
         .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
-        .cat-card{background:var(--sys-surface);border-radius:var(--r-md);padding:14px 16px;cursor:pointer;transition:all 0.18s cubic-bezier(0.4,0,0.2,1);box-shadow:var(--shadow-xs);border:1.5px solid transparent;}
+        .cat-card{background:var(--sys-surface);border-radius:var(--r-md);padding:16px 18px;cursor:pointer;transition:all 0.18s cubic-bezier(0.4,0,0.2,1);box-shadow:var(--shadow-xs);border:1.5px solid transparent;}
         .cat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
         .cat-card.selected{border-color:var(--sys-label);box-shadow:var(--shadow-sm);}
         .cat-card:focus-visible{outline:2px solid var(--sys-blue);outline-offset:2px;}
         .cat-header{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
         .cat-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
-        .cat-name{font-size:13px;font-weight:600;color:var(--sys-label);}
+        .cat-name{font-size:14px;font-weight:600;color:var(--sys-label);}
         .cat-progress-track{height:3px;background:rgba(0,0,0,0.06);border-radius:2px;overflow:hidden;margin-bottom:10px;}
         .cat-progress-fill{height:100%;width:0%;border-radius:2px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);}
         .cat-footer{display:flex;align-items:center;justify-content:space-between;}
         .cat-status{font-size:10px;font-weight:600;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.04em;}
         .cat-footer-right{display:flex;align-items:center;gap:5px;}
         .overdue-badge{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--sys-red-bg);color:var(--sys-red);}
-        .cat-count{font-family:var(--font-mono);font-size:12px;font-weight:600;padding:2px 8px;border-radius:10px;}
+        .cat-count{font-family:var(--font-mono);font-size:13px;font-weight:600;padding:3px 9px;border-radius:10px;}
+        .cat-done-count{font-family:var(--font-mono);font-size:13px;font-weight:600;padding:3px 9px;border-radius:10px;background:rgba(50,173,230,0.12);color:#32ADE6;}
 
         /* Category color tokens */
         .cat-card[data-cat="사고관리"] .cat-icon{background:var(--sys-red-bg);color:var(--sys-red);}
@@ -172,15 +195,15 @@
 
         /* TASK LIST */
         #ui-post-list{padding:0 22px;}
-        .list-row{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 0;gap:16px;border-bottom:0.5px solid var(--sys-separator);transition:opacity 0.15s;}
+        .list-row{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 0;gap:16px;border-bottom:0.5px solid var(--sys-separator);transition:opacity 0.15s;}
         .list-row:last-child{border-bottom:none;}
         .list-row.done{opacity:0.42;}
-        .list-row.done .list-title{text-decoration:line-through;color:var(--sys-label-3);}
+        .list-row.done .list-title{color:var(--sys-label-3);}
         .list-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;}
         .list-cat-tag{display:inline-block;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;background:var(--sys-gray-bg);color:var(--sys-gray);margin-bottom:2px;width:fit-content;}
         .list-date{font-family:var(--font-mono);font-size:11px;color:var(--sys-label-4);}
-        .list-title{font-size:14px;font-weight:600;color:var(--sys-label);line-height:1.45;}
-        .list-content{font-size:13px;color:var(--sys-label-3);line-height:1.55;white-space:pre-wrap;margin-top:2px;}
+        .list-title{font-size:15px;font-weight:600;color:var(--sys-label);line-height:1.45;}
+        .list-content{font-size:13.5px;color:var(--sys-label-3);line-height:1.6;white-space:pre-wrap;margin-top:3px;}
         .list-duedate{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-family:var(--font-mono);color:var(--sys-label-3);margin-top:4px;}
         .list-duedate.overdue{color:var(--sys-red);background:var(--sys-red-bg);padding:2px 6px;border-radius:4px;font-weight:600;}
         .list-attachment{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:12px;color:var(--sys-blue);font-weight:500;text-decoration:none;}
@@ -221,17 +244,6 @@
         .btn-text-only:hover{color:var(--sys-label);}
 
         /* PERSONNEL */
-        .personnel-card{background:var(--sys-surface);border-radius:var(--r-lg);display:flex;align-items:stretch;box-shadow:var(--shadow-sm);overflow:hidden;}
-        .pers-item{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:6px;}
-        .pers-item.total{background:var(--sys-label);flex:1.3;}
-        .pers-divider{width:0.5px;background:var(--sys-separator);flex-shrink:0;align-self:stretch;}
-        .pers-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--sys-label-3);}
-        .pers-item.total .pers-label{color:rgba(255,255,255,0.45);}
-        .pers-val-row{display:flex;align-items:baseline;gap:3px;}
-        .pers-value{font-size:34px;font-weight:300;font-family:var(--font-mono);color:var(--sys-label);line-height:1;}
-        .pers-item.total .pers-value{color:white;}
-        .pers-unit{font-size:13px;color:var(--sys-label-4);}
-        .pers-item.total .pers-unit{color:rgba(255,255,255,0.4);}
         .pers-edit-btn{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--sys-label-3);font-size:11px;cursor:pointer;transition:all 0.12s;}
         .pers-edit-btn:hover{background:rgba(0,0,0,0.06);color:var(--sys-label);}
 
@@ -299,7 +311,8 @@
             .schedule-grid{grid-template-columns:repeat(2,1fr);}
             .top-nav{padding:0 16px;}
             .container{padding:24px 16px;}
-            .nav-center{display:none;}
+            .nav-center{display:flex;} /* 숨기지 않음 */
+            .nav-pill:last-child{display:none;} /* Tasks 수만 숨김 */
             .modal-sheet{max-width:100%;border-bottom-left-radius:0;border-bottom-right-radius:0;margin-top:auto;}
         }
         @media (hover:none) and (pointer:coarse){
@@ -348,42 +361,47 @@
 <div class="container">
 
     <div class="section">
-        <div class="section-head">
-            <span class="section-title">출력 인원 현황</span>
-            <button class="pers-edit-btn" onclick="openPersonnelModal()" title="인원 입력" aria-label="인원 입력">
-                <i class="fa-solid fa-pencil"></i>
-            </button>
-        </div>
-        <div class="personnel-card">
-            <div class="pers-item total">
-                <span class="pers-label">전체 출력인원</span>
-                <div class="pers-val-row">
-                    <span class="pers-value" id="pers-total">0</span>
-                    <span class="pers-unit">명</span>
-                </div>
+        <!-- 라벨 행: 3fr(인원) + 4fr(일정) -->
+        <div style="display:grid;grid-template-columns:3fr 4fr;gap:6px;margin-bottom:6px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+                <span class="section-title">출력 인원 현황</span>
+                <button class="pers-edit-btn" onclick="openPersonnelModal()" title="인원 입력" aria-label="인원 입력"><i class="fa-solid fa-pencil"></i></button>
             </div>
-            <div class="pers-divider"></div>
-            <div class="pers-item">
-                <span class="pers-label">하이테크</span>
-                <div class="pers-val-row">
-                    <span class="pers-value" id="pers-hitech">0</span>
-                    <span class="pers-unit">명</span>
-                </div>
-            </div>
-            <div class="pers-divider"></div>
-            <div class="pers-item">
-                <span class="pers-label">건축기계</span>
-                <div class="pers-val-row">
-                    <span class="pers-value" id="pers-arch">0</span>
-                    <span class="pers-unit">명</span>
-                </div>
+            <div style="display:flex;align-items:center;gap:7px;">
+                <span class="section-title">최차장 주간 일정</span>
+                <button class="pers-edit-btn" onclick="openScheduleModal()" title="일정 입력" aria-label="일정 입력"><i class="fa-solid fa-pencil"></i></button>
             </div>
         </div>
-    </div>
-
-    <div class="section">
-        <div class="section-head"><span class="section-title">최차장 주간 일정</span></div>
-        <div class="schedule-grid" id="ui-schedule"></div>
+        <!-- 카드 행: 7칸 단일 그리드 -->
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;">
+            <!-- 전체 출력인원 -->
+            <div class="sch-card today" style="position:relative;">
+                <span class="today-badge">TODAY</span>
+                <div class="sch-top"><span class="sch-dayname" style="color:rgba(255,255,255,0.5);">전체 출력인원</span></div>
+                <div style="display:flex;align-items:baseline;gap:2px;">
+                    <span class="sch-date" id="pers-total">0</span>
+                    <span class="sch-loc" style="color:rgba(255,255,255,0.65);">명</span>
+                </div>
+            </div>
+            <!-- 하이테크 -->
+            <div class="sch-card">
+                <div class="sch-top"><span class="sch-dayname">하이테크</span></div>
+                <div style="display:flex;align-items:baseline;gap:2px;">
+                    <span class="sch-date" id="pers-hitech">0</span>
+                    <span class="sch-loc">명</span>
+                </div>
+            </div>
+            <!-- 건축기계 -->
+            <div class="sch-card">
+                <div class="sch-top"><span class="sch-dayname">건축기계</span></div>
+                <div style="display:flex;align-items:baseline;gap:2px;">
+                    <span class="sch-date" id="pers-arch">0</span>
+                    <span class="sch-loc">명</span>
+                </div>
+            </div>
+            <!-- 주간일정 4칸 (JS 렌더, display:contents로 그리드 참여) -->
+            <div id="ui-schedule" style="display:contents;"></div>
+        </div>
     </div>
 
     <div class="section">
@@ -401,36 +419,45 @@
             <button class="gsb-clear" id="gsb-clear" onclick="clearGlobalSearch()" style="display:none;" aria-label="검색 초기화"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
+        <div class="new-arrive-wrap" id="new-arrive-wrap">
+            <div class="new-arrive-header">
+                <span class="new-arrive-dot"></span>
+                <span class="new-arrive-label">New Arrive</span>
+                <span style="font-size:10px;color:var(--sys-label-4);">— 최근 7일 신규 업무</span>
+            </div>
+            <div class="new-arrive-list" id="new-arrive-list"></div>
+        </div>
+
         <div class="category-grid">
             <div class="cat-card" id="card-사고관리" data-cat="사고관리" onclick="selectCategory('사고관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('사고관리')">
                 <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><span class="cat-name">사고관리</span></div>
                 <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-사고관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-사고관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-사고관리" style="display:none;"></span><span class="cat-count" id="badge-사고관리">0</span></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-사고관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-사고관리" style="display:none;"></span><span class="cat-done-count" id="done-사고관리" style="display:none;"></span><span class="cat-count" id="badge-사고관리">0</span></div></div>
             </div>
             <div class="cat-card" id="card-입찰지원" data-cat="입찰지원" onclick="selectCategory('입찰지원')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('입찰지원')">
                 <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-layer-group"></i></div><span class="cat-name">입찰지원</span></div>
                 <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-입찰지원"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-입찰지원">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-입찰지원" style="display:none;"></span><span class="cat-count" id="badge-입찰지원">0</span></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-입찰지원">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-입찰지원" style="display:none;"></span><span class="cat-done-count" id="done-입찰지원" style="display:none;"></span><span class="cat-count" id="badge-입찰지원">0</span></div></div>
             </div>
             <div class="cat-card" id="card-노무관리" data-cat="노무관리" onclick="selectCategory('노무관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('노무관리')">
                 <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-user-group"></i></div><span class="cat-name">노무관리</span></div>
                 <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-노무관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-노무관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-노무관리" style="display:none;"></span><span class="cat-count" id="badge-노무관리">0</span></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-노무관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-노무관리" style="display:none;"></span><span class="cat-done-count" id="done-노무관리" style="display:none;"></span><span class="cat-count" id="badge-노무관리">0</span></div></div>
             </div>
             <div class="cat-card" id="card-인증관리" data-cat="인증관리" onclick="selectCategory('인증관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('인증관리')">
                 <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-certificate"></i></div><span class="cat-name">인증관리</span></div>
                 <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-인증관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-인증관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-인증관리" style="display:none;"></span><span class="cat-count" id="badge-인증관리">0</span></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-인증관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-인증관리" style="display:none;"></span><span class="cat-done-count" id="done-인증관리" style="display:none;"></span><span class="cat-count" id="badge-인증관리">0</span></div></div>
             </div>
             <div class="cat-card" id="card-법무관리" data-cat="법무관리" onclick="selectCategory('법무관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('법무관리')">
                 <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-scale-balanced"></i></div><span class="cat-name">법무관리</span></div>
                 <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-법무관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-법무관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-법무관리" style="display:none;"></span><span class="cat-count" id="badge-법무관리">0</span></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-법무관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-법무관리" style="display:none;"></span><span class="cat-done-count" id="done-법무관리" style="display:none;"></span><span class="cat-count" id="badge-법무관리">0</span></div></div>
             </div>
             <div class="cat-card" id="card-기타관리" data-cat="기타관리" onclick="selectCategory('기타관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('기타관리')">
                 <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-ellipsis"></i></div><span class="cat-name">기타관리</span></div>
                 <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-기타관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-기타관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-기타관리" style="display:none;"></span><span class="cat-count" id="badge-기타관리">0</span></div></div>
+                <div class="cat-footer"><span class="cat-status" id="status-기타관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-기타관리" style="display:none;"></span><span class="cat-done-count" id="done-기타관리" style="display:none;"></span><span class="cat-count" id="badge-기타관리">0</span></div></div>
             </div>
         </div>
 
@@ -456,7 +483,7 @@
 </div>
 
 <!-- MODAL: 업무 추가/수정 -->
-<div id="inputModal" class="modal" onclick="if(event.target===this)closeModal()">
+<div id="inputModal" class="modal">
     <div class="modal-sheet">
         <div class="modal-title" id="modal-ui-title">새 업무 추가</div>
         <input type="hidden" id="reg-id">
@@ -481,7 +508,7 @@
 </div>
 
 <!-- MODAL: 출력인원 -->
-<div id="personnelModal" class="modal" onclick="if(event.target===this)closePersonnelModal()">
+<div id="personnelModal" class="modal">
     <div class="modal-sheet">
         <div class="modal-title">출력 인원 입력</div>
         <div class="modal-subtitle" id="pers-modal-date"></div>
@@ -500,8 +527,21 @@
     </div>
 </div>
 
+<!-- MODAL: 주간일정 -->
+<div id="scheduleModal" class="modal">
+    <div class="modal-sheet">
+        <div class="modal-title">주간 일정 수정</div>
+        <div class="modal-subtitle">4일치 장소/내용을 입력하세요</div>
+        <div id="sch-input-rows"></div>
+        <div class="modal-actions">
+            <button class="btn-fill dark" id="btn-sch-save" onclick="handleScheduleSave()">구글시트 저장</button>
+            <button class="btn-text-only" onclick="closeScheduleModal()">취소</button>
+        </div>
+    </div>
+</div>
+
 <!-- MODAL: KPI -->
-<div id="kpiModal" class="modal" onclick="if(event.target===this)closeKpiModal()">
+<div id="kpiModal" class="modal">
     <div class="modal-sheet wide">
         <div class="modal-title">월별 업무 달성 KPI</div>
         <div class="modal-subtitle" id="kpi-date-range">—</div>
@@ -538,19 +578,35 @@
     /* ── PASSWORD ── */
     function onPwdInput(val) { _sessionPwd = val.trim(); } // ② 입력 즉시 캐싱
     function getGlobalPassword() {
-        const field = document.getElementById('global-auth-pwd').value.trim();
-        if (field) { _sessionPwd = field; return field; }
+        const field = document.getElementById('global-auth-pwd');
+        const val = field.value.trim();
+        if (val) { _sessionPwd = val; return val; }
         if (_sessionPwd) return _sessionPwd;
-        alert("상단 바의 인증코드를 입력하십시오."); return null;
+        // alert 대신 필드 강조
+        const wrap = field.closest('.nav-auth-wrap') || field.parentElement;
+        wrap.style.boxShadow = '0 0 0 3px rgba(255,59,48,0.3)';
+        wrap.style.borderColor = 'var(--sys-red)';
+        field.focus();
+        setTimeout(() => { wrap.style.boxShadow = ''; wrap.style.borderColor = ''; }, 2000);
+        return null;
     }
 
     /* ── INIT ── */
+    const CACHE_TTL = 5 * 60 * 1000; // 5분
+
     async function initApp(forceReload=false) {
         const overlay = document.getElementById('loading-overlay');
         const cached = localStorage.getItem('warehouse_cache_data');
         if (!forceReload && cached) {
             try {
-                parseAndSetState(JSON.parse(cached));
+                const parsed = JSON.parse(cached);
+                // 캐시 만료 감지
+                if (parsed.cachedAt && Date.now() - parsed.cachedAt > CACHE_TTL) {
+                    localStorage.removeItem('warehouse_cache_data');
+                    throw new Error('cache expired');
+                }
+                const cacheData = parsed.cachedAt ? parsed.data : parsed; // 구버전 호환
+                parseAndSetState(cacheData);
                 overlay.style.display='none';
                 document.getElementById('cache-chip').style.display=''; // ⑩ 캐시 표시
                 render(); return;
@@ -559,7 +615,7 @@
         overlay.classList.remove('fade-out'); overlay.style.display='flex';
         try {
             const data = await fetch(GAS_URL).then(r=>r.json());
-            localStorage.setItem('warehouse_cache_data', JSON.stringify(data));
+            localStorage.setItem('warehouse_cache_data', JSON.stringify({data, cachedAt: Date.now()}));
             parseAndSetState(data);
             document.getElementById('cache-chip').style.display='none'; // ⑩ 신선 데이터
         } catch(e) { console.error('Fetch error:',e); }
@@ -584,10 +640,10 @@
     async function syncSilent(restoreY=null) { // ⑤ 백그라운드 싱크
         try {
             const data = await fetch(GAS_URL).then(r=>r.json());
-            localStorage.setItem('warehouse_cache_data', JSON.stringify(data));
+            localStorage.setItem('warehouse_cache_data', JSON.stringify({data, cachedAt: Date.now()}));
             parseAndSetState(data);
             document.getElementById('cache-chip').style.display='none';
-            render();
+            renderDeferred();
             if (restoreY!==null) requestAnimationFrame(()=>window.scrollTo(0,restoreY));
         } catch(e) {}
     }
@@ -614,6 +670,12 @@
     function onGlobalSearch(val) {
         AppState.globalQuery = val.trim();
         AppState.selectedCategory = null;
+        // 아카이브 모드 해제
+        if (AppState.onlyArchiveMode) {
+            AppState.onlyArchiveMode = false;
+            document.getElementById('btn-toggle-archive').classList.remove('active');
+            document.getElementById('archive-btn-text').innerText = '종료된 업무';
+        }
         document.getElementById('gsb-clear').style.display = val?'':'none';
         document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('selected'));
         render();
@@ -633,6 +695,12 @@
     }
 
     /* ── RENDER ── */
+    let _renderTimer = null;
+    function renderDeferred() {
+        clearTimeout(_renderTimer);
+        _renderTimer = setTimeout(render, 16); // 1 frame debounce
+    }
+
     function render() {
         let total=0, doneTotal=0;
         const today=todayStr();
@@ -644,13 +712,16 @@
             total+=tasks.length; doneTotal+=doneCnt;
 
             const pct=tasks.length>0?Math.round(doneCnt/tasks.length*100):0;
-            document.getElementById(`badge-${cat}`).innerText = AppState.onlyArchiveMode?doneCnt:activeCnt;
+            document.getElementById(`badge-${cat}`).innerText = AppState.onlyArchiveMode?`종료 ${doneCnt}`:`진행 ${activeCnt}`;
             document.getElementById(`progress-${cat}`).style.width=`${pct}%`;
             document.getElementById(`status-${cat}`).innerText = tasks.length===0?'Empty':(activeCnt===0?'완료':'Active');
 
             // ⑫ 기한초과 배지
             const oBadge=document.getElementById(`overdue-${cat}`);
             if(oBadge){oBadge.style.display=overdueCnt>0?'':'none';oBadge.textContent=`D+ ${overdueCnt}`;}
+            // 종료된업무 배지
+            const dBadge=document.getElementById(`done-${cat}`);
+            if(dBadge){dBadge.style.display=doneCnt>0?'':'none';dBadge.textContent=`종료 ${doneCnt}`;}
 
             document.getElementById(`card-${cat}`).classList.toggle('selected',AppState.selectedCategory===cat);
         }
@@ -668,12 +739,50 @@
         document.getElementById('ui-ring-fill').style.strokeDashoffset=circ-(circ*pct/100);
 
         // Schedule ⑪ todayStr 이미 적용됨
-        document.getElementById('ui-schedule').innerHTML=AppState.schedule.map(s=>{
+        const schItems = [...AppState.schedule];
+        while (schItems.length < 4) schItems.push(null);
+        document.getElementById('ui-schedule').innerHTML=schItems.map(s=>{
+            if (!s) return `<div class="sch-card"><div class="sch-dayname">—</div></div>`;
             const cls=['sch-card',s.isToday?'today':'',s.isHoliday?'holiday':''].filter(Boolean).join(' ');
-            return `<div class="${cls}"><div class="sch-top"><span class="sch-dayname">${escHtml(s.id||'')}</span>${s.isToday?'<span class="today-badge">TODAY</span>':''}</div><div class="sch-date">${escHtml(s.date||'')}</div>${s.isHoliday?`<div class="holiday-label">${escHtml(s.holiday||'')}</div>`:''}<div class="sch-loc">${escHtml(s.loc||'—')}</div></div>`;
+            return `<div class="${cls}">${s.isToday?'<span class="today-badge">TODAY</span>':''}<div class="sch-top"><span class="sch-dayname">${escHtml(s.id||'')}</span></div><div class="sch-date">${escHtml(s.date||'')}</div>${s.isHoliday?`<div class="holiday-label">${escHtml(s.holiday||'')}</div>`:''}<div class="sch-loc">${escHtml(s.loc||'—')}</div></div>`;
         }).join('');
 
+        renderNewArrive();
         filterAndRenderList();
+    }
+
+    /* ── NEW ARRIVE ── */
+    function renderNewArrive() {
+        const today = todayStr();
+        const cutoff = new Date(today);
+        cutoff.setDate(cutoff.getDate() - 7);
+        const cutoffStr = cutoff.toLocaleDateString('en-CA');
+
+        let recent = [];
+        for (const cat of CATS) {
+            (AppState.tasks[cat] || []).forEach(t => {
+                if (t.date && t.date >= cutoffStr) recent.push({...t, cat});
+            });
+        }
+        // 최신순 정렬, 최대 3개
+        recent.sort((a, b) => (b.date || '').localeCompare(a.date || '') || String(b.id || '').localeCompare(String(a.id || '')));
+        recent = recent.slice(0, 3);
+
+        const wrap = document.getElementById('new-arrive-wrap');
+        const list = document.getElementById('new-arrive-list');
+        if (recent.length === 0) { wrap.style.display = 'none'; return; }
+        wrap.style.display = '';
+
+        list.innerHTML = recent.map(t => {
+            const isToday = t.date === today;
+            return `<div class="na-card" data-cat="${escHtml(t.cat)}" title="${escHtml(t.title)}">
+                <span class="na-dot ${escHtml(t.cat)}"></span>
+                <span class="na-cat">${escHtml(t.cat)}</span>
+                <span class="na-title">${escHtml(t.title)}</span>
+                ${isToday ? '<span class="na-new-badge">NEW</span>' : ''}
+                <span class="na-date">${escHtml(t.date)}</span>
+            </div>`;
+        }).join('');
     }
 
     /* ── LIST ── */
@@ -698,8 +807,10 @@
         }
 
         let filtered=sourceItems.filter(t=>{
-            if (AppState.onlyArchiveMode&&t.status!=='done') return false;
-            if (!AppState.onlyArchiveMode&&t.status==='done') return false;
+            if (!gq) {
+                if (AppState.onlyArchiveMode&&t.status!=='done') return false;
+                if (!AppState.onlyArchiveMode&&t.status==='done') return false;
+            }
             if (keyword) return (t.title||'').toLowerCase().includes(keyword)||(t.content||'').toLowerCase().includes(keyword);
             return true;
         });
@@ -709,7 +820,7 @@
         filtered.sort((a,b)=>{
             if (mode==='duedate_asc') return (a.duedate||'9999-99-99').localeCompare(b.duedate||'9999-99-99');
             if (mode==='duedate_desc') return (b.duedate||'').localeCompare(a.duedate||'');
-            return (a.date||'').localeCompare(b.date||'');
+            return (b.date||'').localeCompare(a.date||''); // 내림차순(최신먼저)
         });
 
         if (gq) {
@@ -742,9 +853,9 @@
                     ${fileHref?`<a href="${fileHref}" target="_blank" rel="noopener" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일</a>`:''}
                 </div>
                 <div class="list-actions">
-                    <button class="act-btn done-btn${isDone?' active':''}" onclick="toggleDone('${tid}')" title="${isDone?'진행중으로 변경':'완료 처리'}"><i class="fa-solid fa-check"></i></button>
-                    <button class="act-btn mod-btn" onclick="openModifyModal('${catBtn}','${tid}')" title="수정"><i class="fa-solid fa-pen"></i></button>
-                    <button class="act-btn del-btn" onclick="handleDelete('${catBtn}','${tid}')" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="act-btn done-btn${isDone?' active':''}" data-action="done" data-id="${escHtml(t.id)}" data-cat="${escHtml(t.cat||AppState.selectedCategory)}" title="${isDone?'진행중으로 변경':'완료 처리'}"><i class="fa-solid fa-check"></i></button>
+                    <button class="act-btn mod-btn" data-action="modify" data-id="${escHtml(t.id)}" data-cat="${escHtml(t.cat||AppState.selectedCategory)}" title="수정"><i class="fa-solid fa-pen"></i></button>
+                    <button class="act-btn del-btn" data-action="delete" data-id="${escHtml(t.id)}" data-cat="${escHtml(t.cat||AppState.selectedCategory)}" title="삭제"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             </div>`;
         }).join('');
@@ -848,6 +959,52 @@
         finally{btn.textContent='구글시트 저장';btn.disabled=false;}
     }
 
+    /* ── SCHEDULE MODAL ── */
+    function openScheduleModal() {
+        const rows = document.getElementById('sch-input-rows');
+        const DAY_KO = ['일','월','화','수','목','금','토'];
+        rows.innerHTML = AppState.schedule.map((s, i) => {
+            const d = new Date(s.fullDate + 'T00:00:00');
+            const dayLabel = `${s.fullDate} (${DAY_KO[d.getDay()]})`;
+            const loc = s.loc === '—' ? '' : escHtml(s.loc || '');
+            return `<div class="field-group">
+                <div class="field-label" style="display:flex;align-items:center;gap:8px;">
+                    <span>${dayLabel}</span>
+                    ${s.isToday ? '<span style="font-size:9px;font-weight:700;color:var(--sys-blue);background:var(--sys-blue-bg);padding:1px 6px;border-radius:8px;">TODAY</span>' : ''}
+                </div>
+                <input type="text" id="sch-loc-${i}" value="${loc}" placeholder="장소 / 내용 입력">
+            </div>`;
+        }).join('');
+        document.getElementById('scheduleModal').classList.add('active');
+        setTimeout(() => document.getElementById('sch-loc-0')?.focus(), 200);
+    }
+    function closeScheduleModal() { document.getElementById('scheduleModal').classList.remove('active'); }
+
+    async function handleScheduleSave() {
+        const pwd = getGlobalPassword(); if (!pwd) return;
+        const entries = AppState.schedule.map((s, i) => ({
+            date: s.fullDate,
+            loc: document.getElementById(`sch-loc-${i}`)?.value.trim() || ''
+        }));
+        const btn = document.getElementById('btn-sch-save');
+        btn.textContent = '저장 중…'; btn.disabled = true;
+        try {
+            const res = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'saveSchedule', entries, password: pwd }) });
+            const result = await res.json();
+            if (result.status === 'auth_error') { alert(result.message); }
+            else {
+                // 로컬 상태 즉시 반영
+                entries.forEach((e, i) => { if (AppState.schedule[i]) AppState.schedule[i].loc = e.loc || '—'; });
+                render();
+                closeScheduleModal();
+                localStorage.removeItem('warehouse_cache_data');
+                syncSilent();
+            }
+        } catch(e) { alert('통신 오류가 발생했습니다.'); }
+        finally { btn.textContent = '구글시트 저장'; btn.disabled = false; }
+    }
+
     /* ── SAVE ── */
     async function handleSave() {
         const id=document.getElementById('reg-id').value;
@@ -860,7 +1017,7 @@
         const payload={
             action:id?'updateTask':'addTask', id:id||Date.now().toString(),
             category:document.getElementById('reg-cat').value,
-            date:document.getElementById('reg-startdate').value||todayStr(),
+            date:id ? todayStr() : (document.getElementById('reg-startdate').value||todayStr()),
             title, content:document.getElementById('reg-content').value.trim(),
             duedate:document.getElementById('reg-duedate').value,
             password:pwd, fileData:null, fileName:null, fileMime:null
@@ -902,6 +1059,7 @@
             const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'deleteTask',id,password:pwd})});
             const result=await res.json();
             if(result.status==="auth_error"){alert(result.message);await initApp(true);}
+            else if(result.status!=="ok"){alert("서버 오류가 발생했습니다. 데이터를 복원합니다.");await initApp(true);}
             else{await syncSilent();}
         } catch(e){alert("통신 오류가 발생했습니다.");await initApp(true);}
     }
@@ -916,7 +1074,6 @@
             if(task){task.status=task.status==='done'?'active':'done';break;}
         }
         render();
-        requestAnimationFrame(()=>window.scrollTo(0,scrollY));
         try {
             const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'toggleStatus',id,password:pwd})});
             const result=await res.json();
@@ -972,7 +1129,48 @@
         window.print();
     }
 
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closePersonnelModal();closeKpiModal();}});
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            const active = document.querySelector('.modal.active');
+            if (!active) return;
+            if (active.id === 'inputModal') closeModal();
+            else if (active.id === 'personnelModal') closePersonnelModal();
+            else if (active.id === 'scheduleModal') closeScheduleModal();
+            else if (active.id === 'kpiModal') closeKpiModal();
+        }
+    });
+
+    // #2 — 업무 목록 버튼 이벤트 위임
+    document.getElementById('ui-post-list').addEventListener('click', e => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const {action, id, cat} = btn.dataset;
+        if (action === 'done') toggleDone(id);
+        else if (action === 'modify') openModifyModal(cat, id);
+        else if (action === 'delete') handleDelete(cat, id);
+    });
+
+    // #13 — na-card 이벤트 위임
+    document.getElementById('new-arrive-list').addEventListener('click', e => {
+        const card = e.target.closest('.na-card');
+        if (card && card.dataset.cat) selectCategory(card.dataset.cat);
+    });
+
+    // #9 — 모달 드래그 후 배경 클릭으로 닫힘 방지 (mousedown/mouseup 추적)
+    let _modalMousedownTarget = null;
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('mousedown', e => { _modalMousedownTarget = e.target; });
+        modal.addEventListener('mouseup', e => {
+            if (_modalMousedownTarget === modal && e.target === modal) {
+                if (modal.id === 'inputModal') closeModal();
+                else if (modal.id === 'personnelModal') closePersonnelModal();
+                else if (modal.id === 'scheduleModal') closeScheduleModal();
+                else if (modal.id === 'kpiModal') closeKpiModal();
+            }
+            _modalMousedownTarget = null;
+        });
+    });
+
     initApp();
 </script>
 </body>
