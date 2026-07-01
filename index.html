@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -601,27 +602,6 @@
         field.focus();
         setTimeout(() => { wrap.style.boxShadow = ''; wrap.style.borderColor = ''; }, 2000);
         return null;
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Worker Voice</title>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <style>
-    :root {
-      --bg: #f5f5f7;
-      --surface: #ffffff;
-      --surface-low: #f3f3f5;
-      --text: #1a1c1d;
-      --muted: #44474d;
-      --line: #d1d1d6;
-      --line-strong: #c5c6ce;
-      --primary: #1a2b47;
-      --secondary: #0070eb;
-      --low: #28a745;
-      --medium: #ff9500;
-      --high: #ff3b30;
-      --critical: #af52de;
-      --radius: 16px;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
     /* ── INIT ── */
@@ -657,12 +637,6 @@
             setTimeout(()=>overlay.style.display='none',300);
             render();
         }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
     }
 
     function parseAndSetState(data) {
@@ -674,11 +648,6 @@
         }
         const today = todayStr();
         AppState.schedule.forEach(s => s.isToday = (s.fullDate === today));
-    .container { max-width: 1280px; margin: 0 auto; padding: 24px 16px 40px; }
-    .topbar {
-      height: 64px; border-bottom: 1px solid var(--line-strong);
-      background: var(--surface); display: flex; align-items: center;
-      position: sticky; top: 0; z-index: 10;
     }
 
     async function syncSilent(restoreY=null) { // ⑤ 백그라운드 싱크
@@ -690,18 +659,6 @@
             renderDeferred();
             if (restoreY!==null) requestAnimationFrame(()=>window.scrollTo(0,restoreY));
         } catch(e) {}
-    .topbar-inner { max-width: 1280px; width: 100%; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 24px; }
-    .brand { font-size: 46px; font-weight: 800; letter-spacing: -0.02em; color: #0d1b37; line-height: 1; }
-    .hero-title { font-size: 44px; margin: 20px 0 6px; color: #0d1b37; letter-spacing: -0.01em; }
-    .hero-sub { color: var(--muted); margin: 0 0 20px; }
-    .grid { display: grid; grid-template-columns: 1.35fr .95fr; gap: 24px; }
-    @media (max-width: 1060px) { .grid { grid-template-columns: 1fr; } .brand { font-size: 34px; } .hero-title { font-size: 34px; } }
-    .card {
-      background: var(--surface);
-      border: 1px solid #e9eaee;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 24px;
     }
 
     function syncForce() { initApp(true); }
@@ -713,19 +670,6 @@
         document.getElementById('global-search-input').value="";
         document.getElementById('gsb-clear').style.display='none';
         render(); window.scrollTo({top:0,behavior:'smooth'});
-    h2 { margin: 0; font-size: 36px; }
-    h3 { margin: 0 0 14px; font-size: 36px; color: #0d1b37; }
-    .section-title { font-size: 34px; margin-bottom: 8px; color: #0d1b37; }
-    .muted { color: var(--muted); }
-    .label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
-    input, select, textarea {
-      width: 100%;
-      border: 1.5px solid var(--line);
-      border-radius: 10px;
-      padding: 12px 14px;
-      font: inherit;
-      background: #fff;
-      color: var(--text);
     }
 
     function toggleArchiveMode() {
@@ -733,8 +677,6 @@
         document.getElementById('btn-toggle-archive').classList.toggle('active',AppState.onlyArchiveMode);
         document.getElementById('archive-btn-text').innerText=AppState.onlyArchiveMode?'진행중으로 복귀':'종료된 업무';
         render();
-    input:focus, select:focus, textarea:focus {
-      outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(0, 112, 235, .2);
     }
 
     /* ── GLOBAL SEARCH ⑬ ── */
@@ -750,27 +692,12 @@
         document.getElementById('gsb-clear').style.display = val?'':'none';
         document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('selected'));
         render();
-    textarea { min-height: 130px; resize: vertical; }
-    .form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .form-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    @media (max-width: 820px) { .form-grid2, .form-grid3 { grid-template-columns: 1fr; } }
-    .risk-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px; }
-    .risk-btn {
-      border: 0; color: #fff; font-weight: 700; border-radius: 8px; padding: 10px 6px; cursor: pointer; opacity: .55;
     }
     function clearGlobalSearch() {
         AppState.globalQuery="";
         document.getElementById('global-search-input').value="";
         document.getElementById('gsb-clear').style.display='none';
         render();
-    .risk-btn.active { opacity: 1; box-shadow: inset 0 0 0 2px rgba(255,255,255,.4); }
-    .risk-low { background: var(--low); } .risk-medium { background: var(--medium); } .risk-high { background: var(--high); } .risk-critical { background: var(--critical); }
-    .upload-box {
-      border: 1px dashed var(--line-strong);
-      background: var(--surface-low);
-      border-radius: 10px;
-      padding: 14px;
-      display: flex; justify-content: space-between; align-items: center; gap: 10px;
     }
 
     /* ── SORT ⑥ ── */
@@ -835,11 +762,6 @@
 
         renderNewArrive();
         filterAndRenderList();
-    .toggle { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-    .toggle input[type="checkbox"] { width: 44px; height: 24px; }
-    .submit-btn {
-      width: 100%; border: 0; color: #fff; font-size: 22px; font-weight: 700; border-radius: 10px; padding: 14px 16px; cursor: pointer;
-      background: linear-gradient(to bottom, #1a2b47, #0d1624); box-shadow: var(--shadow);
     }
 
     /* ── NEW ARRIVE ── */
@@ -961,176 +883,7 @@
         } else {
             el.textContent='파일 선택 (최대 25MB)'; icon.className='fa-solid fa-cloud-arrow-up';
         }
-    .submit-btn:active { transform: translateY(1px); }
-    .notice { font-size: 14px; color: var(--muted); margin-top: 10px; }
-    .success {
-      margin-top: 10px; border: 1px solid #b9e3c2; background: #effbf2; color: #136b2a;
-      border-radius: 10px; padding: 12px 14px; font-size: 14px;
     }
-    .lookup-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-    .lookup-box { display: flex; gap: 8px; margin: 10px 0 12px; }
-    .lookup-box input { flex: 1; }
-    .lookup-btn { border: 0; border-radius: 10px; background: var(--secondary); color: #fff; font-weight: 700; padding: 10px 16px; cursor: pointer; }
-    .item { border-top: 1px solid #ececf0; padding: 12px 0; }
-    .item:first-child { border-top: 0; }
-    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #fff; margin-right: 6px; }
-    .status { font-size: 12px; color: var(--muted); }
-    .title { font-size: 18px; font-weight: 700; margin: 6px 0; color: #111f3f; }
-    .meta { color: var(--muted); font-size: 13px; }
-    .content { margin-top: 6px; white-space: pre-wrap; }
-  </style>
-</head>
-<body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">Worker Voice</div>
-    </div>
-  </header>
-
-  <main class="container">
-    <h2 class="hero-title">근로자의 의견청취(작업중지권포함)</h2>
-    <p class="hero-sub">안전하고 신뢰할 수 있는 일터를 만들기 위한 여러분의 의견을 들려주세요.</p>
-
-    <div class="grid">
-      <section class="card">
-        <h3 class="section-title">신규 보고서 작성</h3>
-        <form id="voiceForm" method="post" target="submitFrame">
-          <input type="hidden" name="action" value="create" />
-          <input type="hidden" name="response_mode" value="iframe" />
-          <input type="hidden" name="risk_level" id="riskLevel" value="medium" />
-          <input type="hidden" name="recaptcha_token" id="recaptchaToken" />
-
-          <div class="form-grid2">
-            <div>
-              <label class="label">카테고리</label>
-              <select name="category" required>
-                <option value="안전관리">안전관리</option>
-                <option value="노무관리">노무관리</option>
-                <option value="기타관리">기타관리</option>
-              </select>
-            </div>
-            <div>
-              <label class="label">위험 수준</label>
-              <div class="risk-row">
-                <button type="button" class="risk-btn risk-low" data-risk="low">낮음</button>
-                <button type="button" class="risk-btn risk-medium active" data-risk="medium">보통</button>
-                <button type="button" class="risk-btn risk-high" data-risk="high">높음</button>
-                <button type="button" class="risk-btn risk-critical" data-risk="critical">긴급</button>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top:12px;">
-            <label class="label">현장 이름</label>
-            <select name="site_name" id="siteName" required>
-              <option value="">현장 선택</option>
-            </select>
-          </div>
-
-          <div style="margin-top:12px;">
-            <label class="label">제목(상용구)</label>
-            <select id="titleTemplate" required></select>
-            <input id="titleInput" name="title" maxlength="100" placeholder="문제점을 간략하게 요약해 주세요..." style="margin-top:8px;" disabled required />
-          </div>
-
-          <div style="margin-top:12px;">
-            <label class="label">세부 내용</label>
-            <textarea name="content" placeholder="발생 위치, 시간, 관련자 등 구체적인 내용을 입력해 주세요..." required></textarea>
-          </div>
-
-          <div style="margin-top:12px;" class="upload-box">
-            <div class="muted">파일 업로드 (PDF, JPG, PNG)</div>
-            <div>
-              <input id="attachmentFile" type="file" accept="image/*" />
-              <input type="hidden" name="attachment_base64" id="attachmentBase64" />
-              <input type="hidden" name="attachment_name" id="attachmentName" />
-              <input type="hidden" name="attachment_mime" id="attachmentMime" />
-            </div>
-          </div>
-
-          <div class="toggle">
-            <input type="checkbox" id="isAnonymousToggle" />
-            <span><strong>익명으로 제출하기</strong></span>
-            <input type="hidden" name="is_anonymous" id="isAnonymousHidden" value="TRUE" />
-          </div>
-
-          <div class="form-grid3" style="margin-top:10px;">
-            <div><label class="label">이름</label><input name="reporter_name" id="reporterName" /></div>
-            <div><label class="label">전화번호</label><input name="reporter_contact" id="reporterContact" placeholder="010-0000-0000" /></div>
-            <div><label class="label">이메일 주소</label><input name="reporter_email" id="reporterEmail" type="email" placeholder="email@company.com" /></div>
-          </div>
-
-          <button class="submit-btn" type="submit" style="margin-top:14px;">보고서 제출하기</button>
-          <div style="margin-top:10px;" class="g-recaptcha" data-sitekey="CHANGE_ME_RECAPTCHA_SITE_KEY"></div>
-          <div class="notice" id="submitMsg">접수 대기 중</div>
-          <div class="success" id="receiptMsg" style="display:none;"></div>
-        </form>
-        <iframe name="submitFrame" style="display:none;"></iframe>
-      </section>
-
-      <section class="card">
-        <div class="lookup-head">
-          <h3 style="font-size:30px;">보고서 및 문의 내역</h3>
-        </div>
-        <div class="lookup-box">
-          <input id="receiptNoInput" maxlength="4" placeholder="접수번호 4자리 입력" />
-          <button class="lookup-btn" id="btnLookup">조회</button>
-        </div>
-        <div id="list"><p class="muted">접수번호로 조회하면 처리결과를 확인할 수 있습니다.</p></div>
-      </section>
-    </div>
-  </main>
-
-  <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbyEhd91bxscWGtnLiEwb74vpEcEsNicXHaEdquyLjEkY3-Wxrv-5_5OMoF3f0s6NRzG/exec";
-    const voiceForm = document.getElementById("voiceForm");
-    const submitMsg = document.getElementById("submitMsg");
-    const receiptMsg = document.getElementById("receiptMsg");
-    const siteNameEl = document.getElementById("siteName");
-    const riskLevelEl = document.getElementById("riskLevel");
-    const riskButtons = document.querySelectorAll(".risk-btn");
-    const receiptNoInput = document.getElementById("receiptNoInput");
-    const listEl = document.getElementById("list");
-    const isAnonymousToggle = document.getElementById("isAnonymousToggle");
-    const isAnonymousHidden = document.getElementById("isAnonymousHidden");
-    const categoryEl = voiceForm.querySelector('select[name="category"]');
-    const titleTemplateEl = document.getElementById("titleTemplate");
-    const titleInputEl = document.getElementById("titleInput");
-    const reporterName = document.getElementById("reporterName");
-    const reporterContact = document.getElementById("reporterContact");
-    const reporterEmail = document.getElementById("reporterEmail");
-    const attachmentFile = document.getElementById("attachmentFile");
-    const attachmentBase64 = document.getElementById("attachmentBase64");
-    const attachmentName = document.getElementById("attachmentName");
-    const attachmentMime = document.getElementById("attachmentMime");
-    const recaptchaTokenEl = document.getElementById("recaptchaToken");
-
-    const riskLabel = { low: "낮음", medium: "보통", high: "높음", critical: "긴급" };
-    const statusLabel = { active: "처리중", in_review: "검토중", done: "완료", hold: "보류" };
-    const titleTemplates = {
-      "안전관리": [
-        "작업중지권 발동",
-        "보호구 미착용/지급 부족",
-        "추락·낙하 위험 구간 안전조치 미흡",
-        "전기·기계 설비 안전점검 필요",
-        "작업구역 정리정돈 및 통행로 위험",
-        "비상대응(소화기·대피동선) 점검 요청"
-      ],
-      "노무관리": [
-        "근로계약/업무지시 내용 확인 요청",
-        "근무시간·휴게시간 운영 개선 요청",
-        "임금/수당 산정 관련 확인 요청",
-        "현장 배치·업무분장 조정 요청",
-        "직장 내 고충/소통 개선 요청"
-      ],
-      "기타관리": [
-        "현장 시설·환경 개선 요청",
-        "자재·장비 지원 요청",
-        "업무 프로세스 개선 제안",
-        "교육·안내자료 보강 요청",
-        "기타 운영 관련 건의"
-      ]
-    };
 
     /* ── CATEGORY SELECT ── */
     function selectCategory(cat) {
@@ -1141,13 +894,6 @@
         if(document.getElementById('reg-cat')) document.getElementById('reg-cat').value=cat;
         render();
         setTimeout(()=>document.getElementById('content-area')?.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
-    function esc(v) {
-      return String(v || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
     }
 
     /* ── MODAL: 추가/수정 ── */
@@ -1157,14 +903,6 @@
         document.getElementById('reg-startdate').value=todayStr(); // ⑪
         document.getElementById('inputModal').classList.add('active');
         setTimeout(()=>document.getElementById('reg-title').focus(),200);
-    function jsonp(url, callback) {
-      const cbName = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
-      window[cbName] = function(res) { callback(res); delete window[cbName]; };
-      url.searchParams.set("callback", cbName);
-      const s = document.createElement("script");
-      s.src = url.toString();
-      s.onload = () => s.remove();
-      document.body.appendChild(s);
     }
 
     function openModifyModal(cat,id) {
@@ -1189,20 +927,6 @@
         }
         document.getElementById('inputModal').classList.add('active');
         setTimeout(()=>document.getElementById('reg-title').focus(),200);
-    function setIdentityMode() {
-      const anon = isAnonymousToggle.checked;
-      isAnonymousHidden.value = anon ? "TRUE" : "FALSE";
-      reporterName.disabled = anon;
-      reporterContact.disabled = anon;
-      reporterEmail.disabled = anon;
-      reporterName.required = !anon;
-      reporterContact.required = !anon;
-      reporterEmail.required = !anon;
-      if (anon) {
-        reporterName.value = "";
-        reporterContact.value = "";
-        reporterEmail.value = "";
-      }
     }
 
     function closeModal() {
@@ -1214,15 +938,6 @@
         icon.className='fa-solid fa-cloud-arrow-up'; icon.style.color='';
         document.getElementById('btn-save-submit').textContent='구글시트 저장';
         document.getElementById('btn-save-submit').disabled=false;
-    function renderTitleTemplates() {
-      const category = categoryEl.value;
-      const items = titleTemplates[category] || [];
-      const options = ['<option value="">상용구 선택</option>']
-        .concat(items.map(v => `<option value="${esc(v)}">${esc(v)}</option>`))
-        .concat('<option value="__custom__">직접입력</option>');
-      titleTemplateEl.innerHTML = options.join("");
-      titleInputEl.value = "";
-      titleInputEl.disabled = true;
     }
 
     /* ── PERSONNEL MODAL ── */
@@ -1232,22 +947,6 @@
         document.getElementById('pers-arch-input').value=AppState.personnel.arch||'';
         document.getElementById('personnelModal').classList.add('active');
         setTimeout(()=>document.getElementById('pers-hitech-input').focus(),200);
-    function onTemplateChange() {
-      const v = titleTemplateEl.value;
-      if (v === "__custom__") {
-        titleInputEl.disabled = false;
-        titleInputEl.value = "";
-        titleInputEl.focus();
-        return;
-      }
-      if (!v) {
-        titleInputEl.disabled = true;
-        titleInputEl.value = "";
-        return;
-      }
-      titleInputEl.disabled = false;
-      titleInputEl.value = v;
-      titleInputEl.disabled = true;
     }
     function closePersonnelModal(){document.getElementById('personnelModal').classList.remove('active');}
 
@@ -1271,14 +970,6 @@
             }
         } catch(e){alert("통신 오류가 발생했습니다.");}
         finally{btn.textContent='구글시트 저장';btn.disabled=false;}
-    function loadSites() {
-      const url = new URL(GAS_URL);
-      url.searchParams.set("action", "sites");
-      jsonp(url, (res) => {
-        const items = res && res.items ? res.items : [];
-        siteNameEl.innerHTML = '<option value="">현장 선택</option>' +
-          items.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
-      });
     }
 
     /* ── SCHEDULE MODAL ── */
@@ -1299,16 +990,6 @@
         }).join('');
         document.getElementById('scheduleModal').classList.add('active');
         setTimeout(() => document.getElementById('sch-loc-0')?.focus(), 200);
-    function lookupByReceipt() {
-      const receipt = (receiptNoInput.value || "").trim();
-      if (!/^\d{4}$/.test(receipt)) {
-        listEl.innerHTML = '<p class="muted">접수번호 4자리를 입력해 주세요.</p>';
-        return;
-      }
-      const url = new URL(GAS_URL);
-      url.searchParams.set("action", "receipt_lookup");
-      url.searchParams.set("receipt_no", receipt);
-      jsonp(url, (res) => renderList(res && res.items ? res.items : []));
     }
     function closeScheduleModal() { document.getElementById('scheduleModal').classList.remove('active'); }
 
@@ -1366,26 +1047,6 @@
             reader.onload=async(e)=>{ payload.fileData=e.target.result.split(',')[1]; payload.fileName=file.name; payload.fileMime=file.type; await sendTaskData(payload); };
             reader.readAsDataURL(file);
         } else { await sendTaskData(payload); }
-    function renderList(items) {
-      if (!items.length) {
-        listEl.innerHTML = '<p class="muted">일치하는 접수 건이 없습니다.</p>';
-        return;
-      }
-      listEl.innerHTML = items.map(it => {
-        const risk = it.risk_level || "medium";
-        const riskColor = risk === "low" ? "var(--low)" : risk === "high" ? "var(--high)" : risk === "critical" ? "var(--critical)" : "var(--medium)";
-        return `
-          <article class="item">
-            <div>
-              <span class="pill" style="background:${riskColor};">${esc(riskLabel[risk] || risk)}</span>
-              <span class="status">${esc(statusLabel[it.status] || it.status || "")}</span>
-            </div>
-            <div class="title">${esc(it.title || "")}</div>
-            <div class="meta">${esc(it.category || "")} · ${esc(it.created_at || "")} · ${esc(it.site_name || "")}</div>
-            <div class="content">${esc(it.content || "")}</div>
-          </article>
-        `;
-      }).join("");
     }
 
     async function sendTaskData(payload) {
@@ -1396,13 +1057,6 @@
             else{localStorage.removeItem('warehouse_cache_data');closeModal();await syncSilent();}
         } catch(e){alert("통신 오류가 발생했습니다.");}
         finally{document.getElementById('btn-save-submit').textContent="구글시트 저장";document.getElementById('btn-save-submit').disabled=false;}
-    function fileToDataUrl(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
     }
 
     /* ── DELETE ① ── */
@@ -1422,13 +1076,6 @@
             else{await syncSilent();}
         } catch(e){alert("통신 오류가 발생했습니다.");await initApp(true);}
     }
-    riskButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        riskButtons.forEach(x => x.classList.remove("active"));
-        btn.classList.add("active");
-        riskLevelEl.value = btn.dataset.risk;
-      });
-    });
 
     /* ── TOGGLE DONE ⑤ ── */
     async function toggleDone(id) {
@@ -1438,18 +1085,6 @@
         for(const cat of CATS){
             const task=(AppState.tasks[cat]||[]).find(t=>String(t.id)===String(id));
             if(task){task.status=task.status==='done'?'active':'done';break;}
-    isAnonymousToggle.addEventListener("change", setIdentityMode);
-    categoryEl.addEventListener("change", renderTitleTemplates);
-    titleTemplateEl.addEventListener("change", onTemplateChange);
-    document.getElementById("btnLookup").addEventListener("click", lookupByReceipt);
-
-    voiceForm.addEventListener("submit", async (ev) => {
-      ev.preventDefault();
-      if (window.grecaptcha) {
-        const token = grecaptcha.getResponse();
-        if (!token) {
-          submitMsg.textContent = "자동생성방지 확인을 완료해 주세요.";
-          return;
         }
         render();
         try {
@@ -1515,28 +1150,7 @@
             else if (active.id === 'personnelModal') closePersonnelModal();
             else if (active.id === 'scheduleModal') closeScheduleModal();
             else if (active.id === 'kpiModal') closeKpiModal();
-        recaptchaTokenEl.value = token;
-      }
-      const file = attachmentFile.files && attachmentFile.files[0];
-      if (file) {
-        if (file.size > 10 * 1024 * 1024) {
-          submitMsg.textContent = "첨부파일은 최대 10MB까지 가능합니다.";
-          return;
         }
-        submitMsg.textContent = "첨부파일 처리 중...";
-        const dataUrl = await fileToDataUrl(file);
-        attachmentBase64.value = dataUrl;
-        attachmentName.value = file.name || "attachment";
-        attachmentMime.value = file.type || "application/octet-stream";
-      } else {
-        attachmentBase64.value = "";
-        attachmentName.value = "";
-        attachmentMime.value = "";
-      }
-      submitMsg.textContent = "접수 중...";
-      receiptMsg.style.display = "none";
-      voiceForm.action = GAS_URL;
-      voiceForm.submit();
     });
 
     // #2 — 업무 목록 버튼 이벤트 위임
@@ -1568,24 +1182,9 @@
             }
             _modalMousedownTarget = null;
         });
-    window.addEventListener("message", (event) => {
-      const data = event.data || {};
-      if (!data.ok || !data.id) return;
-      const anon = isAnonymousToggle.checked;
-      const receipt = String(data.id).slice(-4);
-      submitMsg.textContent = anon
-        ? "접수가 완료되었으나, 개선결과는 통지받지 못할수 있습니다."
-        : "접수가 완료되었습니다. 소중한 제보 감사합니다.";
-      receiptMsg.style.display = "block";
-      receiptMsg.innerHTML = `보고서가 성공적으로 제출되었습니다. 접수번호는 <strong>#${esc(receipt)}</strong> 입니다.`;
-      receiptNoInput.value = receipt;
     });
 
     initApp();
 </script>
-    setIdentityMode();
-    renderTitleTemplates();
-    loadSites();
-  </script>
 </body>
 </html>
