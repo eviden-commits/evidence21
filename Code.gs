@@ -6,8 +6,10 @@
 function doGet(e) {
   try {
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var categories = getCategories_(ss);
     var payload = {
-      tasks: getTasks_(ss),
+      categories: categories,
+      tasks: getTasks_(ss, categories),
       schedule: getScheduleData_(ss),
       personnel: getTodayPersonnel_(ss),
       lastSync: Utilities.formatDate(new Date(), "GMT+9", "yy-MM-dd HH:mm")
@@ -43,6 +45,9 @@ function doPost(e) {
       case 'deleteTask':
       case 'toggleStatus':
         deleteOrToggleTask_(ss, data);
+        break;
+      case 'addCategory':
+        addCategory_(ss, data);
         break;
     }
 

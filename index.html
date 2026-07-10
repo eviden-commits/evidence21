@@ -131,13 +131,6 @@
         .na-title{font-size:13px;font-weight:500;color:var(--sys-label);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
         .na-date{font-size:11px;font-family:var(--font-mono);color:var(--sys-label-4);flex-shrink:0;}
         .na-new-badge{font-size:9px;font-weight:700;color:var(--sys-blue);background:var(--sys-blue-bg);padding:1px 6px;border-radius:8px;flex-shrink:0;}
-        /* dot colors per cat */
-        .na-dot.사고관리{background:var(--sys-red);}
-        .na-dot.입찰지원{background:var(--sys-blue);}
-        .na-dot.노무관리{background:var(--sys-orange);}
-        .na-dot.인증관리{background:var(--sys-green);}
-        .na-dot.법무관리{background:var(--sys-purple);}
-        .na-dot.기타관리{background:var(--sys-gray);}
 
         /* CATEGORY GRID */
         .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;}
@@ -157,25 +150,7 @@
         .cat-count{font-family:var(--font-mono);font-size:13px;font-weight:600;padding:3px 9px;border-radius:10px;}
         .cat-done-count{font-family:var(--font-mono);font-size:13px;font-weight:600;padding:3px 9px;border-radius:10px;background:rgba(50,173,230,0.12);color:#32ADE6;}
 
-        /* Category color tokens */
-        .cat-card[data-cat="사고관리"] .cat-icon{background:var(--sys-red-bg);color:var(--sys-red);}
-        .cat-card[data-cat="사고관리"] .cat-count{background:var(--sys-red-bg);color:var(--sys-red);}
-        .cat-card[data-cat="사고관리"] .cat-progress-fill{background:var(--sys-red);}
-        .cat-card[data-cat="입찰지원"] .cat-icon{background:var(--sys-blue-bg);color:var(--sys-blue);}
-        .cat-card[data-cat="입찰지원"] .cat-count{background:var(--sys-blue-bg);color:var(--sys-blue);}
-        .cat-card[data-cat="입찰지원"] .cat-progress-fill{background:var(--sys-blue);}
-        .cat-card[data-cat="노무관리"] .cat-icon{background:var(--sys-orange-bg);color:var(--sys-orange);}
-        .cat-card[data-cat="노무관리"] .cat-count{background:var(--sys-orange-bg);color:var(--sys-orange);}
-        .cat-card[data-cat="노무관리"] .cat-progress-fill{background:var(--sys-orange);}
-        .cat-card[data-cat="인증관리"] .cat-icon{background:var(--sys-green-bg);color:var(--sys-green);}
-        .cat-card[data-cat="인증관리"] .cat-count{background:var(--sys-green-bg);color:var(--sys-green);}
-        .cat-card[data-cat="인증관리"] .cat-progress-fill{background:var(--sys-green);}
-        .cat-card[data-cat="법무관리"] .cat-icon{background:var(--sys-purple-bg);color:var(--sys-purple);}
-        .cat-card[data-cat="법무관리"] .cat-count{background:var(--sys-purple-bg);color:var(--sys-purple);}
-        .cat-card[data-cat="법무관리"] .cat-progress-fill{background:var(--sys-purple);}
-        .cat-card[data-cat="기타관리"] .cat-icon{background:var(--sys-gray-bg);color:var(--sys-gray);}
-        .cat-card[data-cat="기타관리"] .cat-count{background:var(--sys-gray-bg);color:var(--sys-gray);}
-        .cat-card[data-cat="기타관리"] .cat-progress-fill{background:var(--sys-gray);}
+        /* Category colors are applied inline via JS (catColor()) so new categories work without CSS changes. */
 
         /* CONTENT PANEL */
         #content-area{display:none;background:var(--sys-surface);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-md);animation:slideDown 0.22s cubic-bezier(0.4,0,0.2,1) both;}
@@ -421,6 +396,7 @@
         <div class="categories-head">
             <span class="section-title">업무 분류 <span id="total-tasks-label" style="font-weight:400;"></span></span>
             <div class="head-btn-group">
+                <button class="pill-btn" onclick="openAddCategoryModal()"><i class="fa-solid fa-plus"></i> 분류 추가</button>
                 <button class="pill-btn kpi" onclick="openKpiModal()"><i class="fa-solid fa-chart-bar"></i> 월별 KPI</button>
                 <button class="pill-btn" id="btn-toggle-archive" onclick="toggleArchiveMode()"><i class="fa-solid fa-box-archive"></i><span id="archive-btn-text">종료된 업무</span></button>
             </div>
@@ -441,38 +417,7 @@
             <div class="new-arrive-list" id="new-arrive-list"></div>
         </div>
 
-        <div class="category-grid">
-            <div class="cat-card" id="card-사고관리" data-cat="사고관리" onclick="selectCategory('사고관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('사고관리')">
-                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><span class="cat-name">사고관리</span></div>
-                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-사고관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-사고관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-사고관리" style="display:none;"></span><span class="cat-done-count" id="done-사고관리" style="display:none;"></span><span class="cat-count" id="badge-사고관리">0</span></div></div>
-            </div>
-            <div class="cat-card" id="card-입찰지원" data-cat="입찰지원" onclick="selectCategory('입찰지원')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('입찰지원')">
-                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-layer-group"></i></div><span class="cat-name">입찰지원</span></div>
-                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-입찰지원"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-입찰지원">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-입찰지원" style="display:none;"></span><span class="cat-done-count" id="done-입찰지원" style="display:none;"></span><span class="cat-count" id="badge-입찰지원">0</span></div></div>
-            </div>
-            <div class="cat-card" id="card-노무관리" data-cat="노무관리" onclick="selectCategory('노무관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('노무관리')">
-                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-user-group"></i></div><span class="cat-name">노무관리</span></div>
-                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-노무관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-노무관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-노무관리" style="display:none;"></span><span class="cat-done-count" id="done-노무관리" style="display:none;"></span><span class="cat-count" id="badge-노무관리">0</span></div></div>
-            </div>
-            <div class="cat-card" id="card-인증관리" data-cat="인증관리" onclick="selectCategory('인증관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('인증관리')">
-                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-certificate"></i></div><span class="cat-name">인증관리</span></div>
-                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-인증관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-인증관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-인증관리" style="display:none;"></span><span class="cat-done-count" id="done-인증관리" style="display:none;"></span><span class="cat-count" id="badge-인증관리">0</span></div></div>
-            </div>
-            <div class="cat-card" id="card-법무관리" data-cat="법무관리" onclick="selectCategory('법무관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('법무관리')">
-                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-scale-balanced"></i></div><span class="cat-name">법무관리</span></div>
-                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-법무관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-법무관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-법무관리" style="display:none;"></span><span class="cat-done-count" id="done-법무관리" style="display:none;"></span><span class="cat-count" id="badge-법무관리">0</span></div></div>
-            </div>
-            <div class="cat-card" id="card-기타관리" data-cat="기타관리" onclick="selectCategory('기타관리')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('기타관리')">
-                <div class="cat-header"><div class="cat-icon"><i class="fa-solid fa-ellipsis"></i></div><span class="cat-name">기타관리</span></div>
-                <div class="cat-progress-track"><div class="cat-progress-fill" id="progress-기타관리"></div></div>
-                <div class="cat-footer"><span class="cat-status" id="status-기타관리">Active</span><div class="cat-footer-right"><span class="overdue-badge" id="overdue-기타관리" style="display:none;"></span><span class="cat-done-count" id="done-기타관리" style="display:none;"></span><span class="cat-count" id="badge-기타관리">0</span></div></div>
-            </div>
-        </div>
+        <div class="category-grid" id="category-grid"></div>
 
         <div id="content-area">
             <div class="content-header">
@@ -569,6 +514,18 @@
     </div>
 </div>
 
+<!-- MODAL: 분류 추가 -->
+<div id="addCategoryModal" class="modal">
+    <div class="modal-sheet">
+        <div class="modal-title">새 분류 추가</div>
+        <div class="field-group"><div class="field-label">분류 이름</div><input type="text" id="newcat-name" placeholder="예: 교육관리" maxlength="20"></div>
+        <div class="modal-actions">
+            <button class="btn-fill dark" id="btn-newcat-save" onclick="handleAddCategorySave()">추가</button>
+            <button class="btn-text-only" onclick="closeAddCategoryModal()">취소</button>
+        </div>
+    </div>
+</div>
+
 <script>
     /* ── HELPERS ── */
     function todayStr() { return new Date().toLocaleDateString('en-CA'); } // ⑪ 로컬 타임존
@@ -576,14 +533,21 @@
     function safeUrl(u) { if(!u)return''; try{const p=new URL(u).protocol;return['http:','https:'].includes(p)?u:'';}catch{return'';} } // ⑨
 
     const GAS_URL = "https://script.google.com/macros/s/AKfycbydbx84YwAtFwAebCDsCQEkRKTeaqd1e5XXO9xok77UZrdbtTQ2XkHj9tZ5bm0OwlHX/exec";
-    const CATS = ["사고관리","입찰지원","노무관리","인증관리","법무관리","기타관리"];
+    let CATS = ["사고관리","입찰지원","노무관리","인증관리","법무관리","기타관리"]; // 서버에서 받은 분류 목록으로 갱신됨
     const SORT_MODES = [{key:'date',label:'등록일'},{key:'duedate_asc',label:'마감일↑'},{key:'duedate_desc',label:'마감일↓'}];
     let _sortIdx = 0;
     let _sessionPwd = ''; // ② 세션 캐싱
 
+    // 분류 색상/아이콘: 기본 분류는 고정 아이콘, 새로 추가된 분류는 폴더 아이콘 + 순환 색상
+    const CAT_COLOR_PALETTE = ['red','blue','orange','green','purple','gray'];
+    const CAT_ICON_MAP = {'사고관리':'fa-triangle-exclamation','입찰지원':'fa-layer-group','노무관리':'fa-user-group','인증관리':'fa-certificate','법무관리':'fa-scale-balanced','기타관리':'fa-ellipsis'};
+    function catColor(idx) { return CAT_COLOR_PALETTE[idx % CAT_COLOR_PALETTE.length]; }
+    function catColorByName(name) { return catColor(Math.max(0, CATS.indexOf(name))); }
+    function catIcon(name) { return CAT_ICON_MAP[name] || 'fa-folder'; }
+
     let AppState = {
         schedule:[],
-        tasks:{"사고관리":[],"입찰지원":[],"노무관리":[],"인증관리":[],"법무관리":[],"기타관리":[]},
+        tasks:{},
         personnel:{ hitech:0, arch:0 },
         selectedCategory:null, onlyArchiveMode:false, lastSync:"—", globalQuery:""
     };
@@ -640,6 +604,7 @@
     }
 
     function parseAndSetState(data) {
+        if (data.categories && data.categories.length) CATS = data.categories;
         AppState.tasks = data.tasks || AppState.tasks;
         AppState.schedule = data.schedule || [];
         AppState.lastSync = data.lastSync || "—";
@@ -714,30 +679,46 @@
         _renderTimer = setTimeout(render, 16); // 1 frame debounce
     }
 
+    function renderCategoryGrid() {
+        const today=todayStr();
+        const grid=document.getElementById('category-grid');
+        grid.innerHTML = CATS.map((cat,idx)=>{
+            const tasks=AppState.tasks[cat]||[];
+            const doneCnt=tasks.filter(t=>t.status==='done').length;
+            const activeCnt=tasks.length-doneCnt;
+            const overdueCnt=tasks.filter(t=>t.status!=='done'&&t.duedate&&t.duedate<today).length; // ⑫
+            const pct=tasks.length>0?Math.round(doneCnt/tasks.length*100):0;
+            const status=tasks.length===0?'Empty':(activeCnt===0?'완료':'Active');
+            const color=catColor(idx);
+            const badge=AppState.onlyArchiveMode?`종료 ${doneCnt}`:`진행 ${activeCnt}`;
+            const selected=AppState.selectedCategory===cat?' selected':'';
+            const c=escHtml(cat);
+            return `<div class="cat-card${selected}" data-cat="${c}" onclick="selectCategory('${c}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('${c}')">
+                <div class="cat-header"><div class="cat-icon" style="background:var(--sys-${color}-bg);color:var(--sys-${color});"><i class="fa-solid ${catIcon(cat)}"></i></div><span class="cat-name">${c}</span></div>
+                <div class="cat-progress-track"><div class="cat-progress-fill" style="width:${pct}%;background:var(--sys-${color});"></div></div>
+                <div class="cat-footer"><span class="cat-status">${status}</span><div class="cat-footer-right">${overdueCnt>0?`<span class="overdue-badge">D+ ${overdueCnt}</span>`:''}${doneCnt>0?`<span class="cat-done-count">종료 ${doneCnt}</span>`:''}<span class="cat-count" style="background:var(--sys-${color}-bg);color:var(--sys-${color});">${badge}</span></div></div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderCategorySelect() {
+        const sel=document.getElementById('reg-cat');
+        if (!sel) return;
+        const current=sel.value;
+        sel.innerHTML = CATS.map(cat=>`<option value="${escHtml(cat)}">${escHtml(cat)}</option>`).join('');
+        if (CATS.includes(current)) sel.value=current;
+    }
+
     function render() {
         let total=0, doneTotal=0;
         const today=todayStr();
         for (const cat of CATS) {
             const tasks=AppState.tasks[cat]||[];
             const doneCnt=tasks.filter(t=>t.status==='done').length;
-            const activeCnt=tasks.length-doneCnt;
-            const overdueCnt=tasks.filter(t=>t.status!=='done'&&t.duedate&&t.duedate<today).length; // ⑫
             total+=tasks.length; doneTotal+=doneCnt;
-
-            const pct=tasks.length>0?Math.round(doneCnt/tasks.length*100):0;
-            document.getElementById(`badge-${cat}`).innerText = AppState.onlyArchiveMode?`종료 ${doneCnt}`:`진행 ${activeCnt}`;
-            document.getElementById(`progress-${cat}`).style.width=`${pct}%`;
-            document.getElementById(`status-${cat}`).innerText = tasks.length===0?'Empty':(activeCnt===0?'완료':'Active');
-
-            // ⑫ 기한초과 배지
-            const oBadge=document.getElementById(`overdue-${cat}`);
-            if(oBadge){oBadge.style.display=overdueCnt>0?'':'none';oBadge.textContent=`D+ ${overdueCnt}`;}
-            // 종료된업무 배지
-            const dBadge=document.getElementById(`done-${cat}`);
-            if(dBadge){dBadge.style.display=doneCnt>0?'':'none';dBadge.textContent=`종료 ${doneCnt}`;}
-
-            document.getElementById(`card-${cat}`).classList.toggle('selected',AppState.selectedCategory===cat);
         }
+        renderCategoryGrid();
+        renderCategorySelect();
         const pct=total>0?Math.round(doneTotal/total*100):0;
         document.getElementById('ui-progress-percent').innerText=`${pct}%`;
         document.getElementById('nav-total').innerText=total;
@@ -789,7 +770,7 @@
         list.innerHTML = recent.map(t => {
             const isToday = t.date === today;
             return `<div class="na-card" data-cat="${escHtml(t.cat)}" title="${escHtml(t.title)}">
-                <span class="na-dot ${escHtml(t.cat)}"></span>
+                <span class="na-dot" style="background:var(--sys-${catColorByName(t.cat)});"></span>
                 <span class="na-cat">${escHtml(t.cat)}</span>
                 <span class="na-title">${escHtml(t.title)}</span>
                 ${isToday ? '<span class="na-new-badge">NEW</span>' : ''}
@@ -1095,6 +1076,36 @@
         } catch(e){alert("통신 오류가 발생했습니다.");await initApp(true);}
     }
 
+    /* ── 분류 추가 ── */
+    function openAddCategoryModal() {
+        document.getElementById('newcat-name').value='';
+        document.getElementById('addCategoryModal').classList.add('active');
+        setTimeout(()=>document.getElementById('newcat-name').focus(),200);
+    }
+    function closeAddCategoryModal() { document.getElementById('addCategoryModal').classList.remove('active'); }
+
+    async function handleAddCategorySave() {
+        const name=document.getElementById('newcat-name').value.trim();
+        if (!name) { alert('분류 이름을 입력하세요.'); return; }
+        if (CATS.includes(name)) { alert('이미 존재하는 분류입니다.'); return; }
+        const pwd=getGlobalPassword(); if(!pwd) return;
+        const btn=document.getElementById('btn-newcat-save');
+        btn.textContent='추가 중…'; btn.disabled=true;
+        try {
+            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+                body:JSON.stringify({action:'addCategory',name,password:pwd})});
+            const result=await res.json();
+            if(result.status==="auth_error"){alert(result.message);}
+            else if(result.status!=="ok"){alert(result.message||'분류 추가에 실패했습니다.');}
+            else {
+                closeAddCategoryModal();
+                localStorage.removeItem('warehouse_cache_data');
+                await syncSilent();
+            }
+        } catch(e){alert("통신 오류가 발생했습니다.");}
+        finally{btn.textContent='추가';btn.disabled=false;}
+    }
+
     /* ── KPI ── */
     let kpiTab='monthly';
     function openKpiModal(){document.getElementById('kpiModal').classList.add('active');buildKpiContent();}
@@ -1150,6 +1161,7 @@
             else if (active.id === 'personnelModal') closePersonnelModal();
             else if (active.id === 'scheduleModal') closeScheduleModal();
             else if (active.id === 'kpiModal') closeKpiModal();
+            else if (active.id === 'addCategoryModal') closeAddCategoryModal();
         }
     });
 
@@ -1179,6 +1191,7 @@
                 else if (modal.id === 'personnelModal') closePersonnelModal();
                 else if (modal.id === 'scheduleModal') closeScheduleModal();
                 else if (modal.id === 'kpiModal') closeKpiModal();
+                else if (modal.id === 'addCategoryModal') closeAddCategoryModal();
             }
             _modalMousedownTarget = null;
         });

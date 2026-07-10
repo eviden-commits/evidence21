@@ -3,9 +3,9 @@
    업무데이터 시트 CRUD (조회/추가/수정/삭제/상태토글) 및 첨부파일 업로드.
    ========================================================================= */
 
-function getTasks_(ss) {
+function getTasks_(ss, categoryNames) {
   var tasks = {};
-  TASK_CATEGORIES.forEach(function(cat) { tasks[cat] = []; });
+  categoryNames.forEach(function(cat) { tasks[cat] = []; });
 
   var taskSheet = ss.getSheetByName('업무데이터');
   if (!taskSheet) return tasks;
