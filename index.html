@@ -575,7 +575,7 @@
     function escHtml(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); } // ⑨ XSS
     function safeUrl(u) { if(!u)return''; try{const p=new URL(u).protocol;return['http:','https:'].includes(p)?u:'';}catch{return'';} } // ⑨
 
-    const GAS_URL = "https://script.google.com/macros/s/AKfycby08KHN5Wf5_lJ8QnXI5L3rLqE6C4i3_wOuciB5gIjUyhPNZpHsKGAIr0loeSB3m0CT/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbydbx84YwAtFwAebCDsCQEkRKTeaqd1e5XXO9xok77UZrdbtTQ2XkHj9tZ5bm0OwlHX/exec";
     const CATS = ["사고관리","입찰지원","노무관리","인증관리","법무관리","기타관리"];
     const SORT_MODES = [{key:'date',label:'등록일'},{key:'duedate_asc',label:'마감일↑'},{key:'duedate_desc',label:'마감일↓'}];
     let _sortIdx = 0;
