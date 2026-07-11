@@ -94,6 +94,9 @@ function doPost(e) {
       case 'addSubscriber':
         addSubscriber_(ss, data);
         break;
+      case 'setAdminPassword':
+        setAdminPassword_(data);
+        break;
     }
 
     CacheService.getScriptCache().remove(DASHBOARD_CACHE_KEY);
