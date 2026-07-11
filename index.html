@@ -181,6 +181,12 @@
         .list-content{font-size:13.5px;color:var(--sys-label-3);line-height:1.6;white-space:pre-wrap;margin-top:3px;}
         .list-duedate{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-family:var(--font-mono);color:var(--sys-label-3);margin-top:4px;}
         .list-duedate.overdue{color:var(--sys-red);background:var(--sys-red-bg);padding:2px 6px;border-radius:4px;font-weight:600;}
+        .list-duedate.upcoming{color:var(--sys-orange);background:var(--sys-orange-bg);padding:2px 6px;border-radius:4px;font-weight:600;}
+        .risk-badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;vertical-align:middle;}
+        .risk-badge.risk-low{background:var(--sys-green-bg);color:var(--sys-green);}
+        .risk-badge.risk-medium{background:var(--sys-orange-bg);color:var(--sys-orange);}
+        .risk-badge.risk-high{background:var(--sys-red-bg);color:var(--sys-red);}
+        .risk-badge.risk-critical{background:var(--sys-purple-bg);color:var(--sys-purple);}
         .list-attachment{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:12px;color:var(--sys-blue);font-weight:500;text-decoration:none;}
         .list-attachment:hover{text-decoration:underline;}
         .list-actions{display:flex;gap:2px;flex-shrink:0;padding-top:2px;}
@@ -396,7 +402,8 @@
         <div class="categories-head">
             <span class="section-title">업무 분류 <span id="total-tasks-label" style="font-weight:400;"></span></span>
             <div class="head-btn-group">
-                <button class="pill-btn" onclick="openAddCategoryModal()"><i class="fa-solid fa-plus"></i> 분류 추가</button>
+                <button class="pill-btn" onclick="openCategoryManageModal()"><i class="fa-solid fa-sliders"></i> 분류 관리</button>
+                <button class="pill-btn" onclick="openHistoryModal()"><i class="fa-solid fa-clock-rotate-left"></i> 변경 이력</button>
                 <button class="pill-btn kpi" onclick="openKpiModal()"><i class="fa-solid fa-chart-bar"></i> 월별 KPI</button>
                 <button class="pill-btn" id="btn-toggle-archive" onclick="toggleArchiveMode()"><i class="fa-solid fa-box-archive"></i><span id="archive-btn-text">종료된 업무</span></button>
             </div>
@@ -446,15 +453,18 @@
         <div class="modal-title" id="modal-ui-title">새 업무 추가</div>
         <input type="hidden" id="reg-id">
         <div class="field-group"><div class="field-label">분류</div>
-            <select id="reg-cat"><option value="사고관리">사고관리</option><option value="입찰지원">입찰지원</option><option value="노무관리">노무관리</option><option value="인증관리">인증관리</option><option value="법무관리">법무관리</option><option value="기타관리">기타관리</option></select>
+            <select id="reg-cat" onchange="onRegCatChange()"></select>
         </div>
         <div class="field-group"><div class="field-label">업무 제목 *</div><input type="text" id="reg-title" placeholder="제목을 입력하세요"></div>
         <div class="field-group"><div class="field-label">내용</div><textarea id="reg-content" rows="3" placeholder="상세 내용을 입력하세요"></textarea></div>
-        <div class="date-row">
-            <div class="field-group"><div class="field-label">시작일</div><input type="date" id="reg-startdate"></div>
-            <div class="field-group"><div class="field-label">종료일</div><input type="date" id="reg-duedate"></div>
+        <div class="field-group" id="risk-field-group" style="display:none;"><div class="field-label">위험도</div>
+            <select id="reg-risk"><option value="">선택 안함</option><option value="low">낮음</option><option value="medium">보통</option><option value="high">높음</option><option value="critical">긴급</option></select>
         </div>
-        <div class="field-group"><div class="field-label">파일 첨부</div>
+        <div class="date-row">
+            <div class="field-group"><div class="field-label" id="reg-duedate-label-start">시작일</div><input type="date" id="reg-startdate"></div>
+            <div class="field-group"><div class="field-label" id="reg-duedate-label-end">종료일</div><input type="date" id="reg-duedate"></div>
+        </div>
+        <div class="field-group"><div class="field-label" id="file-field-label">파일 첨부</div>
             <label for="reg-file" class="file-drop-zone" id="file-label-el"><i class="fa-solid fa-cloud-arrow-up"></i><span id="file-label-text">파일 선택 (최대 25MB)</span></label>
             <input type="file" id="reg-file" style="display:none;" onchange="updateFileLabel(this)">
         </div>
@@ -514,15 +524,29 @@
     </div>
 </div>
 
-<!-- MODAL: 분류 추가 -->
-<div id="addCategoryModal" class="modal">
+<!-- MODAL: 분류 관리 -->
+<div id="categoryManageModal" class="modal">
     <div class="modal-sheet">
-        <div class="modal-title">새 분류 추가</div>
-        <div class="field-group"><div class="field-label">분류 이름</div><input type="text" id="newcat-name" placeholder="예: 교육관리" maxlength="20"></div>
+        <div class="modal-title">분류 관리</div>
+        <div class="field-group">
+            <div class="field-label">기존 분류 (비활성화 시 목록에서만 숨겨지고 데이터는 유지됩니다)</div>
+            <div id="cat-manage-list"></div>
+        </div>
+        <div class="field-group"><div class="field-label">새 분류 추가</div><input type="text" id="newcat-name" placeholder="예: 교육관리" maxlength="20"></div>
         <div class="modal-actions">
             <button class="btn-fill dark" id="btn-newcat-save" onclick="handleAddCategorySave()">추가</button>
-            <button class="btn-text-only" onclick="closeAddCategoryModal()">취소</button>
+            <button class="btn-text-only" onclick="closeCategoryManageModal()">닫기</button>
         </div>
+    </div>
+</div>
+
+<!-- MODAL: 변경 이력 -->
+<div id="historyModal" class="modal">
+    <div class="modal-sheet wide">
+        <div class="modal-title">변경 이력</div>
+        <div class="modal-subtitle">최근 50건</div>
+        <div id="history-list" style="display:flex;flex-direction:column;gap:2px;max-height:400px;overflow-y:auto;"></div>
+        <div class="modal-actions" style="margin-top:16px;"><button class="btn-text-only" onclick="closeHistoryModal()">닫기</button></div>
     </div>
 </div>
 
@@ -548,6 +572,8 @@
     let AppState = {
         schedule:[],
         tasks:{},
+        allCategories:[],
+        history:[],
         personnel:{ hitech:0, arch:0 },
         selectedCategory:null, onlyArchiveMode:false, lastSync:"—", globalQuery:""
     };
@@ -605,6 +631,8 @@
 
     function parseAndSetState(data) {
         if (data.categories && data.categories.length) CATS = data.categories;
+        AppState.allCategories = data.allCategories || AppState.allCategories;
+        AppState.history = data.history || AppState.history;
         AppState.tasks = data.tasks || AppState.tasks;
         AppState.schedule = data.schedule || [];
         AppState.lastSync = data.lastSync || "—";
@@ -687,6 +715,12 @@
             const doneCnt=tasks.filter(t=>t.status==='done').length;
             const activeCnt=tasks.length-doneCnt;
             const overdueCnt=tasks.filter(t=>t.status!=='done'&&t.duedate&&t.duedate<today).length; // ⑫
+            const win=warningWindowDays(cat);
+            const upcomingCnt=tasks.filter(t=>{
+                if (t.status==='done'||!t.duedate||t.duedate<today) return false;
+                const dl=Math.ceil((new Date(t.duedate+'T00:00:00')-new Date(today+'T00:00:00'))/86400000);
+                return dl<=win;
+            }).length;
             const pct=tasks.length>0?Math.round(doneCnt/tasks.length*100):0;
             const status=tasks.length===0?'Empty':(activeCnt===0?'완료':'Active');
             const color=catColor(idx);
@@ -696,7 +730,7 @@
             return `<div class="cat-card${selected}" data-cat="${c}" onclick="selectCategory('${c}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')selectCategory('${c}')">
                 <div class="cat-header"><div class="cat-icon" style="background:var(--sys-${color}-bg);color:var(--sys-${color});"><i class="fa-solid ${catIcon(cat)}"></i></div><span class="cat-name">${c}</span></div>
                 <div class="cat-progress-track"><div class="cat-progress-fill" style="width:${pct}%;background:var(--sys-${color});"></div></div>
-                <div class="cat-footer"><span class="cat-status">${status}</span><div class="cat-footer-right">${overdueCnt>0?`<span class="overdue-badge">D+ ${overdueCnt}</span>`:''}${doneCnt>0?`<span class="cat-done-count">종료 ${doneCnt}</span>`:''}<span class="cat-count" style="background:var(--sys-${color}-bg);color:var(--sys-${color});">${badge}</span></div></div>
+                <div class="cat-footer"><span class="cat-status">${status}</span><div class="cat-footer-right">${overdueCnt>0?`<span class="overdue-badge">D+ ${overdueCnt}</span>`:''}${upcomingCnt>0?`<span class="overdue-badge" style="background:var(--sys-orange-bg);color:var(--sys-orange);">임박 ${upcomingCnt}</span>`:''}${doneCnt>0?`<span class="cat-done-count">종료 ${doneCnt}</span>`:''}<span class="cat-count" style="background:var(--sys-${color}-bg);color:var(--sys-${color});">${badge}</span></div></div>
             </div>`;
         }).join('');
     }
@@ -833,7 +867,11 @@
 
         listDiv.innerHTML=filtered.map(t=>{
             const isDone=t.status==='done';
+            const cat=t.cat||AppState.selectedCategory;
             const isOverdue=!isDone&&t.duedate&&t.duedate<today; // ⑦
+            const daysLeft=t.duedate?Math.ceil((new Date(t.duedate+'T00:00:00')-new Date(today+'T00:00:00'))/86400000):null;
+            const isUpcoming=!isDone&&!isOverdue&&t.duedate&&daysLeft!==null&&daysLeft<=warningWindowDays(cat);
+            const upcomingLabel=cat==='인증관리'?'만료임박':'마감임박';
             const catBtn=escHtml(t.cat||AppState.selectedCategory);
             const tid=escHtml(t.id);
             const fileHref=safeUrl(t.fileUrl); // ⑨
@@ -841,9 +879,9 @@
                 <div class="list-info">
                     ${gq?`<span class="list-cat-tag">${escHtml(t.cat)}</span>`:''}
                     <span class="list-date">${escHtml(t.date)} 등록</span>
-                    <span class="list-title">${escHtml(t.title)}</span>
+                    <span class="list-title">${escHtml(t.title)}${t.riskLevel?` <span class="risk-badge risk-${escHtml(t.riskLevel)}">${riskLabel(t.riskLevel)}</span>`:''}</span>
                     ${t.content?`<span class="list-content">${escHtml(t.content)}</span>`:''}
-                    ${t.duedate?`<span class="list-duedate${isOverdue?' overdue':''}"><i class="fa-regular fa-clock"></i> 목표일: ${escHtml(t.duedate)}${isOverdue?' · 기한초과':''}</span>`:''}
+                    ${t.duedate?`<span class="list-duedate${isOverdue?' overdue':isUpcoming?' upcoming':''}"><i class="fa-regular fa-clock"></i> 목표일: ${escHtml(t.duedate)}${isOverdue?' · 기한초과':isUpcoming?` · ${upcomingLabel} D-${daysLeft}`:''}</span>`:''}
                     ${fileHref?`<a href="${fileHref}" target="_blank" rel="noopener" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일</a>`:''}
                 </div>
                 <div class="list-actions">
@@ -872,7 +910,7 @@
         document.getElementById('global-search-input').value="";
         document.getElementById('gsb-clear').style.display='none';
         document.getElementById('search-keyword').value="";
-        if(document.getElementById('reg-cat')) document.getElementById('reg-cat').value=cat;
+        if(document.getElementById('reg-cat')) { document.getElementById('reg-cat').value=cat; onRegCatChange(); }
         render();
         setTimeout(()=>document.getElementById('content-area')?.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
     }
@@ -882,6 +920,8 @@
         document.getElementById('modal-ui-title').innerText="새 업무 추가";
         document.getElementById('reg-id').value="";
         document.getElementById('reg-startdate').value=todayStr(); // ⑪
+        document.getElementById('reg-risk').value="";
+        onRegCatChange();
         document.getElementById('inputModal').classList.add('active');
         setTimeout(()=>document.getElementById('reg-title').focus(),200);
     }
@@ -896,6 +936,8 @@
         document.getElementById('reg-content').value=item.content||'';
         document.getElementById('reg-startdate').value=item.date;
         document.getElementById('reg-duedate').value=item.duedate||'';
+        document.getElementById('reg-risk').value=item.riskLevel||'';
+        onRegCatChange();
         // ⑧ 기존 파일 표시
         const el=document.getElementById('file-label-text');
         const icon=document.querySelector('#file-label-el i');
@@ -912,7 +954,7 @@
 
     function closeModal() {
         document.getElementById('inputModal').classList.remove('active');
-        ['reg-id','reg-title','reg-content','reg-startdate','reg-duedate'].forEach(id=>document.getElementById(id).value='');
+        ['reg-id','reg-title','reg-content','reg-startdate','reg-duedate','reg-risk'].forEach(id=>document.getElementById(id).value='');
         document.getElementById('reg-file').value='';
         document.getElementById('file-label-text').textContent='파일 선택 (최대 25MB)';
         const icon=document.querySelector('#file-label-el i');
@@ -1005,18 +1047,30 @@
         const title=document.getElementById('reg-title').value.trim();
         // ④ 제목 검증
         if (!title) { alert("제목을 입력하세요."); document.getElementById('reg-title').focus(); return; }
+        const category=document.getElementById('reg-cat').value;
+        const fileInput=document.getElementById('reg-file');
+        // 사고관리는 증빙 파일 첨부 필수 (기존 파일이 있는 수정 건은 예외)
+        if (category==='사고관리') {
+            const existing=id?findTaskById(id):null;
+            const hasNewFile=fileInput.files&&fileInput.files.length>0;
+            const hasExistingFile=existing&&!!safeUrl(existing.fileUrl);
+            if (!hasNewFile && !hasExistingFile) {
+                alert("사고관리 항목은 증빙 파일 첨부가 필요합니다.");
+                return;
+            }
+        }
         const pwd=getGlobalPassword(); if(!pwd) return;
         const submitBtn=document.getElementById('btn-save-submit');
         submitBtn.textContent="저장 중…"; submitBtn.disabled=true;
         const payload={
             action:id?'updateTask':'addTask', id:id||Date.now().toString(),
-            category:document.getElementById('reg-cat').value,
+            category,
             date:id ? todayStr() : (document.getElementById('reg-startdate').value||todayStr()),
             title, content:document.getElementById('reg-content').value.trim(),
             duedate:document.getElementById('reg-duedate').value,
+            riskLevel:document.getElementById('reg-risk').value,
             password:pwd, fileData:null, fileName:null, fileMime:null
         };
-        const fileInput=document.getElementById('reg-file');
         if (fileInput.files&&fileInput.files.length>0) {
             const file=fileInput.files[0];
             // ③ 파일 크기/타입 검증
@@ -1076,18 +1130,45 @@
         } catch(e){alert("통신 오류가 발생했습니다.");await initApp(true);}
     }
 
-    /* ── 분류 추가 ── */
-    function openAddCategoryModal() {
+    /* ── 분류 관리(추가/비활성화) ── */
+    function openCategoryManageModal() {
         document.getElementById('newcat-name').value='';
-        document.getElementById('addCategoryModal').classList.add('active');
-        setTimeout(()=>document.getElementById('newcat-name').focus(),200);
+        renderCategoryManageList();
+        document.getElementById('categoryManageModal').classList.add('active');
     }
-    function closeAddCategoryModal() { document.getElementById('addCategoryModal').classList.remove('active'); }
+    function closeCategoryManageModal() { document.getElementById('categoryManageModal').classList.remove('active'); }
+
+    function renderCategoryManageList() {
+        const list=document.getElementById('cat-manage-list');
+        list.innerHTML=(AppState.allCategories||[]).map(c=>{
+            const name=escHtml(c.name);
+            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--sys-separator-2);">
+                <span style="font-size:13px;${c.active?'':'color:var(--sys-label-4);text-decoration:line-through;'}">${name}</span>
+                <button class="pill-btn${c.active?' active':''}" style="padding:3px 10px;font-size:11px;" onclick="handleToggleCategoryActive('${name}')">${c.active?'사용중':'비활성'}</button>
+            </div>`;
+        }).join('');
+    }
+
+    async function handleToggleCategoryActive(name) {
+        const pwd=getGlobalPassword(); if(!pwd) return;
+        try {
+            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+                body:JSON.stringify({action:'toggleCategoryActive',name,password:pwd})});
+            const result=await res.json();
+            if(result.status==="auth_error"){alert(result.message);}
+            else if(result.status!=="ok"){alert(result.message||'변경에 실패했습니다.');}
+            else {
+                localStorage.removeItem('warehouse_cache_data');
+                await syncSilent();
+                renderCategoryManageList();
+            }
+        } catch(e){alert("통신 오류가 발생했습니다.");}
+    }
 
     async function handleAddCategorySave() {
         const name=document.getElementById('newcat-name').value.trim();
         if (!name) { alert('분류 이름을 입력하세요.'); return; }
-        if (CATS.includes(name)) { alert('이미 존재하는 분류입니다.'); return; }
+        if ((AppState.allCategories||[]).some(c=>c.name===name)) { alert('이미 존재하는 분류입니다.'); return; }
         const pwd=getGlobalPassword(); if(!pwd) return;
         const btn=document.getElementById('btn-newcat-save');
         btn.textContent='추가 중…'; btn.disabled=true;
@@ -1098,12 +1179,52 @@
             if(result.status==="auth_error"){alert(result.message);}
             else if(result.status!=="ok"){alert(result.message||'분류 추가에 실패했습니다.');}
             else {
-                closeAddCategoryModal();
+                document.getElementById('newcat-name').value='';
                 localStorage.removeItem('warehouse_cache_data');
                 await syncSilent();
+                renderCategoryManageList();
             }
         } catch(e){alert("통신 오류가 발생했습니다.");}
         finally{btn.textContent='추가';btn.disabled=false;}
+    }
+
+    /* ── 변경 이력 ── */
+    function openHistoryModal() {
+        const list=document.getElementById('history-list');
+        const items=AppState.history||[];
+        list.innerHTML = items.length===0
+            ? `<div class="list-empty"><i class="fa-regular fa-folder-open"></i>이력이 없습니다.</div>`
+            : items.map(h=>`<div style="padding:9px 0;border-bottom:0.5px solid var(--sys-separator-2);">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+                    <span style="font-family:var(--font-mono);font-size:11px;color:var(--sys-label-4);">${escHtml(h.time)}</span>
+                    <span style="font-size:11px;font-weight:600;color:var(--sys-blue);">${escHtml(h.action)}</span>
+                    <span style="font-size:11px;color:var(--sys-label-4);">${escHtml(h.category)}</span>
+                </div>
+                <div style="font-size:13px;font-weight:600;">${escHtml(h.title)}</div>
+                ${h.detail?`<div style="font-size:12px;color:var(--sys-label-3);margin-top:2px;">${escHtml(h.detail)}</div>`:''}
+            </div>`).join('');
+        document.getElementById('historyModal').classList.add('active');
+    }
+    function closeHistoryModal() { document.getElementById('historyModal').classList.remove('active'); }
+
+    /* ── 위험도 / 마감 임박 헬퍼 ── */
+    const RISK_LABELS = { low:'낮음', medium:'보통', high:'높음', critical:'긴급' };
+    function riskLabel(level) { return RISK_LABELS[level] || ''; }
+    function riskColor(level) { return level==='critical'?'purple':level==='high'?'red':level==='medium'?'orange':'green'; }
+    function onRegCatChange() {
+        const cat=document.getElementById('reg-cat').value;
+        document.getElementById('risk-field-group').style.display = cat==='사고관리' ? '' : 'none';
+        document.getElementById('file-field-label').innerText = cat==='사고관리' ? '파일 첨부 *(증빙 필수)' : '파일 첨부';
+        document.getElementById('reg-duedate-label-end').innerText = cat==='인증관리' ? '만료일' : '종료일';
+    }
+    // 분류별 마감 경고 리드타임: 인증관리는 갱신 준비 기간이 기므로 60일, 나머지는 3일
+    function warningWindowDays(cat) { return cat==='인증관리' ? 60 : 3; }
+    function findTaskById(id) {
+        for (const cat of CATS) {
+            const found=(AppState.tasks[cat]||[]).find(t=>String(t.id)===String(id));
+            if (found) return {...found, cat};
+        }
+        return null;
     }
 
     /* ── KPI ── */
@@ -1161,7 +1282,8 @@
             else if (active.id === 'personnelModal') closePersonnelModal();
             else if (active.id === 'scheduleModal') closeScheduleModal();
             else if (active.id === 'kpiModal') closeKpiModal();
-            else if (active.id === 'addCategoryModal') closeAddCategoryModal();
+            else if (active.id === 'categoryManageModal') closeCategoryManageModal();
+            else if (active.id === 'historyModal') closeHistoryModal();
         }
     });
 
@@ -1191,7 +1313,8 @@
                 else if (modal.id === 'personnelModal') closePersonnelModal();
                 else if (modal.id === 'scheduleModal') closeScheduleModal();
                 else if (modal.id === 'kpiModal') closeKpiModal();
-                else if (modal.id === 'addCategoryModal') closeAddCategoryModal();
+                else if (modal.id === 'categoryManageModal') closeCategoryManageModal();
+                else if (modal.id === 'historyModal') closeHistoryModal();
             }
             _modalMousedownTarget = null;
         });

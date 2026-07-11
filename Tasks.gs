@@ -1,6 +1,7 @@
 /* =========================================================================
    Tasks.gs
-   업무데이터 시트 CRUD (조회/추가/수정/삭제/상태토글) 및 첨부파일 업로드.
+   업무데이터 시트 CRUD (조회/추가/수정/삭제/상태토글), 첨부파일 업로드,
+   변경 이력 기록.
    ========================================================================= */
 
 function getTasks_(ss, categoryNames) {
@@ -22,7 +23,8 @@ function getTasks_(ss, categoryNames) {
         content: row[4] || '',
         duedate: row[5] ? Utilities.formatDate(new Date(row[5]), "GMT+9", "yyyy-MM-dd") : '',
         status: row[6] || 'active',
-        fileUrl: row[7] || ''
+        fileUrl: row[7] || '',
+        riskLevel: row[8] || ''
       });
     }
   }
@@ -42,7 +44,8 @@ function uploadTaskFile_(data) {
 function addTask_(ss, data) {
   var sheet = ss.getSheetByName('업무데이터');
   var fileUrl = uploadTaskFile_(data);
-  sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', fileUrl]);
+  sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', fileUrl, data.riskLevel || '']);
+  logChange_(ss, '신규 등록', data.category, data.id, data.title, '');
 }
 
 function updateTask_(ss, data) {
@@ -51,14 +54,18 @@ function updateTask_(ss, data) {
   for (var i = 1; i < values.length; i++) {
     if (String(values[i][0]) === String(data.id)) {
       var rowNum = i + 1;
+      var before = { category: values[i][1], title: values[i][3], content: values[i][4], duedate: values[i][5] };
       sheet.getRange(rowNum, 2).setValue(data.category);
       sheet.getRange(rowNum, 3).setValue(data.date);
       sheet.getRange(rowNum, 4).setValue(data.title);
       sheet.getRange(rowNum, 5).setValue(data.content || '');
       sheet.getRange(rowNum, 6).setValue(data.duedate || '');
+      sheet.getRange(rowNum, 9).setValue(data.riskLevel || '');
       if (data.fileData && data.fileName) {
         sheet.getRange(rowNum, 8).setValue(uploadTaskFile_(data));
       }
+      var after = { category: data.category, title: data.title, content: data.content, duedate: data.duedate };
+      logChange_(ss, '수정', data.category, data.id, data.title, buildTaskDiff_(before, after));
       break;
     }
   }
@@ -69,11 +76,15 @@ function deleteOrToggleTask_(ss, data) {
   var values = sheet.getDataRange().getValues();
   for (var i = 1; i < values.length; i++) {
     if (String(values[i][0]) === String(data.id)) {
+      var cat = values[i][1], title = values[i][3];
       if (data.action === 'deleteTask') {
         sheet.deleteRow(i + 1);
+        logChange_(ss, '삭제', cat, data.id, title, '');
       } else {
         var current = values[i][6] || 'active';
-        sheet.getRange(i + 1, 7).setValue(current === 'done' ? 'active' : 'done');
+        var next = current === 'done' ? 'active' : 'done';
+        sheet.getRange(i + 1, 7).setValue(next);
+        logChange_(ss, next === 'done' ? '완료 처리' : '진행중으로 변경', cat, data.id, title, '');
       }
       break;
     }

@@ -9,9 +9,11 @@ function doGet(e) {
     var categories = getCategories_(ss);
     var payload = {
       categories: categories,
+      allCategories: getAllCategories_(ss),
       tasks: getTasks_(ss, categories),
       schedule: getScheduleData_(ss),
       personnel: getTodayPersonnel_(ss),
+      history: getRecentHistory_(ss, 50),
       lastSync: Utilities.formatDate(new Date(), "GMT+9", "yy-MM-dd HH:mm")
     };
     return jsonOutput_(payload);
@@ -48,6 +50,9 @@ function doPost(e) {
         break;
       case 'addCategory':
         addCategory_(ss, data);
+        break;
+      case 'toggleCategoryActive':
+        toggleCategoryActive_(ss, data);
         break;
     }
 
