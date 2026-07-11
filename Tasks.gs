@@ -2,31 +2,35 @@
    Tasks.gs
    업무데이터 시트 CRUD (조회/추가/수정/삭제/상태토글), 첨부파일 업로드,
    변경 이력 기록.
+
+   컬럼: A id, B 분류, C 등록일, D 제목, E 내용, F 마감일, G 상태, H 파일,
+        I 위험도, J 태그, K 담당자, L 완료일시, M 리마인드발송(내부용)
    ========================================================================= */
 
-function getTasks_(ss, categoryNames) {
+function getTasks_(ss, categoryNames, preloadedRows) {
   var tasks = {};
   categoryNames.forEach(function(cat) { tasks[cat] = []; });
 
   var taskSheet = ss.getSheetByName('업무데이터');
   if (!taskSheet) return tasks;
 
-  var taskData = taskSheet.getDataRange().getValues();
+  var taskData = preloadedRows || taskSheet.getDataRange().getValues();
   for (var i = 1; i < taskData.length; i++) {
     var row = taskData[i];
     var cat = row[1];
     if (tasks[cat]) {
       tasks[cat].push({
         id: row[0],
-        date: row[2] ? Utilities.formatDate(new Date(row[2]), "GMT+9", "yyyy-MM-dd") : '',
+        date: cellToDateKey_(row[2]),
         title: row[3],
         content: row[4] || '',
-        duedate: row[5] ? Utilities.formatDate(new Date(row[5]), "GMT+9", "yyyy-MM-dd") : '',
+        duedate: cellToDateKey_(row[5]),
         status: row[6] || 'active',
         fileUrl: row[7] || '',
         riskLevel: row[8] || '',
         tags: row[9] || '',
-        assignee: row[10] || ''
+        assignee: row[10] || '',
+        completedAt: row[11] || ''
       });
     }
   }
@@ -46,7 +50,7 @@ function uploadTaskFile_(data) {
 function addTask_(ss, data) {
   var sheet = ss.getSheetByName('업무데이터');
   var fileUrl = uploadTaskFile_(data);
-  sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', fileUrl, data.riskLevel || '', data.tags || '', data.assignee || '']);
+  sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', fileUrl, data.riskLevel || '', data.tags || '', data.assignee || '', '', '']);
   logChange_(ss, '신규 등록', data.category, data.id, data.title, '');
 }
 
@@ -65,6 +69,8 @@ function updateTask_(ss, data) {
       sheet.getRange(rowNum, 9).setValue(data.riskLevel || '');
       sheet.getRange(rowNum, 10).setValue(data.tags || '');
       sheet.getRange(rowNum, 11).setValue(data.assignee || '');
+      // 마감일이 바뀌면 이전에 보낸 리마인드 체크포인트를 초기화해서 새 마감일 기준으로 다시 보내도록 함
+      if (String(values[i][5]) !== String(data.duedate || '')) sheet.getRange(rowNum, 13).setValue('');
       if (data.fileData && data.fileName) {
         sheet.getRange(rowNum, 8).setValue(uploadTaskFile_(data));
       }
@@ -88,6 +94,12 @@ function deleteOrToggleTask_(ss, data) {
         var current = values[i][6] || 'active';
         var next = current === 'done' ? 'active' : 'done';
         sheet.getRange(i + 1, 7).setValue(next);
+        if (next === 'done') {
+          sheet.getRange(i + 1, 12).setValue(Utilities.formatDate(new Date(), "GMT+9", "yyyy-MM-dd HH:mm"));
+        } else {
+          sheet.getRange(i + 1, 12).setValue('');
+          sheet.getRange(i + 1, 13).setValue('');
+        }
         logChange_(ss, next === 'done' ? '완료 처리' : '진행중으로 변경', cat, data.id, title, '');
       }
       break;

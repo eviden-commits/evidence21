@@ -17,10 +17,11 @@ function logChange_(ss, action, category, id, title, detail) {
   ]);
 }
 
-function getRecentHistory_(ss, limit) {
+function getRecentHistory_(ss, limit, preloadedRows) {
   var sheet = ss.getSheetByName('변경이력');
-  if (!sheet || sheet.getLastRow() <= 1) return [];
-  var data = sheet.getDataRange().getValues();
+  if (!sheet) return [];
+  var data = preloadedRows || (sheet.getLastRow() <= 1 ? [] : sheet.getDataRange().getValues());
+  if (data.length <= 1) return [];
   var rows = data.slice(1).map(function(row) {
     return { time: row[0], action: row[1], category: row[2], id: row[3], title: row[4], detail: row[5] };
   });

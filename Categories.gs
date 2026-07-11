@@ -5,17 +5,21 @@
    숨겨지고 기존 업무 데이터는 그대로 남습니다.
    ========================================================================= */
 
-function getAllCategories_(ss) {
+function getAllCategories_(ss, preloadedRows) {
   var sheet = ss.getSheetByName('카테고리');
   if (!sheet) {
     sheet = ss.insertSheet('카테고리');
     sheet.appendRow(['이름', '활성']);
     sheet.getRange(1, 1, 1, 2).setFontWeight('bold');
     DEFAULT_CATEGORIES.forEach(function(name) { sheet.appendRow([name, true]); });
+    preloadedRows = null; // 방금 새로 만들었으니 미리 읽어온 값은 무시
   }
-  if (!sheet.getRange(1, 2).getValue()) sheet.getRange(1, 2).setValue('활성');
+  var data = preloadedRows;
+  if (!data) {
+    if (!sheet.getRange(1, 2).getValue()) sheet.getRange(1, 2).setValue('활성');
+    data = sheet.getDataRange().getValues();
+  }
 
-  var data = sheet.getDataRange().getValues();
   var categories = [];
   for (var i = 1; i < data.length; i++) {
     if (!data[i][0]) continue;
@@ -26,8 +30,8 @@ function getAllCategories_(ss) {
   return categories;
 }
 
-function getCategories_(ss) {
-  return getAllCategories_(ss).filter(function(c) { return c.active; }).map(function(c) { return c.name; });
+function getCategories_(ss, preloadedRows) {
+  return getAllCategories_(ss, preloadedRows).filter(function(c) { return c.active; }).map(function(c) { return c.name; });
 }
 
 function addCategory_(ss, data) {

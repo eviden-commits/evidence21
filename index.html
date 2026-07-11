@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>업무창고 — 품질안전보건실</title>
+    <link rel="preconnect" href="https://script.google.com">
+    <link rel="preconnect" href="https://script.googleusercontent.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -413,6 +418,7 @@
             <div class="head-btn-group">
                 <button class="pill-btn" onclick="openCategoryManageModal()"><i class="fa-solid fa-sliders"></i> 분류 관리</button>
                 <button class="pill-btn" onclick="openHistoryModal()"><i class="fa-solid fa-clock-rotate-left"></i> 변경 이력</button>
+                <button class="pill-btn" onclick="openSubscribeModal()"><i class="fa-solid fa-envelope"></i> 리마인드 등록</button>
                 <button class="pill-btn kpi" onclick="openKpiModal()"><i class="fa-solid fa-chart-bar"></i> 월별 KPI</button>
                 <button class="pill-btn" id="btn-toggle-archive" onclick="toggleArchiveMode()"><i class="fa-solid fa-box-archive"></i><span id="archive-btn-text">종료된 업무</span></button>
             </div>
@@ -566,6 +572,20 @@
     </div>
 </div>
 
+<!-- MODAL: 리마인드 등록 -->
+<div id="subscribeModal" class="modal">
+    <div class="modal-sheet">
+        <div class="modal-title">리마인드 이메일 등록</div>
+        <div class="modal-subtitle">담당자 이름과 동일하게 입력해야 리마인드가 연결됩니다. 마감 7일전/3일전/당일에 미완료 업무를 메일로 알려드립니다.</div>
+        <div class="field-group"><div class="field-label">이름</div><input type="text" id="sub-name" placeholder="담당자와 동일한 이름"></div>
+        <div class="field-group"><div class="field-label">이메일</div><input type="email" id="sub-email" placeholder="you@sebangtec.com"></div>
+        <div class="modal-actions">
+            <button class="btn-fill dark" id="btn-sub-save" onclick="handleSubscribeSave()">등록</button>
+            <button class="btn-text-only" onclick="closeSubscribeModal()">취소</button>
+        </div>
+    </div>
+</div>
+
 <script>
     /* ── HELPERS ── */
     function todayStr() { return new Date().toLocaleDateString('en-CA'); } // ⑪ 로컬 타임존
@@ -662,16 +682,14 @@
         if (!forceReload && cached) {
             try {
                 const parsed = JSON.parse(cached);
-                // 캐시 만료 감지
-                if (parsed.cachedAt && Date.now() - parsed.cachedAt > CACHE_TTL) {
-                    localStorage.removeItem('warehouse_cache_data');
-                    throw new Error('cache expired');
-                }
                 const cacheData = parsed.cachedAt ? parsed.data : parsed; // 구버전 호환
                 parseAndSetState(cacheData);
                 overlay.style.display='none';
-                document.getElementById('cache-chip').style.display=''; // ⑩ 캐시 표시
-                render(); return;
+                const isStale = !parsed.cachedAt || (Date.now() - parsed.cachedAt > CACHE_TTL);
+                document.getElementById('cache-chip').style.display = isStale ? '' : 'none'; // ⑩ 캐시 표시
+                render();
+                syncSilent(); // stale-while-revalidate: 캐시로 즉시 렌더하고 백그라운드에서 항상 최신화
+                return;
             } catch(e) { localStorage.removeItem('warehouse_cache_data'); }
         }
         overlay.classList.remove('fade-out'); overlay.style.display='flex';
@@ -1275,6 +1293,34 @@
     }
     function closeHistoryModal() { document.getElementById('historyModal').classList.remove('active'); }
 
+    /* ── 리마인드 이메일 등록 ── */
+    function openSubscribeModal() {
+        document.getElementById('sub-name').value='';
+        document.getElementById('sub-email').value='';
+        document.getElementById('subscribeModal').classList.add('active');
+        setTimeout(()=>document.getElementById('sub-name').focus(),200);
+    }
+    function closeSubscribeModal() { document.getElementById('subscribeModal').classList.remove('active'); }
+
+    async function handleSubscribeSave() {
+        const name=document.getElementById('sub-name').value.trim();
+        const email=document.getElementById('sub-email').value.trim();
+        if (!name) { alert('이름을 입력하세요.'); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('올바른 이메일 주소를 입력하세요.'); return; }
+        const pwd=getGlobalPassword(); if(!pwd) return;
+        const btn=document.getElementById('btn-sub-save');
+        btn.textContent='등록 중…'; btn.disabled=true;
+        try {
+            const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+                body:JSON.stringify({action:'addSubscriber',name,email,password:pwd})});
+            const result=await res.json();
+            if(result.status==="auth_error"){alert(result.message);}
+            else if(result.status!=="ok"){alert(result.message||'등록에 실패했습니다.');}
+            else { alert('등록되었습니다.'); closeSubscribeModal(); }
+        } catch(e){alert("통신 오류가 발생했습니다.");}
+        finally{btn.textContent='등록';btn.disabled=false;}
+    }
+
     /* ── 위험도 / 마감 임박 헬퍼 ── */
     const RISK_LABELS = { low:'낮음', medium:'보통', high:'높음', critical:'긴급' };
     function riskLabel(level) { return RISK_LABELS[level] || ''; }
@@ -1352,6 +1398,7 @@
             else if (active.id === 'kpiModal') closeKpiModal();
             else if (active.id === 'categoryManageModal') closeCategoryManageModal();
             else if (active.id === 'historyModal') closeHistoryModal();
+            else if (active.id === 'subscribeModal') closeSubscribeModal();
         }
     });
 
@@ -1383,6 +1430,7 @@
                 else if (modal.id === 'kpiModal') closeKpiModal();
                 else if (modal.id === 'categoryManageModal') closeCategoryManageModal();
                 else if (modal.id === 'historyModal') closeHistoryModal();
+                else if (modal.id === 'subscribeModal') closeSubscribeModal();
             }
             _modalMousedownTarget = null;
         });
