@@ -308,6 +308,17 @@
             .pv-task-meta{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;}
             .pv-task-date{font-size:10px;color:#AEAEB2;}
             .pv-task-due{font-size:11px;font-weight:600;color:#1D1D1F;}
+            .pv-task-due.overdue{color:#D70015;}
+            .pv-task-due.upcoming{color:#C93400;}
+            .pv-badge-row{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap;}
+            .pv-badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;}
+            .pv-badge-assignee{background:#F5F5F7;color:#3C3C43;}
+            .pv-badge-risk-low{background:rgba(52,199,89,0.14);color:#248A3D;}
+            .pv-badge-risk-medium{background:rgba(255,149,0,0.14);color:#C93400;}
+            .pv-badge-risk-high{background:rgba(255,59,48,0.14);color:#D70015;}
+            .pv-badge-risk-critical{background:rgba(175,82,222,0.14);color:#8944AB;}
+            .pv-summary-value.danger{color:#D70015;}
+            .pv-pers-line{font-size:11px;color:#6C6C70;margin-top:6px;}
             .pv-footer{margin-top:20px;padding-top:10px;border-top:0.5px solid #AEAEB2;font-size:10px;color:#AEAEB2;display:flex;justify-content:space-between;}
         }
 
@@ -1424,21 +1435,35 @@
     /* ── PRINT ⑭ ── */
     function printReport() {
         const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+        const todayKey=todayStr();
         let all=[];
         for(const cat of CATS) all=all.concat((AppState.tasks[cat]||[]).map(t=>({...t,cat})));
         const total=all.length,done=all.filter(t=>t.status==='done').length,pct=total>0?Math.round(done/total*100):0;
+        const overdueTotal=all.filter(t=>t.status!=='done'&&t.duedate&&t.duedate<todayKey).length;
+
+        const persLine=`<div class="pv-pers-line">오늘 출력인원: 전체 ${AppState.personnel.hitech+AppState.personnel.arch}명 (하이테크 ${AppState.personnel.hitech} · 건축기계 ${AppState.personnel.arch})</div>`;
 
         // ⑭ 주간 일정 섹션
-        const schSection=AppState.schedule.length>0?`<div class="pv-cat-section"><div class="pv-cat-header"><span class="pv-cat-name">최차장 주간 일정</span></div><div class="pv-sch-grid">${AppState.schedule.map(s=>`<div class="pv-sch-card${s.isToday?' pv-sch-today':''}"><div class="pv-sch-day">${escHtml(s.id||'')}</div><div class="pv-sch-date">${escHtml(s.date||'')}</div><div class="pv-sch-loc">${s.isHoliday?escHtml(s.holiday||''):escHtml(s.loc||'—')}</div></div>`).join('')}</div></div>`:'';
+        const schSection=AppState.schedule.length>0?`<div class="pv-cat-section"><div class="pv-cat-header"><span class="pv-cat-name">주간 일정</span></div><div class="pv-sch-grid">${AppState.schedule.map(s=>`<div class="pv-sch-card${s.isToday?' pv-sch-today':''}"><div class="pv-sch-day">${escHtml(s.id||'')}</div><div class="pv-sch-date">${escHtml(s.date||'')}</div><div class="pv-sch-loc">${s.isHoliday?escHtml(s.holiday||''):escHtml(s.loc||'—')}</div></div>`).join('')}</div></div>`:'';
 
         const catSections=CATS.map(cat=>{
-            const active=(AppState.tasks[cat]||[]).filter(t=>t.status!=='done').sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+            const active=(AppState.tasks[cat]||[]).filter(t=>t.status!=='done').sort((a,b)=>(a.duedate||'9999-99-99').localeCompare(b.duedate||'9999-99-99'));
             if(!active.length) return '';
-            const rows=active.map(t=>`<div class="pv-task-row"><div class="pv-task-body"><div class="pv-task-title">${escHtml(t.title)}</div>${t.content?`<div class="pv-task-content">${escHtml(t.content)}</div>`:''}</div><div class="pv-task-meta"><span class="pv-task-date">${escHtml(t.date)} 등록</span>${t.duedate?`<span class="pv-task-due">목표: ${escHtml(t.duedate)}</span>`:''}</div></div>`).join('');
+            const win=warningWindowDays(cat);
+            const rows=active.map(t=>{
+                const isOverdue=t.duedate&&t.duedate<todayKey;
+                const daysLeft=t.duedate?Math.ceil((new Date(t.duedate+'T00:00:00')-new Date(todayKey+'T00:00:00'))/86400000):null;
+                const isUpcoming=!isOverdue&&t.duedate&&daysLeft!==null&&daysLeft<=win;
+                const badges=[
+                    t.assignee?`<span class="pv-badge pv-badge-assignee">담당 ${escHtml(t.assignee)}</span>`:'',
+                    t.riskLevel?`<span class="pv-badge pv-badge-risk-${escHtml(t.riskLevel)}">위험도 ${riskLabel(t.riskLevel)}</span>`:''
+                ].filter(Boolean).join('');
+                return `<div class="pv-task-row"><div class="pv-task-body"><div class="pv-task-title">${escHtml(t.title)}</div>${t.content?`<div class="pv-task-content">${escHtml(t.content)}</div>`:''}${badges?`<div class="pv-badge-row">${badges}</div>`:''}</div><div class="pv-task-meta"><span class="pv-task-date">${escHtml(t.date)} 등록</span>${t.duedate?`<span class="pv-task-due${isOverdue?' overdue':isUpcoming?' upcoming':''}">목표: ${escHtml(t.duedate)}${isOverdue?' (기한초과)':isUpcoming?' (임박)':''}</span>`:''}</div></div>`;
+            }).join('');
             return `<div class="pv-cat-section"><div class="pv-cat-header"><span class="pv-cat-name">${cat}</span><span class="pv-cat-stat">&nbsp;진행중 ${active.length}건</span></div>${rows}</div>`;
         }).join('');
 
-        document.getElementById('print-view').innerHTML=`<div class="pv-header"><div class="pv-title">품질안전보건실 업무 현황 보고</div><div class="pv-meta">작성일: ${today}&nbsp;|&nbsp;담당: 최차장&nbsp;|&nbsp;보고: 정재빈 실장</div></div><div class="pv-summary"><div><div class="pv-summary-label">전체 업무</div><div class="pv-summary-value">${total}건</div></div><div><div class="pv-summary-label">완료</div><div class="pv-summary-value">${done}건</div></div><div><div class="pv-summary-label">진행중</div><div class="pv-summary-value">${total-done}건</div></div><div><div class="pv-summary-label">달성률</div><div class="pv-summary-value">${pct}%</div></div></div>${schSection}${catSections}<div class="pv-footer"><span>품질안전보건실 업무창고 시스템</span><span>출력일시: ${new Date().toLocaleString('ko-KR')}</span></div>`;
+        document.getElementById('print-view').innerHTML=`<div class="pv-header"><div class="pv-title">품질안전보건실 업무 현황 보고</div><div class="pv-meta">작성일: ${today}</div>${persLine}</div><div class="pv-summary"><div><div class="pv-summary-label">전체 업무</div><div class="pv-summary-value">${total}건</div></div><div><div class="pv-summary-label">완료</div><div class="pv-summary-value">${done}건</div></div><div><div class="pv-summary-label">진행중</div><div class="pv-summary-value">${total-done}건</div></div><div><div class="pv-summary-label">기한초과</div><div class="pv-summary-value${overdueTotal>0?' danger':''}">${overdueTotal}건</div></div><div><div class="pv-summary-label">달성률</div><div class="pv-summary-value">${pct}%</div></div></div>${schSection}${catSections}<div class="pv-footer"><span>품질안전보건실 업무창고 시스템</span><span>출력일시: ${new Date().toLocaleString('ko-KR')}</span></div>`;
         window.print();
     }
 
