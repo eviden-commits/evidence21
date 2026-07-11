@@ -43,6 +43,15 @@
         .loader-track::after{content:'';display:block;height:100%;width:40%;background:var(--sys-label-3);animation:slide 0.9s cubic-bezier(0.4,0,0.2,1) infinite alternate;}
         @keyframes slide{from{transform:translateX(-100%)}to{transform:translateX(200%)}}
 
+        /* LOGIN */
+        #login-overlay{position:fixed;inset:0;z-index:9998;background:var(--sys-bg);align-items:center;justify-content:center;}
+        .login-card{width:100%;max-width:320px;padding:32px 28px;text-align:center;}
+        .login-title{font-size:17px;font-weight:700;color:var(--sys-label);margin:10px 0 6px;}
+        .login-subtitle{font-size:12.5px;color:var(--sys-label-3);margin-bottom:22px;line-height:1.5;}
+        .login-input{display:block;width:100%;padding:12px 14px;border:1px solid var(--sys-separator);border-radius:var(--r-sm);font-size:15px;text-align:center;letter-spacing:0.05em;font-family:var(--font-sans);color:var(--sys-label);background:var(--sys-surface-2);outline:none;margin-bottom:12px;transition:all 0.15s;}
+        .login-input:focus{border-color:var(--sys-blue);background:var(--sys-surface);box-shadow:0 0 0 3px var(--sys-blue-bg);}
+        .login-error{font-size:12px;color:var(--sys-red);margin:-4px 0 12px;}
+
         /* NAV */
         .top-nav{position:sticky;top:0;z-index:200;height:52px;background:rgba(245,245,247,0.82);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:0.5px solid var(--sys-separator);padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
         .nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px 8px;border-radius:var(--r-xs);transition:background 0.12s;}
@@ -59,10 +68,6 @@
         .nav-right{display:flex;align-items:center;gap:6px;}
         .nav-sync-label{font-size:11px;color:var(--sys-label-4);font-family:var(--font-mono);padding-right:4px;}
         .cache-chip{font-size:10px;font-weight:600;color:var(--sys-orange);background:var(--sys-orange-bg);padding:2px 8px;border-radius:10px;letter-spacing:0.02em;}
-        .nav-auth-wrap{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--r-xs);background:rgba(0,0,0,0.04);border:0.5px solid transparent;transition:all 0.15s;}
-        .nav-auth-wrap:focus-within{background:var(--sys-surface);border-color:var(--sys-separator-2);box-shadow:var(--shadow-sm);}
-        .nav-auth-wrap i{font-size:10px;color:var(--sys-label-4);}
-        .nav-auth-field{border:none;background:transparent;font-size:12px;width:76px;outline:none;font-family:var(--font-mono);color:var(--sys-label);}
         .nav-divider{width:1px;height:18px;background:var(--sys-separator);margin:0 2px;}
         .nav-icon-btn{width:32px;height:32px;border-radius:var(--r-xs);display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--sys-label-3);font-size:13px;cursor:pointer;transition:all 0.12s;}
         .nav-icon-btn:hover{background:rgba(0,0,0,0.06);color:var(--sys-label);}
@@ -331,9 +336,19 @@
 </head>
 <body>
 
-<div id="loading-overlay">
+<div id="loading-overlay" style="display:none;">
     <div class="loader-wordmark">Warehouse</div>
     <div class="loader-track"></div>
+</div>
+<div id="login-overlay" style="display:flex;">
+    <div class="login-card">
+        <div class="loader-wordmark" style="margin-bottom:4px;">Warehouse</div>
+        <div class="login-title">품질안전보건실 업무창고</div>
+        <div class="login-subtitle">인증코드를 입력하면 조회 및 편집이 가능합니다.</div>
+        <input type="password" id="login-pwd-input" class="login-input" placeholder="인증코드" autocomplete="off" onkeydown="if(event.key==='Enter')handleLogin()">
+        <div id="login-error" class="login-error" style="display:none;"></div>
+        <button class="btn-fill dark" id="login-submit-btn" onclick="handleLogin()">입장</button>
+    </div>
 </div>
 <div id="print-view"></div>
 
@@ -355,10 +370,6 @@
     <div class="nav-right">
         <span class="nav-sync-label" id="nav-sync">—</span>
         <span class="cache-chip" id="cache-chip" style="display:none;" title="캐시에서 로드됨 · 새로고침 권장">캐시</span>
-        <div class="nav-auth-wrap">
-            <i class="fa-solid fa-lock"></i>
-            <input type="password" id="global-auth-pwd" class="nav-auth-field" placeholder="인증코드" oninput="onPwdInput(this.value)">
-        </div>
         <div class="nav-divider"></div>
         <button class="nav-icon-btn" onclick="printReport()" title="보고서 출력"><i class="fa-solid fa-print"></i></button>
         <button class="nav-icon-btn" onclick="syncForce()" title="새로고침"><i class="fa-solid fa-arrows-rotate"></i></button>
@@ -596,7 +607,8 @@
     let CATS = ["사고관리","입찰지원","노무관리","인증관리","법무관리","기타관리"]; // 서버에서 받은 분류 목록으로 갱신됨
     const SORT_MODES = [{key:'date',label:'등록일'},{key:'duedate_asc',label:'마감일↑'},{key:'duedate_desc',label:'마감일↓'}];
     let _sortIdx = 0;
-    let _sessionPwd = ''; // ② 세션 캐싱
+    let _sessionPwd = sessionStorage.getItem('warehouse_session_pwd') || ''; // 로그인 시 설정, 탭 종료시 소멸
+    function gasGetUrl() { return GAS_URL + '?pwd=' + encodeURIComponent(_sessionPwd); }
 
     // 분류 색상/아이콘: 기본 분류는 고정 아이콘, 새로 추가된 분류는 폴더 아이콘 + 순환 색상
     const CAT_COLOR_PALETTE = ['red','blue','orange','green','purple','gray'];
@@ -658,19 +670,59 @@
     };
 
     /* ── PASSWORD ── */
-    function onPwdInput(val) { _sessionPwd = val.trim(); } // ② 입력 즉시 캐싱
-    function getGlobalPassword() {
-        const field = document.getElementById('global-auth-pwd');
-        const val = field.value.trim();
-        if (val) { _sessionPwd = val; return val; }
-        if (_sessionPwd) return _sessionPwd;
-        // alert 대신 필드 강조
-        const wrap = field.closest('.nav-auth-wrap') || field.parentElement;
-        wrap.style.boxShadow = '0 0 0 3px rgba(255,59,48,0.3)';
-        wrap.style.borderColor = 'var(--sys-red)';
-        field.focus();
-        setTimeout(() => { wrap.style.boxShadow = ''; wrap.style.borderColor = ''; }, 2000);
-        return null;
+    // 로그인 화면에서 이미 인증코드를 받아 _sessionPwd에 저장해두므로, 편집 액션은 그 값을 그대로 사용합니다.
+    function getGlobalPassword() { return _sessionPwd || null; }
+
+    function forceLogout(message) {
+        _sessionPwd = '';
+        sessionStorage.removeItem('warehouse_session_pwd');
+        document.getElementById('loading-overlay').style.display='none';
+        const errEl = document.getElementById('login-error');
+        errEl.textContent = message || '다시 로그인해주세요.';
+        errEl.style.display = '';
+        document.getElementById('login-pwd-input').value = '';
+        document.getElementById('login-overlay').style.display = 'flex';
+        setTimeout(()=>document.getElementById('login-pwd-input').focus(), 100);
+    }
+
+    function bootApp() {
+        if (_sessionPwd) {
+            document.getElementById('login-overlay').style.display = 'none';
+            initApp();
+        } else {
+            document.getElementById('login-overlay').style.display = 'flex';
+            setTimeout(()=>document.getElementById('login-pwd-input').focus(), 100);
+        }
+    }
+
+    async function handleLogin() {
+        const pwd = document.getElementById('login-pwd-input').value.trim();
+        const errEl = document.getElementById('login-error');
+        errEl.style.display = 'none';
+        if (!pwd) return;
+        _sessionPwd = pwd;
+        const btn = document.getElementById('login-submit-btn');
+        btn.textContent = '확인 중…'; btn.disabled = true;
+        try {
+            const data = await fetch(gasGetUrl()).then(r=>r.json());
+            if (data.authError) {
+                _sessionPwd = '';
+                errEl.textContent = data.error || '인증 코드가 올바르지 않습니다.';
+                errEl.style.display = '';
+                return;
+            }
+            sessionStorage.setItem('warehouse_session_pwd', pwd);
+            localStorage.setItem('warehouse_cache_data', JSON.stringify({data, cachedAt: Date.now()}));
+            parseAndSetState(data);
+            document.getElementById('cache-chip').style.display='none';
+            document.getElementById('login-overlay').style.display = 'none';
+            render();
+        } catch(e) {
+            errEl.textContent = '통신 오류가 발생했습니다.';
+            errEl.style.display = '';
+        } finally {
+            btn.textContent = '입장'; btn.disabled = false;
+        }
     }
 
     /* ── INIT ── */
@@ -694,7 +746,8 @@
         }
         overlay.classList.remove('fade-out'); overlay.style.display='flex';
         try {
-            const data = await fetch(GAS_URL).then(r=>r.json());
+            const data = await fetch(gasGetUrl()).then(r=>r.json());
+            if (data.authError) { forceLogout(data.error); return; }
             localStorage.setItem('warehouse_cache_data', JSON.stringify({data, cachedAt: Date.now()}));
             parseAndSetState(data);
             document.getElementById('cache-chip').style.display='none'; // ⑩ 신선 데이터
@@ -722,7 +775,8 @@
 
     async function syncSilent(restoreY=null) { // ⑤ 백그라운드 싱크
         try {
-            const data = await fetch(GAS_URL).then(r=>r.json());
+            const data = await fetch(gasGetUrl()).then(r=>r.json());
+            if (data.authError) { forceLogout(data.error); return; }
             localStorage.setItem('warehouse_cache_data', JSON.stringify({data, cachedAt: Date.now()}));
             parseAndSetState(data);
             document.getElementById('cache-chip').style.display='none';
@@ -1436,7 +1490,7 @@
         });
     });
 
-    initApp();
+    bootApp();
 </script>
 </body>
 </html>

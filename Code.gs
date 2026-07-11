@@ -8,6 +8,11 @@ var DASHBOARD_CACHE_SECONDS = 60;
 
 function doGet(e) {
   try {
+    var pwd = (e && e.parameter && e.parameter.pwd) || '';
+    if (!checkPassword_({ password: pwd })) {
+      return jsonOutput_({ authError: true, error: "인증 코드가 올바르지 않습니다." });
+    }
+
     var cache = CacheService.getScriptCache();
     var cached = cache.get(DASHBOARD_CACHE_KEY);
     if (cached) return jsonOutput_(JSON.parse(cached));
