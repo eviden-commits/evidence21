@@ -29,7 +29,7 @@ function getRecentHistory_(ss, limit) {
 }
 
 function buildTaskDiff_(before, after) {
-  var labels = { category: '분류', title: '제목', content: '내용', duedate: '마감일' };
+  var labels = { category: '분류', title: '제목', content: '내용', duedate: '마감일', assignee: '담당자' };
   var parts = [];
   Object.keys(labels).forEach(function(key) {
     var b = before[key] || '';

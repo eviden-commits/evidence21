@@ -24,7 +24,9 @@ function getTasks_(ss, categoryNames) {
         duedate: row[5] ? Utilities.formatDate(new Date(row[5]), "GMT+9", "yyyy-MM-dd") : '',
         status: row[6] || 'active',
         fileUrl: row[7] || '',
-        riskLevel: row[8] || ''
+        riskLevel: row[8] || '',
+        tags: row[9] || '',
+        assignee: row[10] || ''
       });
     }
   }
@@ -44,7 +46,7 @@ function uploadTaskFile_(data) {
 function addTask_(ss, data) {
   var sheet = ss.getSheetByName('업무데이터');
   var fileUrl = uploadTaskFile_(data);
-  sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', fileUrl, data.riskLevel || '']);
+  sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', fileUrl, data.riskLevel || '', data.tags || '', data.assignee || '']);
   logChange_(ss, '신규 등록', data.category, data.id, data.title, '');
 }
 
@@ -54,17 +56,19 @@ function updateTask_(ss, data) {
   for (var i = 1; i < values.length; i++) {
     if (String(values[i][0]) === String(data.id)) {
       var rowNum = i + 1;
-      var before = { category: values[i][1], title: values[i][3], content: values[i][4], duedate: values[i][5] };
+      var before = { category: values[i][1], title: values[i][3], content: values[i][4], duedate: values[i][5], assignee: values[i][10] };
       sheet.getRange(rowNum, 2).setValue(data.category);
       sheet.getRange(rowNum, 3).setValue(data.date);
       sheet.getRange(rowNum, 4).setValue(data.title);
       sheet.getRange(rowNum, 5).setValue(data.content || '');
       sheet.getRange(rowNum, 6).setValue(data.duedate || '');
       sheet.getRange(rowNum, 9).setValue(data.riskLevel || '');
+      sheet.getRange(rowNum, 10).setValue(data.tags || '');
+      sheet.getRange(rowNum, 11).setValue(data.assignee || '');
       if (data.fileData && data.fileName) {
         sheet.getRange(rowNum, 8).setValue(uploadTaskFile_(data));
       }
-      var after = { category: data.category, title: data.title, content: data.content, duedate: data.duedate };
+      var after = { category: data.category, title: data.title, content: data.content, duedate: data.duedate, assignee: data.assignee };
       logChange_(ss, '수정', data.category, data.id, data.title, buildTaskDiff_(before, after));
       break;
     }

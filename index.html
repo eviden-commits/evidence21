@@ -187,6 +187,15 @@
         .risk-badge.risk-medium{background:var(--sys-orange-bg);color:var(--sys-orange);}
         .risk-badge.risk-high{background:var(--sys-red-bg);color:var(--sys-red);}
         .risk-badge.risk-critical{background:var(--sys-purple-bg);color:var(--sys-purple);}
+        .tag-badge{display:inline-block;font-size:11px;font-weight:500;padding:1px 7px;border-radius:10px;background:var(--sys-blue-bg);color:var(--sys-blue);margin-right:4px;}
+        .assignee-label{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--sys-label-3);margin-top:4px;}
+        #assignee-suggestions{position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--sys-surface);border:0.5px solid var(--sys-separator);border-radius:var(--r-sm);box-shadow:var(--shadow-md);max-height:160px;overflow-y:auto;z-index:10;}
+        .assignee-chip{display:block;width:100%;text-align:left;padding:8px 12px;background:none;border:none;font-size:13px;color:var(--sys-label);cursor:pointer;font-family:var(--font-sans);}
+        .assignee-chip:hover{background:var(--sys-surface-2);}
+        .top-tags-row{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+        .top-tags-label{font-size:10px;font-weight:700;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.06em;}
+        .top-tag-chip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:var(--sys-blue-bg);color:var(--sys-blue);border:none;cursor:pointer;transition:all 0.12s;}
+        .top-tag-chip:hover{background:var(--sys-blue);color:white;}
         .list-attachment{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:12px;color:var(--sys-blue);font-weight:500;text-decoration:none;}
         .list-attachment:hover{text-decoration:underline;}
         .list-actions{display:flex;gap:2px;flex-shrink:0;padding-top:2px;}
@@ -415,6 +424,8 @@
             <button class="gsb-clear" id="gsb-clear" onclick="clearGlobalSearch()" style="display:none;" aria-label="검색 초기화"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
+        <div class="top-tags-row" id="top-tags-row"></div>
+
         <div class="new-arrive-wrap" id="new-arrive-wrap">
             <div class="new-arrive-header">
                 <span class="new-arrive-dot"></span>
@@ -456,7 +467,12 @@
             <select id="reg-cat" onchange="onRegCatChange()"></select>
         </div>
         <div class="field-group"><div class="field-label">업무 제목 *</div><input type="text" id="reg-title" placeholder="제목을 입력하세요"></div>
-        <div class="field-group"><div class="field-label">내용</div><textarea id="reg-content" rows="3" placeholder="상세 내용을 입력하세요"></textarea></div>
+        <div class="field-group"><div class="field-label">내용</div><textarea id="reg-content" rows="5" placeholder="상세 내용을 입력하세요"></textarea></div>
+        <div class="field-group"><div class="field-label">태그</div><input type="text" id="reg-tags" placeholder="#안전, #고소작업 처럼 쉼표로 구분"></div>
+        <div class="field-group" style="position:relative;"><div class="field-label">담당자</div>
+            <input type="text" id="reg-assignee" placeholder="이름 입력 또는 아래에서 선택" oninput="renderAssigneeSuggestions()" onfocus="renderAssigneeSuggestions()" onblur="setTimeout(()=>document.getElementById('assignee-suggestions').style.display='none',150)">
+            <div id="assignee-suggestions" style="display:none;"></div>
+        </div>
         <div class="field-group" id="risk-field-group" style="display:none;"><div class="field-label">위험도</div>
             <select id="reg-risk"><option value="">선택 안함</option><option value="low">낮음</option><option value="medium">보통</option><option value="high">높음</option><option value="critical">긴급</option></select>
         </div>
@@ -568,6 +584,49 @@
     function catColor(idx) { return CAT_COLOR_PALETTE[idx % CAT_COLOR_PALETTE.length]; }
     function catColorByName(name) { return catColor(Math.max(0, CATS.indexOf(name))); }
     function catIcon(name) { return CAT_ICON_MAP[name] || 'fa-folder'; }
+
+    /* ── 태그 / 담당자 헬퍼 ── */
+    function parseTags(str) {
+        return (str||'').split(',').map(s=>s.trim()).filter(Boolean).map(s=>s.startsWith('#')?s:'#'+s);
+    }
+    function allTasksFlat() {
+        let all=[];
+        for (const cat of CATS) all=all.concat(AppState.tasks[cat]||[]);
+        return all;
+    }
+    function getTopTags(n) {
+        const freq={};
+        allTasksFlat().forEach(t=>parseTags(t.tags).forEach(tag=>{ freq[tag]=(freq[tag]||0)+1; }));
+        return Object.keys(freq).sort((a,b)=>freq[b]-freq[a]).slice(0,n);
+    }
+    function getAllAssignees() {
+        const freq={};
+        allTasksFlat().forEach(t=>{ if(t.assignee) freq[t.assignee]=(freq[t.assignee]||0)+1; });
+        return Object.keys(freq).sort((a,b)=>freq[b]-freq[a]);
+    }
+    function renderTopTags() {
+        const row=document.getElementById('top-tags-row');
+        const tags=getTopTags(5);
+        if (tags.length===0) { row.innerHTML=''; return; }
+        row.innerHTML = `<span class="top-tags-label">자주 쓰는 태그</span>` + tags.map(t=>`<button class="top-tag-chip" onclick="onTopTagClick('${escHtml(t)}')">${escHtml(t)}</button>`).join('');
+    }
+    function onTopTagClick(tag) {
+        document.getElementById('global-search-input').value=tag;
+        onGlobalSearch(tag);
+    }
+    function renderAssigneeSuggestions() {
+        const input=document.getElementById('reg-assignee');
+        const val=input.value.trim().toLowerCase();
+        const names=getAllAssignees().filter(n=>!val||n.toLowerCase().includes(val));
+        const box=document.getElementById('assignee-suggestions');
+        if (names.length===0) { box.style.display='none'; box.innerHTML=''; return; }
+        box.innerHTML=names.slice(0,8).map(n=>`<button type="button" class="assignee-chip" onmousedown="event.preventDefault();selectAssignee('${escHtml(n)}')">${escHtml(n)}</button>`).join('');
+        box.style.display='block';
+    }
+    function selectAssignee(name) {
+        document.getElementById('reg-assignee').value=name;
+        document.getElementById('assignee-suggestions').style.display='none';
+    }
 
     let AppState = {
         schedule:[],
@@ -776,6 +835,7 @@
         }).join('');
 
         renderNewArrive();
+        renderTopTags();
         filterAndRenderList();
     }
 
@@ -839,7 +899,7 @@
                 if (AppState.onlyArchiveMode&&t.status!=='done') return false;
                 if (!AppState.onlyArchiveMode&&t.status==='done') return false;
             }
-            if (keyword) return (t.title||'').toLowerCase().includes(keyword)||(t.content||'').toLowerCase().includes(keyword);
+            if (keyword) return (t.title||'').toLowerCase().includes(keyword)||(t.content||'').toLowerCase().includes(keyword)||(t.tags||'').toLowerCase().includes(keyword)||(t.assignee||'').toLowerCase().includes(keyword);
             return true;
         });
 
@@ -881,7 +941,9 @@
                     <span class="list-date">${escHtml(t.date)} 등록</span>
                     <span class="list-title">${escHtml(t.title)}${t.riskLevel?` <span class="risk-badge risk-${escHtml(t.riskLevel)}">${riskLabel(t.riskLevel)}</span>`:''}</span>
                     ${t.content?`<span class="list-content">${escHtml(t.content)}</span>`:''}
+                    ${t.tags?`<span>${parseTags(t.tags).map(tag=>`<span class="tag-badge">${escHtml(tag)}</span>`).join('')}</span>`:''}
                     ${t.duedate?`<span class="list-duedate${isOverdue?' overdue':isUpcoming?' upcoming':''}"><i class="fa-regular fa-clock"></i> 목표일: ${escHtml(t.duedate)}${isOverdue?' · 기한초과':isUpcoming?` · ${upcomingLabel} D-${daysLeft}`:''}</span>`:''}
+                    ${t.assignee?`<span class="assignee-label"><i class="fa-regular fa-user"></i> 담당: ${escHtml(t.assignee)}</span>`:''}
                     ${fileHref?`<a href="${fileHref}" target="_blank" rel="noopener" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일</a>`:''}
                 </div>
                 <div class="list-actions">
@@ -921,6 +983,8 @@
         document.getElementById('reg-id').value="";
         document.getElementById('reg-startdate').value=todayStr(); // ⑪
         document.getElementById('reg-risk').value="";
+        document.getElementById('reg-tags').value="";
+        document.getElementById('reg-assignee').value="";
         onRegCatChange();
         document.getElementById('inputModal').classList.add('active');
         setTimeout(()=>document.getElementById('reg-title').focus(),200);
@@ -937,6 +1001,8 @@
         document.getElementById('reg-startdate').value=item.date;
         document.getElementById('reg-duedate').value=item.duedate||'';
         document.getElementById('reg-risk').value=item.riskLevel||'';
+        document.getElementById('reg-tags').value=item.tags||'';
+        document.getElementById('reg-assignee').value=item.assignee||'';
         onRegCatChange();
         // ⑧ 기존 파일 표시
         const el=document.getElementById('file-label-text');
@@ -954,7 +1020,7 @@
 
     function closeModal() {
         document.getElementById('inputModal').classList.remove('active');
-        ['reg-id','reg-title','reg-content','reg-startdate','reg-duedate','reg-risk'].forEach(id=>document.getElementById(id).value='');
+        ['reg-id','reg-title','reg-content','reg-startdate','reg-duedate','reg-risk','reg-tags','reg-assignee'].forEach(id=>document.getElementById(id).value='');
         document.getElementById('reg-file').value='';
         document.getElementById('file-label-text').textContent='파일 선택 (최대 25MB)';
         const icon=document.querySelector('#file-label-el i');
@@ -1069,6 +1135,8 @@
             title, content:document.getElementById('reg-content').value.trim(),
             duedate:document.getElementById('reg-duedate').value,
             riskLevel:document.getElementById('reg-risk').value,
+            tags:parseTags(document.getElementById('reg-tags').value).join(', '),
+            assignee:document.getElementById('reg-assignee').value.trim(),
             password:pwd, fileData:null, fileName:null, fileMime:null
         };
         if (fileInput.files&&fileInput.files.length>0) {
