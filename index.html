@@ -300,11 +300,17 @@
 
             /* KPI 카드 */
             .pv-summary{display:flex;gap:9px;margin-bottom:22px;}
-            .pv-stat-card{flex:1;border:1px solid #E3E5E9;border-top:3px solid #14213D;border-radius:3px;padding:9px 11px;}
-            .pv-stat-card.accent-danger{border-top-color:#C0152F;}
+            .pv-stat-card{flex:1;border:1px solid #E3E5E9;border-radius:5px;padding:11px 13px;background:#FAFBFC;}
+            .pv-stat-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10.5px;margin-bottom:9px;background:rgba(20,33,61,0.09);color:#14213D;}
+            .pv-stat-card.accent-success .pv-stat-icon{background:rgba(31,138,69,0.12);color:#1F8A45;}
+            .pv-stat-card.accent-info .pv-stat-icon{background:rgba(21,104,193,0.12);color:#1568C1;}
+            .pv-stat-card.accent-danger .pv-stat-icon{background:rgba(192,21,47,0.12);color:#C0152F;}
+            .pv-stat-card.accent-purple .pv-stat-icon{background:rgba(137,68,171,0.12);color:#8944AB;}
             .pv-summary-label{font-size:9px;font-weight:700;color:#8A93A0;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
-            .pv-summary-value{font-size:19px;font-weight:800;color:#14213D;}
+            .pv-summary-value{font-size:21px;font-weight:800;color:#14213D;}
             .pv-summary-value.danger{color:#C0152F;}
+            .pv-stat-bar-track{height:4px;background:#E9EAED;border-radius:2px;margin-top:9px;overflow:hidden;}
+            .pv-stat-bar-fill{height:100%;background:#8944AB;border-radius:2px;}
 
             /* 주간일정 */
             .pv-sch-grid{display:flex;gap:6px;margin-bottom:6px;}
@@ -1484,11 +1490,11 @@
         </div>`;
 
         const summary=`<div class="pv-summary">
-            <div class="pv-stat-card"><div class="pv-summary-label">전체 업무</div><div class="pv-summary-value">${total}건</div></div>
-            <div class="pv-stat-card"><div class="pv-summary-label">완료</div><div class="pv-summary-value">${done}건</div></div>
-            <div class="pv-stat-card"><div class="pv-summary-label">진행중</div><div class="pv-summary-value">${total-done}건</div></div>
-            <div class="pv-stat-card${overdueTotal>0?' accent-danger':''}"><div class="pv-summary-label">기한초과</div><div class="pv-summary-value${overdueTotal>0?' danger':''}">${overdueTotal}건</div></div>
-            <div class="pv-stat-card"><div class="pv-summary-label">달성률</div><div class="pv-summary-value">${pct}%</div></div>
+            <div class="pv-stat-card"><div class="pv-stat-icon"><i class="fa-solid fa-inbox"></i></div><div class="pv-summary-label">전체 업무</div><div class="pv-summary-value">${total}건</div></div>
+            <div class="pv-stat-card accent-success"><div class="pv-stat-icon"><i class="fa-solid fa-circle-check"></i></div><div class="pv-summary-label">완료</div><div class="pv-summary-value">${done}건</div></div>
+            <div class="pv-stat-card accent-info"><div class="pv-stat-icon"><i class="fa-solid fa-hourglass-half"></i></div><div class="pv-summary-label">진행중</div><div class="pv-summary-value">${total-done}건</div></div>
+            <div class="pv-stat-card${overdueTotal>0?' accent-danger':''}"><div class="pv-stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div class="pv-summary-label">기한초과</div><div class="pv-summary-value${overdueTotal>0?' danger':''}">${overdueTotal}건</div></div>
+            <div class="pv-stat-card accent-purple"><div class="pv-stat-icon"><i class="fa-solid fa-gauge-high"></i></div><div class="pv-summary-label">달성률</div><div class="pv-summary-value">${pct}%</div><div class="pv-stat-bar-track"><div class="pv-stat-bar-fill" style="width:${pct}%;"></div></div></div>
         </div>`;
 
         // ⑭ 주간 일정 섹션
