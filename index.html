@@ -299,19 +299,15 @@
             .pv-doc-meta-row{font-size:10.5px;color:#5A6472;}
             .pv-dot-sep{margin:0 6px;color:#C7CCD4;}
 
-            /* KPI 카드 */
-            .pv-summary{display:flex;gap:9px;margin-bottom:22px;}
-            .pv-stat-card{flex:1;border:1px solid #E3E5E9;border-radius:5px;padding:11px 13px;background:#FAFBFC;}
-            .pv-stat-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10.5px;margin-bottom:9px;background:rgba(20,33,61,0.09);color:#14213D;}
-            .pv-stat-card.accent-success .pv-stat-icon{background:rgba(31,138,69,0.12);color:#1F8A45;}
-            .pv-stat-card.accent-info .pv-stat-icon{background:rgba(21,104,193,0.12);color:#1568C1;}
-            .pv-stat-card.accent-danger .pv-stat-icon{background:rgba(192,21,47,0.12);color:#C0152F;}
-            .pv-stat-card.accent-purple .pv-stat-icon{background:rgba(137,68,171,0.12);color:#8944AB;}
-            .pv-summary-label{font-size:9px;font-weight:700;color:#8A93A0;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
-            .pv-summary-value{font-size:21px;font-weight:800;color:#14213D;}
+            /* KPI 요약표 — 통짜 스트립, 세로 구분선 */
+            .pv-stat-strip{display:flex;border:1px solid #C7CCD4;border-radius:4px;overflow:hidden;margin-bottom:22px;background:#FCFCFD;}
+            .pv-stat-cell{flex:1;padding:12px 15px;border-right:1px solid #E3E5E9;}
+            .pv-stat-cell:last-child{border-right:none;}
+            .pv-summary-label{font-size:9px;font-weight:700;color:#8A93A0;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;}
+            .pv-summary-value{font-size:22px;font-weight:800;color:#14213D;line-height:1;}
             .pv-summary-value.danger{color:#C0152F;}
-            .pv-stat-bar-track{height:4px;background:#E9EAED;border-radius:2px;margin-top:9px;overflow:hidden;}
-            .pv-stat-bar-fill{height:100%;background:#8944AB;border-radius:2px;}
+            .pv-stat-bar-track{height:3px;background:#E9EAED;border-radius:2px;margin-top:8px;overflow:hidden;}
+            .pv-stat-bar-fill{height:100%;background:#14213D;border-radius:2px;}
 
             /* 주간일정 */
             .pv-sch-grid{display:flex;gap:6px;margin-bottom:6px;}
@@ -1490,12 +1486,12 @@
             <div class="pv-doc-meta-row">문서번호 ${docNo}<span class="pv-dot-sep">·</span>작성일 ${today}<span class="pv-dot-sep">·</span>출력인원 ${persTotal}명(하이테크 ${AppState.personnel.hitech} · 건축기계 ${AppState.personnel.arch})</div>
         </div>`;
 
-        const summary=`<div class="pv-summary">
-            <div class="pv-stat-card"><div class="pv-stat-icon"><i class="fa-solid fa-inbox"></i></div><div class="pv-summary-label">전체 업무</div><div class="pv-summary-value">${total}건</div></div>
-            <div class="pv-stat-card accent-success"><div class="pv-stat-icon"><i class="fa-solid fa-circle-check"></i></div><div class="pv-summary-label">완료</div><div class="pv-summary-value">${done}건</div></div>
-            <div class="pv-stat-card accent-info"><div class="pv-stat-icon"><i class="fa-solid fa-hourglass-half"></i></div><div class="pv-summary-label">진행중</div><div class="pv-summary-value">${total-done}건</div></div>
-            <div class="pv-stat-card${overdueTotal>0?' accent-danger':''}"><div class="pv-stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div class="pv-summary-label">기한초과</div><div class="pv-summary-value${overdueTotal>0?' danger':''}">${overdueTotal}건</div></div>
-            <div class="pv-stat-card accent-purple"><div class="pv-stat-icon"><i class="fa-solid fa-gauge-high"></i></div><div class="pv-summary-label">달성률</div><div class="pv-summary-value">${pct}%</div><div class="pv-stat-bar-track"><div class="pv-stat-bar-fill" style="width:${pct}%;"></div></div></div>
+        const summary=`<div class="pv-stat-strip">
+            <div class="pv-stat-cell"><div class="pv-summary-label">전체 업무</div><div class="pv-summary-value">${total}건</div></div>
+            <div class="pv-stat-cell"><div class="pv-summary-label">완료</div><div class="pv-summary-value">${done}건</div></div>
+            <div class="pv-stat-cell"><div class="pv-summary-label">진행중</div><div class="pv-summary-value">${total-done}건</div></div>
+            <div class="pv-stat-cell"><div class="pv-summary-label">기한초과</div><div class="pv-summary-value${overdueTotal>0?' danger':''}">${overdueTotal}건</div></div>
+            <div class="pv-stat-cell"><div class="pv-summary-label">달성률</div><div class="pv-summary-value">${pct}%</div><div class="pv-stat-bar-track"><div class="pv-stat-bar-fill" style="width:${pct}%;"></div></div></div>
         </div>`;
 
         // ⑭ 주간 일정 섹션
