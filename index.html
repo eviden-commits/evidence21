@@ -282,6 +282,7 @@
             @page{margin:16mm 14mm;}
             body>*:not(#print-view){display:none!important;}
             #print-view{display:block!important;font-family:'Pretendard',-apple-system,sans-serif;color:#22262E;font-size:12.5px;line-height:1.6;}
+            #print-view *{-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;}
 
             /* 레터헤드 + 결재란 */
             .pv-letterhead{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:2.5px solid #14213D;}
