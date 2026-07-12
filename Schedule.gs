@@ -3,7 +3,7 @@
    주간일정 조회/저장 및 공휴일 조회.
    ========================================================================= */
 
-function getScheduleData_(ss, preloadedRows) {
+function getScheduleLocationMap_(ss, preloadedRows) {
   var schSheet = ss.getSheetByName('주간일정');
   var locationMap = {};
   if (schSheet) {
@@ -13,7 +13,11 @@ function getScheduleData_(ss, preloadedRows) {
       locationMap[cellToDateKey_(row[0])] = row[1];
     });
   }
+  return locationMap;
+}
 
+function getScheduleData_(ss, preloadedRows) {
+  var locationMap = getScheduleLocationMap_(ss, preloadedRows);
   var holidayMap = getHolidayMap_();
 
   var DAY_NAMES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];

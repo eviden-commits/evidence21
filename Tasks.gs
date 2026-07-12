@@ -3,8 +3,9 @@
    업무데이터 시트 CRUD (조회/추가/수정/삭제/상태토글), 첨부파일 업로드,
    변경 이력 기록.
 
-   컬럼: A id, B 분류, C 등록일, D 제목, E 내용, F 마감일, G 상태, H 파일,
-        I 위험도, J 태그, K 담당자, L 완료일시, M 리마인드발송(내부용)
+   컬럼: A id, B 분류, C 등록일, D 제목, E 내용, F 마감일, G 상태,
+        H 파일(여러 개면 줄바꿈으로 구분), I 위험도, J 태그, K 담당자,
+        L 완료일시, M 리마인드발송(내부용)
    ========================================================================= */
 
 function getTasks_(ss, categoryNames, preloadedRows) {
@@ -26,7 +27,7 @@ function getTasks_(ss, categoryNames, preloadedRows) {
         content: row[4] || '',
         duedate: cellToDateKey_(row[5]),
         status: row[6] || 'active',
-        fileUrl: row[7] || '',
+        fileUrls: splitFileUrls_(row[7]),
         riskLevel: row[8] || '',
         tags: row[9] || '',
         assignee: row[10] || '',
@@ -37,20 +38,26 @@ function getTasks_(ss, categoryNames, preloadedRows) {
   return tasks;
 }
 
-function uploadTaskFile_(data) {
-  if (!data.fileData || !data.fileName) return '';
+function splitFileUrls_(cell) {
+  return cell ? String(cell).split('\n').filter(Boolean) : [];
+}
+
+function uploadTaskFiles_(files) {
+  if (!files || !files.length) return [];
   var folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
-  var contentBytes = Utilities.base64Decode(data.fileData);
-  var blob = Utilities.newBlob(contentBytes, data.fileMime, data.fileName);
-  var file = folder.createFile(blob);
-  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  return file.getUrl();
+  return files.map(function(f) {
+    var contentBytes = Utilities.base64Decode(f.fileData);
+    var blob = Utilities.newBlob(contentBytes, f.fileMime, f.fileName);
+    var file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return file.getUrl();
+  });
 }
 
 function addTask_(ss, data) {
   var sheet = ss.getSheetByName('업무데이터');
-  var fileUrl = uploadTaskFile_(data);
-  sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', fileUrl, data.riskLevel || '', data.tags || '', data.assignee || '', '', '']);
+  var urls = uploadTaskFiles_(data.files);
+  sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', urls.join('\n'), data.riskLevel || '', data.tags || '', data.assignee || '', '', '']);
   logChange_(ss, '신규 등록', data.category, data.id, data.title, '');
 }
 
@@ -69,11 +76,10 @@ function updateTask_(ss, data) {
       sheet.getRange(rowNum, 9).setValue(data.riskLevel || '');
       sheet.getRange(rowNum, 10).setValue(data.tags || '');
       sheet.getRange(rowNum, 11).setValue(data.assignee || '');
+      var newUrls = (data.existingFileUrls || []).concat(uploadTaskFiles_(data.files));
+      sheet.getRange(rowNum, 8).setValue(newUrls.join('\n'));
       // 마감일이 바뀌면 이전에 보낸 리마인드 체크포인트를 초기화해서 새 마감일 기준으로 다시 보내도록 함
       if (String(values[i][5]) !== String(data.duedate || '')) sheet.getRange(rowNum, 13).setValue('');
-      if (data.fileData && data.fileName) {
-        sheet.getRange(rowNum, 8).setValue(uploadTaskFile_(data));
-      }
       var after = { category: data.category, title: data.title, content: data.content, duedate: data.duedate, assignee: data.assignee };
       logChange_(ss, '수정', data.category, data.id, data.title, buildTaskDiff_(before, after));
       break;

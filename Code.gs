@@ -28,6 +28,7 @@ function doGet(e) {
       allCategories: allCategories,
       tasks: getTasks_(ss, categories, batched['업무데이터']),
       schedule: getScheduleData_(ss, batched['주간일정']),
+      scheduleAll: getScheduleLocationMap_(ss, batched['주간일정']),
       personnel: getTodayPersonnel_(ss, batched['출력인원']),
       history: getRecentHistory_(ss, 50, batched['변경이력']),
       lastSync: Utilities.formatDate(new Date(), "GMT+9", "yy-MM-dd HH:mm")

@@ -206,7 +206,7 @@
         .top-tags-label{font-size:10px;font-weight:700;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.06em;}
         .top-tag-chip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:var(--sys-blue-bg);color:var(--sys-blue);border:none;cursor:pointer;transition:all 0.12s;}
         .top-tag-chip:hover{background:var(--sys-blue);color:white;}
-        .list-attachment{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:12px;color:var(--sys-blue);font-weight:500;text-decoration:none;}
+        .list-attachment{display:inline-flex;align-items:center;gap:4px;margin-top:4px;margin-right:10px;font-size:12px;color:var(--sys-blue);font-weight:500;text-decoration:none;}
         .list-attachment:hover{text-decoration:underline;}
         .list-actions{display:flex;gap:2px;flex-shrink:0;padding-top:2px;}
         .act-btn{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--sys-label-4);font-size:12px;cursor:pointer;transition:all 0.12s;}
@@ -236,6 +236,17 @@
         .file-drop-zone:hover{border-color:var(--sys-blue);background:var(--sys-blue-bg);}
         .file-drop-zone i{font-size:18px;color:var(--sys-label-4);}
         .file-drop-zone span{font-size:12px;color:var(--sys-label-3);font-weight:500;}
+        #file-list{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+        .sch-input-rows{max-height:320px;overflow-y:auto;padding-right:2px;}
+        .sch-nav-row{display:flex;gap:8px;margin:10px 0 6px;}
+        .sch-nav-btn{flex:1;padding:8px;border-radius:var(--r-sm);border:1px solid var(--sys-separator);background:var(--sys-surface);font-size:13px;font-weight:500;color:var(--sys-label-2);cursor:pointer;transition:all 0.12s;}
+        .sch-nav-btn:hover{background:var(--sys-surface-2);color:var(--sys-label);}
+        .file-chip{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:var(--sys-surface-2);border-radius:var(--r-xs);font-size:12px;}
+        .file-chip a,.file-chip span.fc-name{color:var(--sys-label-2);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .file-chip a{color:var(--sys-blue);}
+        .file-chip.staged span.fc-name{color:var(--sys-label);}
+        .file-chip button{background:none;border:none;color:var(--sys-label-4);cursor:pointer;font-size:13px;padding:2px 6px;flex-shrink:0;}
+        .file-chip button:hover{color:var(--sys-red);}
         .modal-actions{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
         .btn-fill{width:100%;padding:13px;border-radius:var(--r-sm);border:none;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.12s;font-family:var(--font-sans);letter-spacing:-0.02em;}
         .btn-fill.dark{background:var(--sys-label);color:white;}
@@ -539,8 +550,9 @@
             <div class="field-group"><div class="field-label" id="reg-duedate-label-end">종료일</div><input type="date" id="reg-duedate"></div>
         </div>
         <div class="field-group"><div class="field-label" id="file-field-label">파일 첨부</div>
-            <label for="reg-file" class="file-drop-zone" id="file-label-el"><i class="fa-solid fa-cloud-arrow-up"></i><span id="file-label-text">파일 선택 (최대 25MB)</span></label>
-            <input type="file" id="reg-file" style="display:none;" onchange="updateFileLabel(this)">
+            <label for="reg-file" class="file-drop-zone" id="file-label-el"><i class="fa-solid fa-cloud-arrow-up"></i><span id="file-label-text">파일 선택 또는 Ctrl+V로 스크린샷 붙여넣기 (개당 최대 25MB)</span></label>
+            <input type="file" id="reg-file" multiple style="display:none;" onchange="onFileInputChange(this)">
+            <div id="file-list"></div>
         </div>
         <div class="modal-actions">
             <button class="btn-fill dark" id="btn-save-submit" onclick="handleSave()">구글시트 저장</button>
@@ -573,8 +585,12 @@
 <div id="scheduleModal" class="modal">
     <div class="modal-sheet">
         <div class="modal-title">주간 일정 수정</div>
-        <div class="modal-subtitle">4일치 장소/내용을 입력하세요</div>
-        <div id="sch-input-rows"></div>
+        <div class="modal-subtitle" id="sch-week-range">월~일 7일치 장소/내용을 입력하세요</div>
+        <div id="sch-input-rows" class="sch-input-rows"></div>
+        <div class="sch-nav-row">
+            <button class="sch-nav-btn" onclick="scheduleModalPrevWeek()"><i class="fa-solid fa-chevron-left"></i> 이전 주</button>
+            <button class="sch-nav-btn" onclick="scheduleModalNextWeek()">다음 주 <i class="fa-solid fa-chevron-right"></i></button>
+        </div>
         <div class="modal-actions">
             <button class="btn-fill dark" id="btn-sch-save" onclick="handleScheduleSave()">구글시트 저장</button>
             <button class="btn-text-only" onclick="closeScheduleModal()">취소</button>
@@ -648,6 +664,9 @@
     let CATS = ["사고관리","입찰지원","노무관리","인증관리","법무관리","기타관리"]; // 서버에서 받은 분류 목록으로 갱신됨
     const SORT_MODES = [{key:'date',label:'등록일'},{key:'duedate_asc',label:'마감일↑'},{key:'duedate_desc',label:'마감일↓'}];
     let _sortIdx = 0;
+    let _existingFileUrls = []; // 수정 시 이미 저장된 첨부파일 URL 목록
+    let _stagedFiles = []; // 아직 업로드 안 한 새 첨부파일 {blob, name, mime}
+    let _scheduleWeekOffset = 0; // 일정 수정 모달의 주 이동(0=이번주)
     let _sessionPwd = sessionStorage.getItem('warehouse_session_pwd') || ''; // 로그인 시 설정, 탭 종료시 소멸
     function gasGetUrl() { return GAS_URL + '?pwd=' + encodeURIComponent(_sessionPwd); }
 
@@ -704,6 +723,7 @@
 
     let AppState = {
         schedule:[],
+        scheduleMap:{},
         tasks:{},
         allCategories:[],
         history:[],
@@ -807,6 +827,7 @@
         AppState.history = data.history || AppState.history;
         AppState.tasks = data.tasks || AppState.tasks;
         AppState.schedule = data.schedule || [];
+        AppState.scheduleMap = data.scheduleAll || AppState.scheduleMap || {};
         AppState.lastSync = data.lastSync || "—";
         if (data.personnel) {
             AppState.personnel = { hitech: Number(data.personnel.hitech)||0, arch: Number(data.personnel.arch)||0 };
@@ -1048,7 +1069,7 @@
             const upcomingLabel=cat==='인증관리'?'만료임박':'마감임박';
             const catBtn=escHtml(t.cat||AppState.selectedCategory);
             const tid=escHtml(t.id);
-            const fileHref=safeUrl(t.fileUrl); // ⑨
+            const fileHrefs=(t.fileUrls||[]).map(safeUrl).filter(Boolean); // ⑨
             return `<div class="list-row${isDone?' done':''}">
                 <div class="list-info">
                     ${gq?`<span class="list-cat-tag">${escHtml(t.cat)}</span>`:''}
@@ -1058,7 +1079,7 @@
                     ${t.tags?`<span>${parseTags(t.tags).map(tag=>`<span class="tag-badge">${escHtml(tag)}</span>`).join('')}</span>`:''}
                     ${t.duedate?`<span class="list-duedate${isOverdue?' overdue':isUpcoming?' upcoming':''}"><i class="fa-regular fa-clock"></i> 목표일: ${escHtml(t.duedate)}${isOverdue?' · 기한초과':isUpcoming?` · ${upcomingLabel} D-${daysLeft}`:''}</span>`:''}
                     ${t.assignee?`<span class="assignee-label"><i class="fa-regular fa-user"></i> 담당: ${escHtml(t.assignee)}</span>`:''}
-                    ${fileHref?`<a href="${fileHref}" target="_blank" rel="noopener" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일</a>`:''}
+                    ${fileHrefs.length?`<span>${fileHrefs.map((h,i)=>`<a href="${h}" target="_blank" rel="noopener" class="list-attachment"><i class="fa-solid fa-paperclip"></i> 첨부파일${fileHrefs.length>1?' '+(i+1):''}</a>`).join('')}</span>`:''}
                 </div>
                 <div class="list-actions">
                     <button class="act-btn done-btn${isDone?' active':''}" data-action="done" data-id="${escHtml(t.id)}" data-cat="${escHtml(t.cat||AppState.selectedCategory)}" title="${isDone?'진행중으로 변경':'완료 처리'}"><i class="fa-solid fa-check"></i></button>
@@ -1070,15 +1091,47 @@
     }
 
     /* ── FILE LABEL ── */
-    function updateFileLabel(input) {
-        const el=document.getElementById('file-label-text');
-        const icon=document.querySelector('#file-label-el i');
-        if (input.files&&input.files.length>0) {
-            el.textContent=input.files[0].name; icon.className='fa-solid fa-file';
-        } else {
-            el.textContent='파일 선택 (최대 25MB)'; icon.className='fa-solid fa-cloud-arrow-up';
-        }
+    const FILE_ALLOWED_TYPES=['image/','application/pdf','application/msword','application/vnd.openxmlformats','application/vnd.ms-','text/','application/zip','application/x-zip'];
+    function acceptStagedFile(file) {
+        if (file.size>25*1024*1024) { alert(`${file.name}: 파일 크기는 25MB 이하여야 합니다.`); return; }
+        if (!FILE_ALLOWED_TYPES.some(t=>file.type.startsWith(t))) { alert(`허용되지 않는 파일 형식입니다.\n(${file.type})`); return; }
+        _stagedFiles.push({ blob:file, name:file.name, mime:file.type });
     }
+    function onFileInputChange(input) {
+        Array.from(input.files||[]).forEach(acceptStagedFile);
+        input.value='';
+        renderFileList();
+    }
+    function renderFileList() {
+        const box=document.getElementById('file-list');
+        const existingRows=_existingFileUrls.map((url,i)=>{
+            const href=safeUrl(url);
+            return `<div class="file-chip"><a href="${href}" target="_blank" rel="noopener"><i class="fa-solid fa-paperclip"></i> 기존 파일 ${i+1}</a><button type="button" onclick="removeExistingFile(${i})" title="제거"><i class="fa-solid fa-xmark"></i></button></div>`;
+        }).join('');
+        const stagedRows=_stagedFiles.map((f,i)=>`<div class="file-chip staged"><span class="fc-name"><i class="fa-solid fa-file-arrow-up"></i> ${escHtml(f.name)}</span><button type="button" onclick="removeStagedFile(${i})" title="제거"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
+        box.innerHTML=existingRows+stagedRows;
+    }
+    function removeExistingFile(i) { _existingFileUrls.splice(i,1); renderFileList(); }
+    function removeStagedFile(i) { _stagedFiles.splice(i,1); renderFileList(); }
+
+    // Ctrl+V로 스크린샷 붙여넣기 — 업무 추가/수정 모달이 열려있을 때만 동작
+    document.addEventListener('paste', (e) => {
+        if (!document.getElementById('inputModal').classList.contains('active')) return;
+        const items=e.clipboardData&&e.clipboardData.items;
+        if (!items) return;
+        let handled=false;
+        for (const item of items) {
+            if (item.type.startsWith('image/')) {
+                const blob=item.getAsFile();
+                if (!blob) continue;
+                const ext=item.type==='image/png'?'png':'jpg';
+                const file=new File([blob], `screenshot_${Date.now()}.${ext}`, { type:item.type });
+                acceptStagedFile(file);
+                handled=true;
+            }
+        }
+        if (handled) { renderFileList(); e.preventDefault(); }
+    });
 
     /* ── CATEGORY SELECT ── */
     function selectCategory(cat) {
@@ -1099,6 +1152,7 @@
         document.getElementById('reg-risk').value="";
         document.getElementById('reg-tags').value="";
         document.getElementById('reg-assignee').value="";
+        _existingFileUrls=[]; _stagedFiles=[]; renderFileList();
         onRegCatChange();
         document.getElementById('inputModal').classList.add('active');
         setTimeout(()=>document.getElementById('reg-title').focus(),200);
@@ -1118,16 +1172,8 @@
         document.getElementById('reg-tags').value=item.tags||'';
         document.getElementById('reg-assignee').value=item.assignee||'';
         onRegCatChange();
-        // ⑧ 기존 파일 표시
-        const el=document.getElementById('file-label-text');
-        const icon=document.querySelector('#file-label-el i');
-        const href=safeUrl(item.fileUrl);
-        if (href) {
-            el.innerHTML=`기존 파일 연결됨 &nbsp;<a href="${href}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--sys-blue);text-decoration:underline;font-size:11px;">보기</a>`;
-            icon.className='fa-solid fa-file-circle-check'; icon.style.color='var(--sys-green)';
-        } else {
-            el.textContent='파일 선택 (최대 25MB)'; icon.className='fa-solid fa-cloud-arrow-up'; icon.style.color='';
-        }
+        // ⑧ 기존 첨부파일 표시
+        _existingFileUrls=[...(item.fileUrls||[])]; _stagedFiles=[]; renderFileList();
         document.getElementById('inputModal').classList.add('active');
         setTimeout(()=>document.getElementById('reg-title').focus(),200);
     }
@@ -1136,9 +1182,7 @@
         document.getElementById('inputModal').classList.remove('active');
         ['reg-id','reg-title','reg-content','reg-startdate','reg-duedate','reg-risk','reg-tags','reg-assignee'].forEach(id=>document.getElementById(id).value='');
         document.getElementById('reg-file').value='';
-        document.getElementById('file-label-text').textContent='파일 선택 (최대 25MB)';
-        const icon=document.querySelector('#file-label-el i');
-        icon.className='fa-solid fa-cloud-arrow-up'; icon.style.color='';
+        _existingFileUrls=[]; _stagedFiles=[]; renderFileList();
         document.getElementById('btn-save-submit').textContent='구글시트 저장';
         document.getElementById('btn-save-submit').disabled=false;
     }
@@ -1175,32 +1219,57 @@
         finally{btn.textContent='구글시트 저장';btn.disabled=false;}
     }
 
-    /* ── SCHEDULE MODAL ── */
-    function openScheduleModal() {
-        const rows = document.getElementById('sch-input-rows');
-        const DAY_KO = ['일','월','화','수','목','금','토'];
-        rows.innerHTML = AppState.schedule.map((s, i) => {
-            const d = new Date(s.fullDate + 'T00:00:00');
-            const dayLabel = `${s.fullDate} (${DAY_KO[d.getDay()]})`;
-            const loc = s.loc === '—' ? '' : escHtml(s.loc || '');
+    /* ── SCHEDULE MODAL (월~일 7일 + 주 이동) ── */
+    const SCH_DAY_KO = ['일','월','화','수','목','금','토'];
+    function mondayOf_(d) {
+        const day = d.getDay(); // 0=일 .. 6=토
+        const diff = day === 0 ? -6 : 1 - day;
+        const m = new Date(d);
+        m.setDate(d.getDate() + diff);
+        return m;
+    }
+    function getScheduleWeekDates(offset) {
+        const monday = mondayOf_(new Date());
+        monday.setDate(monday.getDate() + offset * 7);
+        const todayKey = todayStr();
+        const days = [];
+        for (let i=0;i<7;i++) {
+            const d = new Date(monday);
+            d.setDate(monday.getDate()+i);
+            const fullDate = d.toLocaleDateString('en-CA');
+            days.push({ fullDate, dayKo: SCH_DAY_KO[d.getDay()], isToday: fullDate===todayKey });
+        }
+        return days;
+    }
+    function renderScheduleModalRows() {
+        const days = getScheduleWeekDates(_scheduleWeekOffset);
+        document.getElementById('sch-week-range').innerText = `${days[0].fullDate} ~ ${days[6].fullDate}`;
+        document.getElementById('sch-input-rows').innerHTML = days.map((d,i) => {
+            const loc = AppState.scheduleMap[d.fullDate] || '';
             return `<div class="field-group">
                 <div class="field-label" style="display:flex;align-items:center;gap:8px;">
-                    <span>${dayLabel}</span>
-                    ${s.isToday ? '<span style="font-size:9px;font-weight:700;color:var(--sys-blue);background:var(--sys-blue-bg);padding:1px 6px;border-radius:8px;">TODAY</span>' : ''}
+                    <span>${d.fullDate} (${d.dayKo})</span>
+                    ${d.isToday ? '<span style="font-size:9px;font-weight:700;color:var(--sys-blue);background:var(--sys-blue-bg);padding:1px 6px;border-radius:8px;">TODAY</span>' : ''}
                 </div>
-                <input type="text" id="sch-loc-${i}" value="${loc}" placeholder="장소 / 내용 입력">
+                <input type="text" id="sch-loc-${i}" data-date="${d.fullDate}" value="${escHtml(loc)}" placeholder="장소 / 내용 입력">
             </div>`;
         }).join('');
+    }
+    function openScheduleModal() {
+        _scheduleWeekOffset = 0;
+        renderScheduleModalRows();
         document.getElementById('scheduleModal').classList.add('active');
         setTimeout(() => document.getElementById('sch-loc-0')?.focus(), 200);
     }
     function closeScheduleModal() { document.getElementById('scheduleModal').classList.remove('active'); }
+    function scheduleModalPrevWeek() { _scheduleWeekOffset--; renderScheduleModalRows(); }
+    function scheduleModalNextWeek() { _scheduleWeekOffset++; renderScheduleModalRows(); }
 
     async function handleScheduleSave() {
         const pwd = getGlobalPassword(); if (!pwd) return;
-        const entries = AppState.schedule.map((s, i) => ({
-            date: s.fullDate,
-            loc: document.getElementById(`sch-loc-${i}`)?.value.trim() || ''
+        const entries = Array.from(document.querySelectorAll('#sch-input-rows input')).map(inp => ({
+            date: inp.dataset.date,
+            loc: inp.value.trim()
         }));
         const btn = document.getElementById('btn-sch-save');
         btn.textContent = '저장 중…'; btn.disabled = true;
@@ -1210,8 +1279,12 @@
             const result = await res.json();
             if (result.status === 'auth_error') { alert(result.message); }
             else {
-                // 로컬 상태 즉시 반영
-                entries.forEach((e, i) => { if (AppState.schedule[i]) AppState.schedule[i].loc = e.loc || '—'; });
+                // 로컬 상태 즉시 반영(이번 대시보드 4일 창 + 전체 맵)
+                entries.forEach(e => {
+                    AppState.scheduleMap[e.date] = e.loc;
+                    const dashItem = AppState.schedule.find(s => s.fullDate === e.date);
+                    if (dashItem) dashItem.loc = e.loc || '—';
+                });
                 render();
                 closeScheduleModal();
                 localStorage.removeItem('warehouse_cache_data');
@@ -1222,48 +1295,49 @@
     }
 
     /* ── SAVE ── */
+    function readFileAsBase64(f) {
+        return new Promise((resolve,reject)=>{
+            const reader=new FileReader();
+            reader.onerror=()=>reject(new Error('read failed'));
+            reader.onload=e=>resolve({ fileData:e.target.result.split(',')[1], fileName:f.name, fileMime:f.mime });
+            reader.readAsDataURL(f.blob);
+        });
+    }
+
     async function handleSave() {
         const id=document.getElementById('reg-id').value;
         const title=document.getElementById('reg-title').value.trim();
         // ④ 제목 검증
         if (!title) { alert("제목을 입력하세요."); document.getElementById('reg-title').focus(); return; }
         const category=document.getElementById('reg-cat').value;
-        const fileInput=document.getElementById('reg-file');
-        // 사고관리는 증빙 파일 첨부 필수 (기존 파일이 있는 수정 건은 예외)
-        if (category==='사고관리') {
-            const existing=id?findTaskById(id):null;
-            const hasNewFile=fileInput.files&&fileInput.files.length>0;
-            const hasExistingFile=existing&&!!safeUrl(existing.fileUrl);
-            if (!hasNewFile && !hasExistingFile) {
-                alert("사고관리 항목은 증빙 파일 첨부가 필요합니다.");
-                return;
-            }
+        // 사고관리는 증빙 파일 첨부 필수
+        if (category==='사고관리' && _existingFileUrls.length===0 && _stagedFiles.length===0) {
+            alert("사고관리 항목은 증빙 파일 첨부가 필요합니다.");
+            return;
         }
         const pwd=getGlobalPassword(); if(!pwd) return;
         const submitBtn=document.getElementById('btn-save-submit');
         submitBtn.textContent="저장 중…"; submitBtn.disabled=true;
-        const payload={
-            action:id?'updateTask':'addTask', id:id||Date.now().toString(),
-            category,
-            date:id ? todayStr() : (document.getElementById('reg-startdate').value||todayStr()),
-            title, content:document.getElementById('reg-content').value.trim(),
-            duedate:document.getElementById('reg-duedate').value,
-            riskLevel:document.getElementById('reg-risk').value,
-            tags:parseTags(document.getElementById('reg-tags').value).join(', '),
-            assignee:document.getElementById('reg-assignee').value.trim(),
-            password:pwd, fileData:null, fileName:null, fileMime:null
-        };
-        if (fileInput.files&&fileInput.files.length>0) {
-            const file=fileInput.files[0];
-            // ③ 파일 크기/타입 검증
-            if (file.size>25*1024*1024) { alert("파일 크기는 25MB 이하여야 합니다."); submitBtn.textContent='구글시트 저장'; submitBtn.disabled=false; return; }
-            const allowed=['image/','application/pdf','application/msword','application/vnd.openxmlformats','application/vnd.ms-','text/','application/zip','application/x-zip'];
-            if (!allowed.some(t=>file.type.startsWith(t))) { alert(`허용되지 않는 파일 형식입니다.\n(${file.type})`); submitBtn.textContent='구글시트 저장'; submitBtn.disabled=false; return; }
-            const reader=new FileReader();
-            reader.onerror=()=>{ alert("파일을 읽는 중 오류가 발생했습니다."); submitBtn.textContent='구글시트 저장'; submitBtn.disabled=false; }; // ③
-            reader.onload=async(e)=>{ payload.fileData=e.target.result.split(',')[1]; payload.fileName=file.name; payload.fileMime=file.type; await sendTaskData(payload); };
-            reader.readAsDataURL(file);
-        } else { await sendTaskData(payload); }
+        try {
+            const files=await Promise.all(_stagedFiles.map(readFileAsBase64));
+            const payload={
+                action:id?'updateTask':'addTask', id:id||Date.now().toString(),
+                category,
+                date:id ? todayStr() : (document.getElementById('reg-startdate').value||todayStr()),
+                title, content:document.getElementById('reg-content').value.trim(),
+                duedate:document.getElementById('reg-duedate').value,
+                riskLevel:document.getElementById('reg-risk').value,
+                tags:parseTags(document.getElementById('reg-tags').value).join(', '),
+                assignee:document.getElementById('reg-assignee').value.trim(),
+                existingFileUrls:_existingFileUrls,
+                files,
+                password:pwd
+            };
+            await sendTaskData(payload);
+        } catch(e) {
+            alert("파일을 읽는 중 오류가 발생했습니다.");
+            submitBtn.textContent='구글시트 저장'; submitBtn.disabled=false;
+        }
     }
 
     async function sendTaskData(payload) {
@@ -1429,13 +1503,6 @@
     }
     // 분류별 마감 경고 리드타임: 인증관리는 갱신 준비 기간이 기므로 60일, 나머지는 3일
     function warningWindowDays(cat) { return cat==='인증관리' ? 60 : 3; }
-    function findTaskById(id) {
-        for (const cat of CATS) {
-            const found=(AppState.tasks[cat]||[]).find(t=>String(t.id)===String(id));
-            if (found) return {...found, cat};
-        }
-        return null;
-    }
 
     /* ── KPI ── */
     let kpiTab='monthly';
