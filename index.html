@@ -206,6 +206,9 @@
         .top-tags-label{font-size:10px;font-weight:700;color:var(--sys-label-4);text-transform:uppercase;letter-spacing:0.06em;}
         .top-tag-chip{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;background:var(--sys-blue-bg);color:var(--sys-blue);border:none;cursor:pointer;transition:all 0.12s;}
         .top-tag-chip:hover{background:var(--sys-blue);color:white;}
+        #tag-suggestions{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
+        .tag-suggest-chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:11px;background:var(--sys-surface-2);color:var(--sys-label-2);border:1px dashed var(--sys-separator);cursor:pointer;transition:all 0.12s;}
+        .tag-suggest-chip:hover{background:var(--sys-blue-bg);color:var(--sys-blue);border-color:var(--sys-blue);}
         .list-attachment{display:inline-flex;align-items:center;gap:4px;margin-top:4px;margin-right:10px;font-size:12px;color:var(--sys-blue);font-weight:500;text-decoration:none;}
         .list-attachment:hover{text-decoration:underline;}
         .list-actions{display:flex;gap:2px;flex-shrink:0;padding-top:2px;}
@@ -535,9 +538,11 @@
         <div class="field-group"><div class="field-label">분류</div>
             <select id="reg-cat" onchange="onRegCatChange()"></select>
         </div>
-        <div class="field-group"><div class="field-label">업무 제목 *</div><input type="text" id="reg-title" placeholder="제목을 입력하세요"></div>
-        <div class="field-group"><div class="field-label">내용</div><textarea id="reg-content" rows="5" placeholder="상세 내용을 입력하세요"></textarea></div>
-        <div class="field-group"><div class="field-label">태그</div><input type="text" id="reg-tags" placeholder="#안전, #고소작업 처럼 쉼표로 구분"></div>
+        <div class="field-group"><div class="field-label">업무 제목 *</div><input type="text" id="reg-title" placeholder="제목을 입력하세요" oninput="renderTagSuggestions()"></div>
+        <div class="field-group"><div class="field-label">내용</div><textarea id="reg-content" rows="5" placeholder="상세 내용을 입력하세요" oninput="renderTagSuggestions()"></textarea></div>
+        <div class="field-group"><div class="field-label">태그</div><input type="text" id="reg-tags" placeholder="#안전, #고소작업 처럼 쉼표로 구분" oninput="renderTagSuggestions()">
+            <div id="tag-suggestions"></div>
+        </div>
         <div class="field-group" style="position:relative;"><div class="field-label">담당자</div>
             <input type="text" id="reg-assignee" placeholder="이름 입력 또는 아래에서 선택" oninput="renderAssigneeSuggestions()" onfocus="renderAssigneeSuggestions()" onblur="setTimeout(()=>document.getElementById('assignee-suggestions').style.display='none',150)">
             <div id="assignee-suggestions" style="display:none;"></div>
@@ -691,6 +696,26 @@
         const freq={};
         allTasksFlat().forEach(t=>parseTags(t.tags).forEach(tag=>{ freq[tag]=(freq[tag]||0)+1; }));
         return Object.keys(freq).sort((a,b)=>freq[b]-freq[a]).slice(0,n);
+    }
+    function getAllTagsList() { return getTopTags(Infinity); }
+
+    /* ── 태그 추천: 제목/내용에 등장하는 단어가 기존 태그와 겹치면 추천 ── */
+    function renderTagSuggestions() {
+        const box=document.getElementById('tag-suggestions');
+        const text=(document.getElementById('reg-title').value+' '+document.getElementById('reg-content').value).toLowerCase();
+        if (!text.trim()) { box.innerHTML=''; return; }
+        const current=parseTags(document.getElementById('reg-tags').value);
+        const matches=getAllTagsList().filter(tag=>{
+            const keyword=tag.replace(/^#/,'').toLowerCase();
+            return keyword && text.includes(keyword) && !current.includes(tag);
+        }).slice(0,6);
+        box.innerHTML=matches.map(tag=>`<button type="button" class="tag-suggest-chip" onclick="addSuggestedTag('${escHtml(tag)}')">+ ${escHtml(tag)}</button>`).join('');
+    }
+    function addSuggestedTag(tag) {
+        const current=parseTags(document.getElementById('reg-tags').value);
+        if (!current.includes(tag)) current.push(tag);
+        document.getElementById('reg-tags').value=current.join(', ');
+        renderTagSuggestions();
     }
     function getAllAssignees() {
         const freq={};
@@ -1154,6 +1179,7 @@
         document.getElementById('reg-assignee').value="";
         _existingFileUrls=[]; _stagedFiles=[]; renderFileList();
         onRegCatChange();
+        renderTagSuggestions();
         document.getElementById('inputModal').classList.add('active');
         setTimeout(()=>document.getElementById('reg-title').focus(),200);
     }
@@ -1172,6 +1198,7 @@
         document.getElementById('reg-tags').value=item.tags||'';
         document.getElementById('reg-assignee').value=item.assignee||'';
         onRegCatChange();
+        renderTagSuggestions();
         // ⑧ 기존 첨부파일 표시
         _existingFileUrls=[...(item.fileUrls||[])]; _stagedFiles=[]; renderFileList();
         document.getElementById('inputModal').classList.add('active');
@@ -1182,6 +1209,7 @@
         document.getElementById('inputModal').classList.remove('active');
         ['reg-id','reg-title','reg-content','reg-startdate','reg-duedate','reg-risk','reg-tags','reg-assignee'].forEach(id=>document.getElementById(id).value='');
         document.getElementById('reg-file').value='';
+        document.getElementById('tag-suggestions').innerHTML='';
         _existingFileUrls=[]; _stagedFiles=[]; renderFileList();
         document.getElementById('btn-save-submit').textContent='구글시트 저장';
         document.getElementById('btn-save-submit').disabled=false;
