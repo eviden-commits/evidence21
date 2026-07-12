@@ -306,8 +306,7 @@
             .pv-summary-label{font-size:8px;font-weight:700;color:#8A93A0;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px;}
             .pv-summary-value{font-size:15.5px;font-weight:800;color:#14213D;line-height:1.3;}
             .pv-summary-value.danger{color:#C0152F;}
-            .pv-stat-bar-track{height:2px;background:#E9EAED;border-radius:1px;margin-top:4px;overflow:hidden;}
-            .pv-stat-bar-fill{height:100%;background:#14213D;border-radius:1px;}
+            .pv-summary-value.warn{color:#C9700A;}
 
             /* 주간일정 */
             .pv-sch-grid{display:flex;gap:6px;margin-bottom:6px;}
@@ -1472,9 +1471,14 @@
         const docNo='QSH-'+todayKey.replace(/-/g,'');
         let all=[];
         for(const cat of CATS) all=all.concat((AppState.tasks[cat]||[]).map(t=>({...t,cat})));
-        const total=all.length,done=all.filter(t=>t.status==='done').length,pct=total>0?Math.round(done/total*100):0;
-        const overdueTotal=all.filter(t=>t.status!=='done'&&t.duedate&&t.duedate<todayKey).length;
-        const persTotal=AppState.personnel.hitech+AppState.personnel.arch;
+        const active=all.filter(t=>t.status!=='done'); // KPI는 진행중 업무만 카운팅(완료 제외)
+        const activeTotal=active.length;
+        const overdueTotal=active.filter(t=>t.duedate&&t.duedate<todayKey).length;
+        const upcomingTotal=active.filter(t=>{
+            if(!t.duedate||t.duedate<todayKey) return false;
+            const dl=Math.ceil((new Date(t.duedate+'T00:00:00')-new Date(todayKey+'T00:00:00'))/86400000);
+            return dl<=warningWindowDays(t.cat);
+        }).length;
 
         const letterhead=`<div class="pv-letterhead">
             <div><div class="pv-brand-name">(주)세방테크</div><div class="pv-brand-dept">품질안전보건실</div></div>
@@ -1483,15 +1487,13 @@
         <div class="pv-title-block">
             <div class="pv-doc-tag">사내한정 · INTERNAL</div>
             <div class="pv-title">업무 현황 보고서</div>
-            <div class="pv-doc-meta-row">문서번호 ${docNo}<span class="pv-dot-sep">·</span>작성일 ${today}<span class="pv-dot-sep">·</span>출력인원 ${persTotal}명(하이테크 ${AppState.personnel.hitech} · 건축기계 ${AppState.personnel.arch})</div>
+            <div class="pv-doc-meta-row">문서번호 ${docNo}<span class="pv-dot-sep">·</span>작성일 ${today}</div>
         </div>`;
 
         const summary=`<div class="pv-stat-strip">
-            <div class="pv-stat-cell"><div class="pv-summary-label">전체 업무</div><div class="pv-summary-value">${total}건</div></div>
-            <div class="pv-stat-cell"><div class="pv-summary-label">완료</div><div class="pv-summary-value">${done}건</div></div>
-            <div class="pv-stat-cell"><div class="pv-summary-label">진행중</div><div class="pv-summary-value">${total-done}건</div></div>
+            <div class="pv-stat-cell"><div class="pv-summary-label">진행중 업무</div><div class="pv-summary-value">${activeTotal}건</div></div>
             <div class="pv-stat-cell"><div class="pv-summary-label">기한초과</div><div class="pv-summary-value${overdueTotal>0?' danger':''}">${overdueTotal}건</div></div>
-            <div class="pv-stat-cell"><div class="pv-summary-label">달성률</div><div class="pv-summary-value">${pct}%</div><div class="pv-stat-bar-track"><div class="pv-stat-bar-fill" style="width:${pct}%;"></div></div></div>
+            <div class="pv-stat-cell"><div class="pv-summary-label">마감임박</div><div class="pv-summary-value${upcomingTotal>0?' warn':''}">${upcomingTotal}건</div></div>
         </div>`;
 
         // ⑭ 주간 일정 섹션
