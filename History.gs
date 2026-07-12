@@ -23,7 +23,7 @@ function getRecentHistory_(ss, limit, preloadedRows) {
   var data = preloadedRows || (sheet.getLastRow() <= 1 ? [] : sheet.getDataRange().getValues());
   if (data.length <= 1) return [];
   var rows = data.slice(1).map(function(row) {
-    return { time: row[0], action: row[1], category: row[2], id: row[3], title: row[4], detail: row[5] };
+    return { time: cellToDateTimeKey_(row[0]), action: row[1], category: row[2], id: row[3], title: row[4], detail: row[5] };
   });
   rows.reverse();
   return rows.slice(0, limit);

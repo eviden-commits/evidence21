@@ -31,7 +31,7 @@ function getTasks_(ss, categoryNames, preloadedRows) {
         riskLevel: row[8] || '',
         tags: row[9] || '',
         assignee: row[10] || '',
-        completedAt: row[11] || ''
+        completedAt: cellToDateTimeKey_(row[11])
       });
     }
   }
@@ -59,6 +59,7 @@ function addTask_(ss, data) {
   var urls = uploadTaskFiles_(data.files);
   sheet.appendRow([data.id, data.category, data.date, data.title, data.content || '', data.duedate || '', 'active', urls.join('\n'), data.riskLevel || '', data.tags || '', data.assignee || '', '', '']);
   logChange_(ss, '신규 등록', data.category, data.id, data.title, '');
+  notifyAssignment_(ss, { title: data.title, category: data.category, duedate: data.duedate, content: data.content, assignee: data.assignee });
 }
 
 function updateTask_(ss, data) {
@@ -67,7 +68,7 @@ function updateTask_(ss, data) {
   for (var i = 1; i < values.length; i++) {
     if (String(values[i][0]) === String(data.id)) {
       var rowNum = i + 1;
-      var before = { category: values[i][1], title: values[i][3], content: values[i][4], duedate: values[i][5], assignee: values[i][10] };
+      var before = { category: values[i][1], title: values[i][3], content: values[i][4], duedate: cellToDateKey_(values[i][5]), assignee: values[i][10] };
       sheet.getRange(rowNum, 2).setValue(data.category);
       sheet.getRange(rowNum, 3).setValue(data.date);
       sheet.getRange(rowNum, 4).setValue(data.title);
@@ -79,9 +80,12 @@ function updateTask_(ss, data) {
       var newUrls = (data.existingFileUrls || []).concat(uploadTaskFiles_(data.files));
       sheet.getRange(rowNum, 8).setValue(newUrls.join('\n'));
       // 마감일이 바뀌면 이전에 보낸 리마인드 체크포인트를 초기화해서 새 마감일 기준으로 다시 보내도록 함
-      if (String(values[i][5]) !== String(data.duedate || '')) sheet.getRange(rowNum, 13).setValue('');
+      if (before.duedate !== String(data.duedate || '')) sheet.getRange(rowNum, 13).setValue('');
       var after = { category: data.category, title: data.title, content: data.content, duedate: data.duedate, assignee: data.assignee };
       logChange_(ss, '수정', data.category, data.id, data.title, buildTaskDiff_(before, after));
+      if (data.assignee && String(data.assignee) !== String(before.assignee || '')) {
+        notifyAssignment_(ss, { title: data.title, category: data.category, duedate: data.duedate, content: data.content, assignee: data.assignee });
+      }
       break;
     }
   }

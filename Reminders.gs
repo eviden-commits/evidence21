@@ -25,7 +25,7 @@ function runDailyDigestAndReminders_() {
     if (status === 'done') {
       var completedAt = row[11];
       if (completedAt && hoursSince_(completedAt, now) <= 24) {
-        completedItems.push({ category: category, title: title, assignee: row[10] || '', completedAt: completedAt });
+        completedItems.push({ category: category, title: title, assignee: row[10] || '', completedAt: cellToDateTimeKey_(completedAt) });
       }
       continue;
     }
@@ -57,8 +57,9 @@ function daysBetween_(fromStr, toStr) {
   return Math.round((b - a) / 86400000);
 }
 
-function hoursSince_(timeStr, now) {
-  var t = new Date(String(timeStr).replace(' ', 'T'));
+function hoursSince_(cellVal, now) {
+  if (!cellVal) return Infinity;
+  var t = (cellVal instanceof Date) ? cellVal : new Date(String(cellVal).replace(' ', 'T') + '+09:00');
   if (isNaN(t.getTime())) return Infinity;
   return (now - t) / 3600000;
 }
@@ -78,6 +79,25 @@ function sendReminderEmail_(toEmail, task) {
     '<p><a href="' + APP_URL + '" style="color:#007AFF;">업무창고에서 확인하기 →</a></p>' +
     '</div>';
   MailApp.sendEmail({ to: toEmail, subject: subject, htmlBody: html });
+}
+
+// 신규 등록 또는 담당자 변경(재배정 포함) 시 즉시 발송
+function notifyAssignment_(ss, task) {
+  if (!task.assignee) return;
+  var email = findSubscriberEmail_(getSubscribers_(ss), task.assignee);
+  if (!email) return;
+  var subject = '[업무창고] 업무가 배정되었습니다 — ' + task.title;
+  var html =
+    '<div style="font-family:sans-serif;font-size:14px;color:#1D1D1F;line-height:1.6;">' +
+    '<p><b>' + escapeHtml_(task.title) + '</b> 업무가 담당자로 배정되었습니다.</p>' +
+    '<table style="border-collapse:collapse;margin:12px 0;">' +
+    '<tr><td style="color:#6C6C70;padding:2px 12px 2px 0;">분류</td><td>' + escapeHtml_(task.category) + '</td></tr>' +
+    (task.duedate ? '<tr><td style="color:#6C6C70;padding:2px 12px 2px 0;">마감일</td><td>' + escapeHtml_(task.duedate) + '</td></tr>' : '') +
+    (task.content ? '<tr><td style="color:#6C6C70;padding:2px 12px 2px 0;vertical-align:top;">내용</td><td>' + escapeHtml_(task.content).replace(/\n/g, '<br>') + '</td></tr>' : '') +
+    '</table>' +
+    '<p><a href="' + APP_URL + '" style="color:#007AFF;">업무창고에서 확인하기 →</a></p>' +
+    '</div>';
+  MailApp.sendEmail({ to: email, subject: subject, htmlBody: html });
 }
 
 function sendCompletionDigest_(items) {
@@ -101,6 +121,11 @@ function sendCompletionDigest_(items) {
 
 function escapeHtml_(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/* ── 최초 1회 수동 실행: 메일 발송 권한(Mail scope) 승인용. 실제 메일은 보내지 않음 ── */
+function authorizeMailScope() {
+  MailApp.getRemainingDailyQuota();
 }
 
 /* ── 최초 1회 수동 실행: 매일 오전 9시 트리거 설치 ── */
